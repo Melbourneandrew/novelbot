@@ -14,6 +14,7 @@ export default function Login() {
     });
     if (loginResponse.ok) {
       console.log("Logged in");
+      window.location.href = "/protected/dashboard";
     } else {
       const error = await loginResponse.text();
       console.error(error);

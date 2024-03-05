@@ -3,6 +3,7 @@ import mongoose, { models, Schema, Document } from "mongoose";
 interface IUser extends Document {
   email?: string;
   password?: string;
+  stripeSubscriptionId?: string;
 }
 const userSchema: Schema = new Schema(
   {
@@ -14,6 +15,10 @@ const userSchema: Schema = new Schema(
     password: {
       type: String,
       required: true,
+    },
+    stripeSubscriptionId: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }

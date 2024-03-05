@@ -5,12 +5,14 @@ export async function middleware(request: NextRequest) {
   let cookie = request.cookies.get("session");
 
   if (!cookie) {
-    return NextResponse.redirect("/login");
+    return NextResponse.redirect(
+      new URL("/login", request.nextUrl)
+    );
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/api/protected",
+  matcher: ["/api/protected/", "/protected/(.*)"],
 };
