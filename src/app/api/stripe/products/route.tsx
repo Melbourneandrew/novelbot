@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { NextResponse, NextRequest } from "next/server";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const prices = await stripe.prices.list();
   const products = await stripe.products.list({
     active: true,

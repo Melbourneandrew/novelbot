@@ -1,5 +1,10 @@
 "use client";
+import { useState } from 'react'
+import LoadingWheel from "@/components/LoadingWheel";
+
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -7,17 +12,20 @@ export default function Login() {
     const form = event.target as HTMLFormElement;
     const email = form.email.value;
     const password = form.password.value;
+    setIsLoading(true);
     const loginResponse = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    setIsLoading(false);
     if (loginResponse.ok) {
       console.log("Logged in");
       window.location.href = "/protected/dashboard";
     } else {
       const error = await loginResponse.text();
       console.error(error);
+      setErrorMessage("There was an error with your login request.");
     }
   };
   return (
@@ -41,10 +49,14 @@ export default function Login() {
           required
           current-password="true"
         />
-        <button className="btn btn-primary" type="submit">
-          Submit
-        </button>
-        <a href="/login">Login</a>
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {isLoading ? <LoadingWheel /> :
+          <button className="btn btn-primary" type="submit">
+            Submit
+          </button>
+        }
+        <a href="/signup">Signup</a>
+
       </form>
     </div>
   );

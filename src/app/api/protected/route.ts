@@ -1,16 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { connectToDB } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { ProtectedRoute } from "@/lib/ProtectedRoute";
+import { AuthenticatedNextRequest } from "@/types";
 import { auth } from "@/lib/auth";
-import { IUser } from "@/lib/models/User";
 
-export async function GET(request: NextRequest) {
+export const GET = ProtectedRoute(auth, async (request: AuthenticatedNextRequest) => {
   console.log("Protected route called");
-  await connectToDB();
-  const user: IUser | null = await auth(request);
-  if (!user) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  } else {
-    console.log("User found");
-    return new NextResponse("Hello, World!", { status: 200 });
-  }
-}
+  return NextResponse.json({ message: "Protected route called" });
+})

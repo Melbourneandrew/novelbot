@@ -13,6 +13,6 @@ interface ActionResponse {
 interface ActionRequest {
   [key: string]: any;
 }
-interface NextRequestWithSession extends NextRequest {
-  session: SessionTokenInterface;
+interface AuthenticatedNextRequest extends NextRequest {
+  user: IUser;
 }
