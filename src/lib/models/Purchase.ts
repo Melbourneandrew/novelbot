@@ -2,7 +2,7 @@ import mongoose, { models, Schema, Document } from "mongoose";
 import { IUser } from "./User";
 
 interface IPurchase extends Document {
-  user: Object;
+  user: IUser;
   stripeSubscriptionId: string;
 }
 const purchaseSchema: Schema = new Schema(

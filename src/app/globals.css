@@ -5,20 +5,33 @@
 h1 {
   font-size: xx-large;
   font-weight: bold;
+  text-align: center;
 }
 
 h2 {
   font-size: x-large;
   font-weight: bold;
+  text-align: center;
 }
 
 h3 {
   font-size: large;
   font-weight: bold;
+  text-align: center;
 }
 
 a {
   text-decoration: underline;
+}
+
+/* Hide scrollbar for Chrome, Safari, and Edge */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
 }
 
 .lds-facebook {
