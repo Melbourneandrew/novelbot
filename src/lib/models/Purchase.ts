@@ -4,6 +4,8 @@ import { IUser } from "./User";
 interface IPurchase extends Document {
   user: IUser;
   stripeSubscriptionId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 const purchaseSchema: Schema = new Schema(
   {

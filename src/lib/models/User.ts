@@ -4,6 +4,8 @@ interface IUser extends Document {
   email?: string;
   password?: string;
   stripeSubscriptionId?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 const userSchema: Schema = new Schema(
   {

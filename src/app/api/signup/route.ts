@@ -3,7 +3,9 @@ import { User, IUser } from "@/lib/models/User";
 import connectToDB from "@/lib/db";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
-import * as UserService from "@/lib/services/UserService"
+import * as UserService from "@/lib/services/UserService";
+import { cookies } from "next/headers";
+
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function POST(request: NextRequest) {
@@ -33,7 +35,10 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await UserService.createUser({ email: email, password: hashedPassword } as IUser);
+    const newUser = await UserService.createUser({
+      email: email,
+      password: hashedPassword,
+    } as IUser);
     if (!newUser) {
       return new NextResponse("Failed to create new user", {
         status: 500,
@@ -42,18 +47,19 @@ export async function POST(request: NextRequest) {
 
     const token = jwt.sign(
       {
-        email: user.email,
+        email: newUser.email,
         id: newUser._id,
       },
       JWT_SECRET
     );
-
-    return NextResponse.next().cookies.set("session", token, {
+    console.log("returning next response");
+    cookies().set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7, // One week
       path: "/",
     });
+    return new NextResponse("Signed in", { status: 200 });
   } catch (error) {
     console.log(error);
     return new NextResponse("Internal Server Error", {

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react'
+import { useState } from "react";
 import LoadingWheel from "@/components/LoadingWheel";
 
 export default function Signup() {
@@ -25,7 +25,7 @@ export default function Signup() {
     } else {
       const error = await signupResponse.text();
       console.error(error);
-      setErrorMessage("There was an error with your signup request.");
+      setErrorMessage(error);
     }
   };
   return (
@@ -49,14 +49,17 @@ export default function Signup() {
           required
           current-password="true"
         />
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-        {isLoading ? <LoadingWheel /> :
+        {errorMessage && (
+          <p className="text-red-500">{errorMessage}</p>
+        )}
+        {isLoading ? (
+          <LoadingWheel />
+        ) : (
           <button className="btn btn-primary" type="submit">
             Submit
           </button>
-        }
+        )}
         <a href="/login">Login</a>
-
       </form>
     </div>
   );
