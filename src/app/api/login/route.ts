@@ -4,6 +4,7 @@ import connectToDB from "@/lib/db";
 import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import * as UserService from "@/lib/services/UserService";
 
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
@@ -20,7 +21,9 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-    const user: IUser | null = await User.findOne({ email });
+    const user: IUser | null = await UserService.findUser({
+      email,
+    });
     if (!user) {
       return new NextResponse("User not found", {
         status: 404,

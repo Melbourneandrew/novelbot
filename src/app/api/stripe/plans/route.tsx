@@ -4,24 +4,24 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function GET() {
   const prices = await stripe.prices.list();
-  const products = await stripe.products.list({
+  const plans = await stripe.products.list({
     active: true,
   });
 
-  const productsWithPrices = products.data.map(
-    (product: Stripe.Product) => {
+  const plansWithPrices = plans.data.map(
+    (plan: Stripe.Product) => {
       let price = prices.data.filter(
-        (price: Stripe.Price) => price.product === product.id
+        (price: Stripe.Price) => price.product === plan.id
       );
       //Convert to dollars
       price[0].unit_amount = (price[0].unit_amount ?? 0) / 100;
-      const productWithPrice = {
-        ...product,
+      const planWithPrice = {
+        ...plan,
         price: price[0],
       };
-      return productWithPrice;
+      return planWithPrice;
     }
   );
 
-  return NextResponse.json(productsWithPrices);
+  return NextResponse.json(plansWithPrices);
 }

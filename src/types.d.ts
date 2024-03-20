@@ -16,3 +16,8 @@ interface ActionRequest {
 interface AuthenticatedNextRequest extends NextRequest {
   user: IUser;
 }
+interface PurchaseUpdate {
+  stripeSubscriptionId?: string;
+  pricePaid?: number;
+  emailProvided?: string;
+}

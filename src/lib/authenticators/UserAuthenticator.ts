@@ -3,7 +3,8 @@ import { SessionTokenInterface } from "@/types";
 import { IUser, User } from "@/lib/models/User";
 import { NextRequest } from "next/server";
 import { connectToDB } from "@/lib/db";
-export async function auth(
+import * as UserService from "@/lib/services/UserService";
+export async function UserAuthenticator(
   request: NextRequest
 ): Promise<IUser | null> {
   console.log("Authenticating...");
@@ -19,12 +20,12 @@ export async function auth(
       process.env.JWT_SECRET!
     ) as SessionTokenInterface;
 
-    const user: IUser | null = await User.findOne({
-      _id: session.id,
-    });
+    const user: IUser | null = await UserService.findUserById(
+      session.id
+    );
 
     if (user) {
-      console.log("Authenticated");
+      console.log("Authenticated user", user);
       return user;
     } else {
       console.log("Authentication Error: User not found");

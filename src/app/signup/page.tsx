@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import LoadingWheel from "@/components/LoadingWheel";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +53,7 @@ export default function Signup() {
           <p className="text-red-500">{errorMessage}</p>
         )}
         {isLoading ? (
-          <LoadingWheel />
+          <LoadingIndicator />
         ) : (
           <button className="btn btn-primary" type="submit">
             Submit

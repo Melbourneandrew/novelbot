@@ -32,7 +32,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/protected/pricing/page.jsx"
   ],
   "exclude": [
     "node_modules"

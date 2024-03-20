@@ -3,7 +3,9 @@ export default function Home() {
     <div className="flex flex-col items-center">
       <a href="/login">Login</a>
       <a href="/signup">Signup</a>
-      <a href="/protected">Protected</a>
+      <a href="/protected/dashboard">Protected</a>
+      <a href="/protected/pricing">Pricing</a>
+      <a href="/admin/dashboard">Admin</a>
     </div>
   );
 }

@@ -1,14 +1,15 @@
 import mongoose, { models, Schema, Document } from "mongoose";
 import { IUser } from "./User";
 import { IPurchase } from "./Purchase";
-
+import { ISubscription } from "./Subscription";
 interface IEvent extends Document {
   title: string;
   description?: string;
   user?: IUser;
   purchase?: IPurchase;
-  createdAt: string;
-  updatedAt: string;
+  subscription?: ISubscription;
+  createdAt?: string;
+  updatedAt?: string;
 }
 const eventSchema: Schema = new Schema(
   {
@@ -22,6 +23,11 @@ const eventSchema: Schema = new Schema(
     purchase: {
       type: Schema.Types.ObjectId,
       ref: "Purchase",
+      required: false,
+    },
+    subscription: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
       required: false,
     },
   },

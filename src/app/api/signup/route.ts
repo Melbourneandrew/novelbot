@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user: IUser | null = await UserService.findUser({
+      email,
+    });
     if (user) {
       return new NextResponse(
         "User with that email already exists",
