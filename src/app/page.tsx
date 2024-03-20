@@ -5,7 +5,7 @@ export default function Home() {
       <a href="/signup">Signup</a>
       <a href="/protected/dashboard">Protected</a>
       <a href="/protected/pricing">Pricing</a>
-      <a href="/admin/dashboard">Admin</a>
+      <a href="/admin/recent">Admin</a>
     </div>
   );
 }

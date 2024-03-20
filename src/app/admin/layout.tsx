@@ -14,7 +14,7 @@ export default function AdminLayout({
         <a role="tab" className="tab" href="admin-users">
           Admin Users
         </a>
-        <a role="tab" className="tab" href="database-controls">
+        <a role="tab" className="tab" href="db-controls">
           Database
         </a>
       </div>
