@@ -5,9 +5,10 @@ import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import * as UserService from "@/lib/services/UserService";
 import { cookies } from "next/headers";
+import { validateEmail, validatePassword } from "@/lib/util/validators";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
-
+const PASSWORD_HASH_ROUNDS = process.env.PASSWORD_HASH_ROUNDS!;
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
   await connectToDB();
@@ -23,9 +24,22 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
+    const emailValidation = validateEmail(email);
+    if(!emailValidation) {
+      return new NextResponse("Invalid email", {
+        status: 400,
+      });
+    }
+    const passwordValidation = validatePassword(password)
+    if(passwordValidation != "") {
+      return new NextResponse(passwordValidation, {
+        status: 400,
+      });
+    }
+    const sanatizedEmail = email.toLowerCase().trim();
 
     const user: IUser | null = await UserService.findUser({
-      email,
+      sanatizedEmail,
     });
     if (user) {
       return new NextResponse(
@@ -36,9 +50,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, parseInt(PASSWORD_HASH_ROUNDS));
     const newUser = await UserService.createUser({
-      email: email,
+      email: sanatizedEmail,
       password: hashedPassword,
     } as IUser);
     if (!newUser) {

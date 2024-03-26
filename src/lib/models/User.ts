@@ -5,6 +5,7 @@ interface IUser extends Document {
   password?: string;
   subscriptions: ISubscription[];
   isAdmin: boolean;
+  isVerified: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,6 +29,11 @@ const userSchema: Schema = new Schema(
       },
     ],
     isAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    isVerified: {
       type: Boolean,
       required: true,
       default: false,

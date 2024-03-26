@@ -1,17 +1,26 @@
 "use client";
 import { useState } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import { validateEmail, validatePassword } from "@/lib/util/validators";
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const email = form.email.value;
+    const emailValidation = validateEmail(email);
+    if (!emailValidation) {
+      setErrorMessage("Enter a valid email address");
+      return;
+    }
     const password = form.password.value;
+    const passwordValidation = validatePassword(password);
+    if (passwordValidation != "") {
+      setErrorMessage(passwordValidation);
+      return;
+    }
     setIsLoading(true);
     const signupResponse = await fetch("/api/signup", {
       method: "POST",
@@ -49,9 +58,7 @@ export default function Signup() {
           required
           current-password="true"
         />
-        {errorMessage && (
-          <p className="text-red-500">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         {isLoading ? (
           <LoadingIndicator />
         ) : (
