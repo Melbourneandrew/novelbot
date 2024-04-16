@@ -2,7 +2,6 @@ import mongoose, { models, Schema, Document } from "mongoose";
 import { IUser } from "./User";
 import { IPurchase } from "./Purchase";
 interface ISubscription extends Document {
-  purchases: IPurchase[];
   stripeSubscriptionId?: string;
   active: boolean;
   createdAt: string;
@@ -10,12 +9,10 @@ interface ISubscription extends Document {
 }
 const subscriptionSchema: Schema = new Schema(
   {
-    purchases: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Purchase",
-      },
-    ],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     stripeSubscriptionId: {
       type: String,
       required: false,

@@ -60,6 +60,12 @@ export default function Dashboard() {
             Reset password
           </button>
         </div>
+        <button
+          className="btn btn-primary w-[150px]"
+          onClick={() => router.push("/protected/billing")}
+        >
+          Billing
+        </button>
       </div>
     </div>
   );

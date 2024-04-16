@@ -1,9 +1,10 @@
 import mongoose, { models, Schema, Document } from "mongoose";
-import { IUser } from "./User";
 import { ISubscription } from "./Subscription";
+
 interface IPurchase extends Document {
   planName: string;
   priceId: string;
+  subscription: ISubscription;
   stripeSubscriptionId?: string;
   pricePaid?: number;
   emailProvided?: string;
@@ -20,6 +21,15 @@ const purchaseSchema: Schema = new Schema(
     priceId: {
       type: String,
       required: true,
+    },
+    subscription: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
+      required: true,
+    },
+    stripeSubscriptionId: {
+      type: String,
+      required: false,
     },
     pricePaid: {
       type: Number,
