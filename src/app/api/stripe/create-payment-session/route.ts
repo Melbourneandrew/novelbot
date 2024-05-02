@@ -52,10 +52,6 @@ export const POST = ProtectedRoute(
         trial_period_days: 30,
       };
     }
-    const purchase = await PurchaseService.createPurchase({
-      priceId: priceId,
-      planName: planName,
-    } as IPurchase);
 
     const session = await stripe.checkout.sessions.create(
       sessionParams

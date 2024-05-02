@@ -1,7 +1,7 @@
 import mongoose, { models, Schema, Document } from "mongoose";
 import { IUser } from "./User";
-import { IPurchase } from "./Purchase";
 interface ISubscription extends Document {
+  user: IUser;
   stripeSubscriptionId?: string;
   active: boolean;
   createdAt: string;

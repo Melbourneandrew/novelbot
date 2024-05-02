@@ -3,7 +3,6 @@ import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import { AuthenticatedNextRequest } from "@/types";
 import * as SubscriptionService from "@/lib/services/SubscriptionService"
 import { NextResponse } from "next/server";
-import { ISubscription } from "@/lib/models/Subscription";
 
 export const GET = ProtectedRoute(UserAuthenticator, async (request: AuthenticatedNextRequest) => {
     console.log("Request to cancel subscription subscription")

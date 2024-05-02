@@ -28,7 +28,7 @@ export async function getSubscriptionsByUser(userId: string): Promise<ISubscript
   return await Subscription.find({ user: userId });
 }
 
-type SubscriptionResult = { activeSubscription?: ISubscription; stripeSubscriptionObject?: Object };
+type SubscriptionResult = { activeSubscription?: ISubscription; stripeSubscriptionObject?: Stripe.Subscription };
 
 export async function getActiveSubscriptionByUser(userId: string): Promise<SubscriptionResult> {
   const subscriptions = await Subscription.find({ user: userId }).lean();

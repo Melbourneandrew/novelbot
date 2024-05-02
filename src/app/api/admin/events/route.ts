@@ -3,6 +3,9 @@ import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import { Event, IEvent } from "@/lib/models/Event";
+
+//TODO: Change to admin protected route
+
 export const GET = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {

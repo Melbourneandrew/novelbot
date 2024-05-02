@@ -4,6 +4,7 @@ import { AuthenticatedNextRequest } from "@/types";
 import * as SubscriptionService from "@/lib/services/SubscriptionService"
 import { NextResponse } from "next/server";
 import { ISubscription } from "@/lib/models/Subscription";
+import Stripe from "stripe";
 
 export const GET = ProtectedRoute(UserAuthenticator, async (request: AuthenticatedNextRequest) => {
     console.log("Request for user subscription")
@@ -15,7 +16,7 @@ export const GET = ProtectedRoute(UserAuthenticator, async (request: Authenticat
         activeSubscription = {} as ISubscription
     }
     if(!stripeSubscriptionObject){
-        stripeSubscriptionObject = {}
+        stripeSubscriptionObject = {} as Stripe.Subscription
     }
 
     return NextResponse.json({activeSubscription, stripeSubscriptionObject})

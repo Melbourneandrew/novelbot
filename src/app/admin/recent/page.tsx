@@ -24,14 +24,15 @@ export default function Dashboard() {
     fetch("/api/admin/users")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Users: ", data);
         isLoading.users = false;
         setIsLoading(isLoading);
-        console.log(data);
         setUsers(data.users);
       });
     fetch("/api/admin/purchases")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Purchases: ", data);
         isLoading.purchases = false;
         setIsLoading(isLoading);
         setPurchases(data.purchases);
@@ -39,6 +40,7 @@ export default function Dashboard() {
     fetch("/api/admin/events")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Events: ", data);
         isLoading.events = false;
         setIsLoading(isLoading);
         setEvents(data.events);
@@ -52,9 +54,7 @@ export default function Dashboard() {
         <div className="flex flex-col flex-1 gap-2 items-center max-h-[1000px] overflow-auto hide-scrollbar p-3">
           <h2>Users</h2>
           {isLoading.users && <LoadingIndicator />}
-          {!isLoading.users && users.length === 0 && (
-            <p>Nothing yet!</p>
-          )}
+          {!isLoading.users && users.length === 0 && <p>Nothing yet!</p>}
           {users.map((user: IUser, index) => (
             <div
               className="card w-96 bg-base-100 shadow-xl"
@@ -79,16 +79,12 @@ export default function Dashboard() {
             <div
               className="card w-96 bg-base-100 shadow-xl"
               key={index}
-              onClick={() =>
-                showSpotlight("Purchase", purchase._id)
-              }
+              onClick={() => showSpotlight("Purchase", purchase._id)}
             >
               <div className="card-body">
-                <h2 className="card-title">
-                  {purchase.planName}
-                </h2>
+                <h2 className="card-title">{purchase.planName}</h2>
                 <p>{purchase.emailProvided}</p>
-                <p>Completed: {purchase.completed}</p>
+                <p>Completed: {purchase.completed ? "True" : "False"}</p>
               </div>
             </div>
           ))}
@@ -97,9 +93,7 @@ export default function Dashboard() {
         <div className="flex flex-col flex-1 gap-2 items-center max-h-[1000px] overflow-auto hide-scrollbar p-3">
           <h2>Events</h2>
           {isLoading.events && <LoadingIndicator />}
-          {!isLoading.events && events.length === 0 && (
-            <p>Nothing yet!</p>
-          )}
+          {!isLoading.events && events.length === 0 && <p>Nothing yet!</p>}
           {events.map((event, index) => (
             <div
               className="card w-96 bg-base-100 shadow-xl"
@@ -123,9 +117,7 @@ function parseDate(dateString: string | undefined) {
   if (!dateString) return "??/??/?? ??:?? ??";
   const date = new Date(dateString);
 
-  const month = (date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
   const year = date.getFullYear().toString().substr(-2);
   let hours = date.getHours();

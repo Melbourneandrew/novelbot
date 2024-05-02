@@ -1,5 +1,4 @@
 import mongoose, { models, Schema, Document } from "mongoose";
-import { ISubscription } from "./Subscription";
 
 interface IUser extends Document {
   email?: string;

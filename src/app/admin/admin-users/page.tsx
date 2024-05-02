@@ -31,11 +31,7 @@ export default function AdminUsers() {
       console.log(data);
       setNewAdminEmail("");
       setErrorMessage("");
-      (
-        document.getElementById(
-          "add_admin_modal"
-        ) as HTMLDialogElement
-      ).close();
+      (document.getElementById("add_admin_modal") as HTMLDialogElement).close();
     }
     makeAdmin();
   }
@@ -43,6 +39,7 @@ export default function AdminUsers() {
     fetch("/api/admin/admin-users")
       .then((res) => res.json())
       .then((data) => {
+        console.log("Admin users: ", data);
         setIsLoading(false);
         setUsers(data.users);
       });
@@ -69,9 +66,7 @@ export default function AdminUsers() {
           className="card-body"
           onClick={() =>
             (
-              document.getElementById(
-                "add_admin_modal"
-              ) as HTMLDialogElement
+              document.getElementById("add_admin_modal") as HTMLDialogElement
             ).showModal()
           }
         >
@@ -106,9 +101,7 @@ export default function AdminUsers() {
           >
             Submit
           </button>
-          {errorMessage && (
-            <p className="text-red-500 mt-4">{errorMessage}</p>
-          )}
+          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
         </div>
       </dialog>
     </div>

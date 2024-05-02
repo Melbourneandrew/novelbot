@@ -11,7 +11,6 @@ export default function Pricing() {
     setIsLoading(true);
     let res = await fetch("/api/stripe/plans");
     res = await res.json();
-    console.log("Plans: ", res);
     const plansList = [
       {
         name: "Trial",
@@ -27,12 +26,13 @@ export default function Pricing() {
       },
       ...res,
     ];
+    console.log("Plans: ", plansList);
     setPlans(plansList);
     setIsLoading(false);
   };
   const handleSubscription = async (e, plan) => {
     e.preventDefault();
-    const planName = plan.metadata.name;
+    const planName = plan.name;
     let priceId = plan.default_price;
     console.log("Price ID: ", priceId);
     let isTrial = false;

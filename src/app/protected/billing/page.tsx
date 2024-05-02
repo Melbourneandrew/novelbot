@@ -48,6 +48,20 @@ export default function BillingPage() {
     const data = await response.json();
     console.log("Subscription cancelled: ", data);
   };
+
+  const updatePaymentMethod = async () => {
+    const response = await fetch("/api/billing/update-payment-method");
+    if (!response.ok) {
+      const err = await response.text();
+      setErrorMessage(err);
+      console.log(err);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("Payment method updated: ", data);
+  };
+
   useEffect(() => {
     fetchSubscriptionPlan();
     fetchPaymentHistory();
@@ -69,7 +83,12 @@ export default function BillingPage() {
             <div className="stat-value">$29.99/mo</div>
           </div>
         </div>
-        <button className="btn btn-primary">Change Payment Method</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => updatePaymentMethod()}
+        >
+          Change Payment Method
+        </button>
         <button className="btn btn-primary">Cancel Plan</button>
       </div>
       {/* Billing History */}
