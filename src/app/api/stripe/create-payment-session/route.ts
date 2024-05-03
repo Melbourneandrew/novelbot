@@ -6,7 +6,6 @@ import { ISubscription } from "@/lib/models/Subscription";
 import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import * as PurchaseService from "@/lib/services/PurchaseService";
-import * as SubscriptionService from "@/lib/services/SubscriptionService";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const POST = ProtectedRoute(
@@ -31,6 +30,11 @@ export const POST = ProtectedRoute(
         isTrial
     );
 
+    const purchase = await PurchaseService.createPurchase({
+      priceId: priceId,
+      planName: planName,
+    } as IPurchase);
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       line_items: [
@@ -44,7 +48,7 @@ export const POST = ProtectedRoute(
       cancel_url: "http://localhost:3000",
       metadata: {
         userId: userId,
-        puchaseId: "",
+        purchaseId: purchase._id.toString(),
       },
     };
     if (isTrial) {

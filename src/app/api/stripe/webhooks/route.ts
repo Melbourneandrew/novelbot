@@ -2,12 +2,13 @@ import { NextResponse, NextRequest } from "next/server";
 import { PaymentSucceeded } from "./PaymentSucceeded";
 import { PaymentFailed } from "./PaymentFailed";
 import { PaymentMethodUpdated } from "./PaymentMethodUpdated";
+import { CheckoutCompleted } from "./CheckoutCompleted";
 import Stripe from "stripe";
 const STRIPE_WEBHOOK_SECRET =
   process.env.STRIPE_WEBHOOK_SECRET!;
 
-export const GET = async (request: NextRequest) => {
-    console.log("Payment event from stripe");
+export const POST = async (request: NextRequest) => {
+  // console.log("Payment event from stripe");
 
   const stripeSignature =
     request.headers.get("stripe-signature") ?? "";
@@ -17,15 +18,24 @@ export const GET = async (request: NextRequest) => {
     stripeSignature,
     STRIPE_WEBHOOK_SECRET
   ) as any;
-  
-  switch(event.type) {
+
+  switch (event.type) {
     case "payment_intent.succeeded":
-        return PaymentSucceeded(event)
+      return PaymentSucceeded(event);
     case "payment_intent.payment_failed":
-        return PaymentFailed(event)
+      return PaymentFailed(event);
     case "checkout.session.completed":
-        return PaymentMethodUpdated(event)
+      if (
+        event.data.object.metadata.change_payment_method == 1
+      ) {
+        return PaymentMethodUpdated(event);
+      } else {
+        return CheckoutCompleted(event);
+      }
     default:
-        return NextResponse.json({error: "Unhandled event type"}, {status: 200})
-  }        
+      return NextResponse.json(
+        { error: "Unhandled event" },
+        { status: 200 }
+      );
+  }
 };

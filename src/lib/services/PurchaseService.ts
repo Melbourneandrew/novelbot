@@ -2,7 +2,7 @@ import { IUser, User } from "../models/User";
 import { IEvent, Event } from "../models/Event";
 import { IPurchase, Purchase } from "../models/Purchase";
 import { PurchaseUpdate } from "@/types";
-import * as SubscriptionService from "@/lib/services/SubscriptionService"
+import * as SubscriptionService from "@/lib/services/SubscriptionService";
 
 export async function createPurchase(
   purchase: IPurchase
@@ -18,7 +18,7 @@ export async function completePurchase(
   purchaseId: string,
   update: PurchaseUpdate
 ): Promise<IPurchase | null> {
-  const purchase = await Purchase.findByIdAndUpdate(purchaseId);
+  const purchase = await Purchase.findById(purchaseId);
   if (!purchase) return null;
   purchase.stripeSubscriptionId = update.stripeSubscriptionId;
   purchase.pricePaid = update.pricePaid;
@@ -37,7 +37,7 @@ export async function findPurchaseById(
 ): Promise<IPurchase | null> {
   //TODO: Implement caching
   return await Purchase.findOne({ _id: id })
-    .populate("user")
+    .populate("subscription")
     .lean();
 }
 export async function findPurchases(
@@ -49,8 +49,11 @@ export async function findPurchases(
 export async function findPurchasesByUser(
   userId: string
 ): Promise<IPurchase[]> {
-  const {activeSubscription, stripeSubscriptionObject} = await SubscriptionService.getActiveSubscriptionByUser(userId)
-  if (!activeSubscription) return []
+  const { activeSubscription, stripeSubscriptionObject } =
+    await SubscriptionService.getActiveSubscriptionByUser(
+      userId
+    );
+  if (!activeSubscription) return [];
   return await Purchase.find({
     subscription: activeSubscription._id,
   }).lean();

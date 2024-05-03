@@ -25,7 +25,7 @@ const purchaseSchema: Schema = new Schema(
     subscription: {
       type: Schema.Types.ObjectId,
       ref: "Subscription",
-      required: true,
+      required: false,
     },
     stripeSubscriptionId: {
       type: String,

@@ -40,7 +40,7 @@ export default function Pricing() {
       priceId = plans[1].default_price;
       isTrial = true;
     }
-    let res = await fetch("/api/stripe/payment/create", {
+    let res = await fetch("/api/stripe/create-payment-session", {
       method: "POST",
       body: JSON.stringify({
         priceId: priceId,
