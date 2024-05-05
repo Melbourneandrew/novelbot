@@ -25,7 +25,11 @@ export async function UserAuthenticator(
     );
 
     if (user) {
-      console.log("Authenticated user", user);
+      console.log(
+        `Authenticated user, ${
+          user.email
+        }, ${user._id.toString()}`
+      );
       return user;
     } else {
       console.log("Authentication Error: User not found");

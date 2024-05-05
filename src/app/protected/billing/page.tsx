@@ -2,14 +2,23 @@
 import { useState, useEffect } from "react";
 import { ISubscription } from "@/lib/models/Subscription";
 import { IPurchase } from "@/lib/models/Purchase";
+import Stripe from "stripe";
 
+interface SubscriptionPlanResponse {
+  activeSubscription: ISubscription;
+  stripeSubscriptionObject: Stripe.Subscription;
+}
 export default function BillingPage() {
-  const [subscriptionPlan, setSubscriptionPlan] = useState<ISubscription>();
-  const [paymentHistory, setPaymentHistory] = useState<IPurchase[]>();
+  const [subscriptionPlan, setSubscriptionPlan] =
+    useState<SubscriptionPlanResponse>();
+  const [paymentHistory, setPaymentHistory] =
+    useState<IPurchase[]>();
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const fetchSubscriptionPlan = async () => {
-    const response = await fetch("/api/billing/active-subscription");
+    const response = await fetch(
+      "/api/billing/active-subscription"
+    );
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -23,7 +32,9 @@ export default function BillingPage() {
   };
 
   const fetchPaymentHistory = async () => {
-    const response = await fetch("/api/billing/payment-history");
+    const response = await fetch(
+      "/api/billing/payment-history"
+    );
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -37,7 +48,9 @@ export default function BillingPage() {
   };
 
   const cancelSubscription = async () => {
-    const response = await fetch("/api/billing/cancel-subscription");
+    const response = await fetch(
+      "/api/billing/cancel-subscription"
+    );
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -50,7 +63,9 @@ export default function BillingPage() {
   };
 
   const updatePaymentMethod = async () => {
-    const response = await fetch("/api/billing/update-payment-method");
+    const response = await fetch(
+      "/api/billing/update-payment-method"
+    );
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -74,13 +89,19 @@ export default function BillingPage() {
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Plan title</div>
-            <div className="stat-value">{}</div>
+            <div className="stat-value"></div>
           </div>
         </div>
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Plan Cost</div>
-            <div className="stat-value">$29.99/mo</div>
+            <div className="stat-value">
+              $
+              {(
+                (subscriptionPlan?.stripeSubscriptionObject
+                  ?.items?.data[0]?.plan?.amount || 0) / 100
+              ).toFixed(2)}
+            </div>
           </div>
         </div>
         <button

@@ -26,12 +26,13 @@ export async function CheckoutCompleted(event: Stripe.Event) {
       userId
     );
     if (!user) {
-      console.log("User not found");
+      console.log("User not found. Subscription not created.");
       //TODO: Cancel subscription
       return NextResponse.json({ error: "User not found" });
     }
     const subscription: ISubscription =
       await SubscriptionService.createSubscription({
+        user: user,
         stripeSubscriptionId: eventData.subscription,
         active: true,
       } as ISubscription);
