@@ -29,6 +29,12 @@ export default function DbControls() {
     }
     console.log("Delete request response: ", response);
   };
+  const viewCollection = async (collection: Collection) => {
+    const baseUrl =
+      "https://cloud.mongodb.com/v2/60a5844691a56a30086abff9#/serverless/explorer/MelbourneDev/boilerplate";
+    const viewUrl = baseUrl + `/${collection.name}/find`;
+    window.open(viewUrl, "_blank");
+  };
   useEffect(() => {
     getCollections();
   }, []);
@@ -45,7 +51,12 @@ export default function DbControls() {
               <h2 className="card-title">{collection.name}</h2>
               <p>{collection.count} records</p>
               <div className="card-actions justify-end">
-                <button className="btn btn">View</button>
+                <button
+                  className="btn btn"
+                  onClick={() => viewCollection(collection)}
+                >
+                  View
+                </button>
                 <button
                   className="btn btn-error"
                   onClick={() => deleteCollection(collection)}
