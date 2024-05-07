@@ -1,6 +1,6 @@
 # Next SAAS starter
 
-Integrates: Nextjs, Typescript, MongoDB, custom auth, Stripe, Tailwind CSS, DaisyUI,
+Integrates: Nextjs, Typescript, MongoDB, custom auth, Stripe, Tailwind CSS, DaisyUI, Cloudflare R2, Nodemailer
 
 ## Stripe
 
