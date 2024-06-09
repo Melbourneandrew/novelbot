@@ -6,7 +6,8 @@ import { ISubscription } from "@/lib/models/Subscription";
 import * as UserService from "@/lib/services/UserService";
 import * as PurchaseService from "@/lib/services/PurchaseService";
 import * as SubscriptionService from "@/lib/services/SubscriptionService";
-
+import * as EventService from "@/lib/services/EventService";
+import { IEvent } from "@/lib/models/Event";
 export async function CheckoutCompleted(event: Stripe.Event) {
   console.log("Checkout completed webhook hit: ", event);
   const eventData = event.data
@@ -16,6 +17,13 @@ export async function CheckoutCompleted(event: Stripe.Event) {
   try {
     if (eventData.payment_status !== "paid") {
       console.log("Payment status is unpaid");
+      await EventService.createEvent({
+        title:
+          "Checkout completed with payment status unpaid status is unpaid",
+        description: "Payment status is unpaid",
+        user: metadata.userId,
+      } as IEvent);
+
       return NextResponse.json({
         error: "Payment status not paid",
       });

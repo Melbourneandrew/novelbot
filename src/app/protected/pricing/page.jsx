@@ -4,6 +4,7 @@ import LoadingSpinner from "@/components/LoadingIndicator";
 export default function Pricing() {
   const [plans, setPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState();
   useEffect(() => {
     getPlans();
   }, []);
@@ -40,7 +41,7 @@ export default function Pricing() {
       priceId = plans[1].default_price;
       isTrial = true;
     }
-    let res = await fetch("/api/stripe/create-payment-session", {
+    let response = await fetch("/api/stripe/create-payment-session", {
       method: "POST",
       body: JSON.stringify({
         priceId: priceId,
@@ -51,13 +52,15 @@ export default function Pricing() {
         "Content-Type": "application/json",
       },
     });
-    if(!res.ok){
-      console.error("Error creating session: ", res);
+    if(!response.ok){
+      const err = await response.text();
+      setErrorMessage(err);
+      console.error("Error creating session: ",err);
       return;
     }
-    res = await res.json();
-    console.log("Stripe session created: ", res);
-    window.open(res, "_blank").focus();
+    const data = await response.json();
+    console.log("Stripe session created: ", data);
+    window.open(data, "_blank").focus();
   };
   return (
     <div className="flex flex-col items-center justify-center w-[100%] h-[100vh]">
@@ -90,6 +93,9 @@ export default function Pricing() {
           </div>
         ))}
       </div>
+      {errorMessage && (
+        <div className="text-red-500">{errorMessage}</div>
+      )}
     </div>
   );
 }

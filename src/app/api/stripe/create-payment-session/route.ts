@@ -6,6 +6,7 @@ import { ISubscription } from "@/lib/models/Subscription";
 import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import * as PurchaseService from "@/lib/services/PurchaseService";
+import * as SubscriptionService from "@/lib/services/SubscriptionService";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const POST = ProtectedRoute(
@@ -29,6 +30,18 @@ export const POST = ProtectedRoute(
         " isFreeTrial: " +
         isTrial
     );
+
+    const existingSubscription =
+      await SubscriptionService.getActiveSubscriptionByUser(
+        userId
+      );
+    if (existingSubscription.activeSubscription?.active) {
+      console.log("User already has an active subscription");
+      return new NextResponse(
+        "User already has an active subscription",
+        { status: 400 }
+      );
+    }
 
     const purchase = await PurchaseService.createPurchase({
       priceId: priceId,

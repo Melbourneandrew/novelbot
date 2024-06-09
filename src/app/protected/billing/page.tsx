@@ -7,6 +7,8 @@ import Stripe from "stripe";
 interface SubscriptionPlanResponse {
   activeSubscription: ISubscription;
   stripeSubscriptionObject: Stripe.Subscription;
+  stripeProductObject: Stripe.Product;
+  stripePaymentMethod: Stripe.PaymentMethod;
 }
 export default function BillingPage() {
   const [subscriptionPlan, setSubscriptionPlan] =
@@ -48,6 +50,7 @@ export default function BillingPage() {
   };
 
   const cancelSubscription = async () => {
+    console.log("Cancelling subscription");
     const response = await fetch(
       "/api/billing/cancel-subscription"
     );
@@ -64,7 +67,7 @@ export default function BillingPage() {
 
   const updatePaymentMethod = async () => {
     const response = await fetch(
-      "/api/billing/update-payment-method"
+      "/api/stripe/create-update-payment-session"
     );
     if (!response.ok) {
       const err = await response.text();
@@ -74,7 +77,11 @@ export default function BillingPage() {
     }
 
     const data = await response.json();
-    console.log("Payment method updated: ", data);
+    window.location.href = data.url;
+    console.log(
+      "Payment method update checkout session created: ",
+      data
+    );
   };
 
   useEffect(() => {
@@ -84,14 +91,21 @@ export default function BillingPage() {
   return (
     <div>
       <h1>Billing</h1>
+      {errorMessage && (
+        <div className="text-red-500">{errorMessage}</div>
+      )}
       {/* Plan Info */}
       <div className="flex items-center gap-2">
+        {/* Plan title */}
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Plan title</div>
-            <div className="stat-value"></div>
+            <div className="stat-value">
+              {subscriptionPlan?.stripeProductObject.name}
+            </div>
           </div>
         </div>
+        {/* Plan Cost */}
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Plan Cost</div>
@@ -104,13 +118,43 @@ export default function BillingPage() {
             </div>
           </div>
         </div>
+        {/* Renews */}
+        <div className="stats shadow">
+          <div className="stat">
+            <div className="stat-title">Renews</div>
+            <div className="stat-value">
+              {new Date(
+                (subscriptionPlan?.stripeSubscriptionObject
+                  ?.current_period_end ?? 0) * 1000
+              ).toLocaleDateString()}
+            </div>
+          </div>
+        </div>
+        {/* Card info */}
+        <div className="stats shadow">
+          <div className="stat">
+            <div className="stat-title">Card Info</div>
+            <div className="stat-value">
+              {subscriptionPlan?.stripePaymentMethod?.card
+                ?.brand +
+                " " +
+                subscriptionPlan?.stripePaymentMethod?.card
+                  ?.last4}
+            </div>
+          </div>
+        </div>
         <button
           className="btn btn-primary"
           onClick={() => updatePaymentMethod()}
         >
           Change Payment Method
         </button>
-        <button className="btn btn-primary">Cancel Plan</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => cancelSubscription()}
+        >
+          Cancel Plan
+        </button>
       </div>
       {/* Billing History */}
       <div className="overflow-x-auto">

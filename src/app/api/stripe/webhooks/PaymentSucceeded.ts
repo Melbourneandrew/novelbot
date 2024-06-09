@@ -9,6 +9,7 @@ import * as SubscriptionService from "@/lib/services/SubscriptionService";
 
 export async function PaymentSucceeded(event: Stripe.Event) {
   console.log("Payment succeeded webhook hit: ", event);
+  //I think I did this because this logic is handled in CheckoutCompleted
   return NextResponse.json({ message: "Payment succeeded" });
   const eventData = event.data
     .object as Stripe.Checkout.Session;

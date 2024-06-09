@@ -5,9 +5,9 @@ import { ISubscription } from "./Subscription";
 interface IEvent extends Document {
   title: string;
   description?: string;
-  user?: IUser;
-  purchase?: IPurchase;
-  subscription?: ISubscription;
+  user?: IUser | string;
+  purchase?: IPurchase | string;
+  subscription?: ISubscription | string;
   createdAt?: string;
   updatedAt?: string;
 }
