@@ -6,11 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 import * as UserService from "@/lib/services/UserService";
 import { cookies } from "next/headers";
 import { validateEmail, validatePassword } from "@/lib/util/validators";
+import * as AuthorService from "@/lib/services/AuthorService";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const PASSWORD_HASH_ROUNDS = process.env.PASSWORD_HASH_ROUNDS!;
 export async function POST(request: NextRequest) {
-  const { email, password } = await request.json();
+  const { email, password, role } = await request.json();
   await connectToDB();
   try {
     console.log("Signup route called");
@@ -59,6 +60,16 @@ export async function POST(request: NextRequest) {
       return new NextResponse("Failed to create new user", {
         status: 500,
       });
+    }
+
+    if (role === "author") {
+      AuthorService.createAuthor({
+        user: newUser._id,
+        penName: ""
+      });
+      //TODO Also create reader account with author so they can log in as a reader as well
+    } else if (role === "reader") {
+      //TODO Create reader account
     }
 
     const token = jwt.sign(

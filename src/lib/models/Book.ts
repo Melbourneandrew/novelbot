@@ -5,6 +5,7 @@ interface IBook extends Document {
     title: string;
     summary?: string;
     author: IAuthor | string;
+    contentFileLink: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -18,6 +19,7 @@ const bookSchema: Schema = new Schema(
             ref: "Author",
             required: true,
         },
+        contentFileLink: { type: String, required: false }
     },
     { timestamps: true }
 );
