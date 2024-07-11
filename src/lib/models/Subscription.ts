@@ -4,6 +4,7 @@ interface ISubscription extends Document {
   user: IUser;
   stripeSubscriptionId?: string;
   active: boolean;
+  cancelledOn: Date;
   createdAt: string;
   updatedAt: string;
 }
@@ -20,6 +21,10 @@ const subscriptionSchema: Schema = new Schema(
     active: {
       type: Boolean,
       default: false,
+    },
+    cancelledOn: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

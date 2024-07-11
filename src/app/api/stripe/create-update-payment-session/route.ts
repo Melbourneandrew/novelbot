@@ -13,6 +13,12 @@ export const GET = ProtectedRoute(
     console.log("Request to update payment method");
 
     const user = request.user;
+    if (!user) {
+      return NextResponse.json({
+        success: false,
+        message: "No user on request",
+      });
+    }
 
     let { activeSubscription, stripeSubscriptionObject } =
       await SubscriptionService.getActiveSubscriptionByUser(
@@ -32,6 +38,7 @@ export const GET = ProtectedRoute(
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       mode: "setup",
+      customer: customerId,
       metadata: {
         customer_id: customerId,
         subscription_id: stripeSubscriptionObject.id,

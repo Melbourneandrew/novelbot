@@ -32,23 +32,23 @@ export async function getSubscriptionsByUser(
   return await Subscription.find({ user: userId });
 }
 
-type SubscriptionResult = {
-  activeSubscription?: ISubscription;
-  stripeSubscriptionObject?: Stripe.Subscription;
-};
-
 export async function getActiveSubscriptionByUser(
   userId: string
-): Promise<SubscriptionResult> {
+): Promise<{
+  activeSubscription?: ISubscription;
+  stripeSubscriptionObject?: Stripe.Subscription;
+  stripeProductObject?: Stripe.Product;
+  stripePaymentMethod?: Stripe.PaymentMethod;
+}> {
   const subscriptions = await Subscription.find({
     user: userId,
   }).lean();
-  console.log("Subscriptions: ", subscriptions);
   const activeSubscription = subscriptions.sort(
     (a, b) => b.createdAt - a.createdAt
   )[0] as ISubscription;
-
-  if (!activeSubscription) {
+  console.log("Most recent subscription: ", activeSubscription);
+  if (!activeSubscription || !activeSubscription.active) {
+    console.log("No Active Subscription");
     return {};
   }
 
@@ -57,37 +57,53 @@ export async function getActiveSubscriptionByUser(
       activeSubscription.stripeSubscriptionId || ""
     );
 
-  return { activeSubscription, stripeSubscriptionObject };
+  const stripeProductId = stripeSubscriptionObject.items.data[0]
+    .price.product as string;
+  const stripeProductObject = await stripe.products.retrieve(
+    stripeProductId
+  );
+
+  const stripePaymentMethodId =
+    stripeSubscriptionObject.default_payment_method as string;
+  const stripePaymentMethod =
+    await stripe.paymentMethods.retrieve(stripePaymentMethodId);
+
+  return {
+    activeSubscription,
+    stripeSubscriptionObject,
+    stripeProductObject,
+    stripePaymentMethod,
+  };
 }
 
 export async function cancelSubscription(
-  id: string | undefined
-): Promise<ISubscription | null> {
-  if (id === undefined) return null;
+  activeSubscription: ISubscription,
+  stripeSubscriptionObject: Stripe.Subscription
+): Promise<boolean | null> {
+  if (activeSubscription === undefined) return null;
+  if (stripeSubscriptionObject === undefined) return null;
 
-  const subscription = await Subscription.findById(id);
+  const subscription = await Subscription.updateOne(
+    { _id: activeSubscription._id },
+    { active: false, cancelledOn: new Date() }
+  );
   if (!subscription) {
-    return null;
+    return false;
   }
-  const stripeSubscriptionObject =
-    await stripe.subscriptions.retrieve(
-      subscription.stripeSubscriptionId || ""
-    );
+
   if (stripeSubscriptionObject.status === "active") {
     await stripe.subscriptions.cancel(
-      subscription.stripeSubscriptionId
+      stripeSubscriptionObject.id
     );
   }
-
-  subscription.active = false;
-  await subscription.save();
 
   await EventService.createEvent({
     title: "Subscription cancelled",
-    subscription: subscription!,
+    subscription: activeSubscription._id,
   } as IEvent);
 
-  return subscription;
+  console.log("Subscription cancelled");
+  return true;
 }
 
 export async function deleteSubscription(

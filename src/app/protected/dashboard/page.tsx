@@ -3,7 +3,8 @@ import { validateEmail } from "@/lib/util/validators";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 export default function Dashboard() {
-  const [passwordResetEmail, setPasswordResetEmail] = useState("");
+  const [passwordResetEmail, setPasswordResetEmail] =
+    useState("");
   const [file, setFile] = useState<File>();
 
   const router = useRouter();
@@ -37,7 +38,9 @@ export default function Dashboard() {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files) {
       const currentFile = event.target.files[0];
       setFile(currentFile);
@@ -65,9 +68,25 @@ export default function Dashboard() {
       <div className="flex flex-col gap-1">
         <button
           className="btn btn-primary w-[150px]"
-          onClick={() => callProtected()}
+          onClick={() =>
+            (window.location.href = "/admin/recent")
+          }
+        >
+          Admin
+        </button>
+        <button
+          className="btn btn-primary w-[150px]"
+          onClick={() =>
+            (window.location.href = "/protected/pricing")
+          }
         >
           Pricing
+        </button>
+        <button
+          className="btn btn-primary w-[150px]"
+          onClick={() => router.push("/protected/billing")}
+        >
+          Billing
         </button>
         <div>
           <input
@@ -75,7 +94,9 @@ export default function Dashboard() {
             placeholder="Type here"
             className="input input-bordered w-full max-w-xs"
             value={passwordResetEmail}
-            onChange={(event) => setPasswordResetEmail(event.target.value)}
+            onChange={(event) =>
+              setPasswordResetEmail(event.target.value)
+            }
           />
           <button
             className="btn btn-primary w-[150px]"
@@ -84,12 +105,6 @@ export default function Dashboard() {
             Reset password
           </button>
         </div>
-        <button
-          className="btn btn-primary w-[150px]"
-          onClick={() => router.push("/protected/billing")}
-        >
-          Billing
-        </button>
         <div className="mt-4">
           <label
             htmlFor="file-upload"
