@@ -1,20 +1,69 @@
-"use client"
+"use client";
+import PlusIcon from "@/components/icons/PlusIcon";
+import LoadingIndicator from "@/components/LoadingIndicator";
+import { useState, useEffect } from "react";
+import { IBook } from "@/lib/models/Book";
+
 export default function AuthorBooksDashboard() {
-    return (
-        <>
-        <h1 className="text-left">Books Dashboard</h1>
-        <div className="flex flex-wrap">
-            {Array(8).fill(0).map((val, index) => 
-                <div className="rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]">
-                    <h2 className="text-lg font-semibold mb-2">Card Title</h2>
-                    <img src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTM1LWJvb2stMDJhXzEucG5n.png" alt="Card Image" className="w-full h-40 object-cover rounded-md mb-2" />
-                    <p className="text-gray-600">This is a brief description of the card content. You can add more details as needed.</p>
-                </div>
-            )}
-            <div className="flex justify-center items-center rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]">
-                    <div className="text-[150px]">+</div>
-                </div>
+  const [books, setBooks] = useState<IBook[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const fetchBooks = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/author/books/list", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      setErrorMessage(error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    setBooks(data.books);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
+  return (
+    <>
+      <h1 className="text-left">Books Dashboard</h1>
+      <div className="flex flex-wrap">
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
+          books.map((book, index) => (
+            <div
+              key={index}
+              className="rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]"
+            >
+              <h2 className="text-lg font-semibold mb-2">{book.title}</h2>
+              <img
+                src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTM1LWJvb2stMDJhXzEucG5n.png"
+                alt="Card Image"
+                className="w-full h-40 object-cover rounded-md mb-2"
+              />
+              <p className="text-gray-600">{book.summary}</p>
+            </div>
+          ))
+        )}
+        <div
+          className="flex flex-col justify-center items-center rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]"
+          onClick={() => (window.location.href = "/author/books/add")}
+        >
+          <PlusIcon size="64" />
+          <p className="font-bold text-[25px] mt-[10px]">Add new book</p>
         </div>
-        </>
-    )
+      </div>
+    </>
+  );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import DropdownIcon from "../icons/DropdownIcon";
+
 export default function BasicModal() {
   /**
    * Enable this modal with
@@ -12,14 +14,12 @@ export default function BasicModal() {
           Create a New Reader Access Code
         </div>
         <p className="py-4">
-          Access codes are used to allow readers to access your
-          publication. You can create a new access code here.
+          Access codes are used to allow readers to access your publication. You
+          can create a new access code here.
         </p>
         <div className="flex flex-col gap-4">
           <div>
-            <div className="text-[18px] font-bold">
-              Code Name
-            </div>
+            <div className="text-[18px] font-bold">Code Name</div>
             <input
               type="text"
               placeholder="Type here"
@@ -37,15 +37,28 @@ export default function BasicModal() {
             />
           </div>
           <div>
-            <div className="text-[18px] font-bold">
-              Expiration Date
-            </div>
+            <div className="text-[18px] font-bold">Character(s)</div>
+            <details className="dropdown">
+              <summary className="btn m-1">
+                Select Characters <DropdownIcon />
+              </summary>
+              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li>
+                  <a>Item 1</a>
+                </li>
+                <li>
+                  <a>Item 2</a>
+                </li>
+              </ul>
+            </details>
+          </div>
+
+          <div>
+            <div className="text-[18px] font-bold">Expiration Date</div>
             <input type="date" id="expires" name="expires" />
           </div>
           <div className="flex">
-            <div className="text-[17px] mr-[30px]">
-              Never expires
-            </div>
+            <div className="text-[17px] mr-[30px]">Never expires</div>
             <input
               type="checkbox"
               defaultChecked

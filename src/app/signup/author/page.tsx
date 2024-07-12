@@ -9,6 +9,7 @@ export default function AuthorSignup() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
+    const penName = form.penName.value;
     const email = form.email.value;
     const emailValidation = validateEmail(email);
     if (!emailValidation) {
@@ -25,7 +26,7 @@ export default function AuthorSignup() {
     const signupResponse = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, role: "author" }),
+      body: JSON.stringify({ email, password, penName, role: "author" }),
     });
     setIsLoading(false);
     if (signupResponse.ok) {
@@ -44,6 +45,12 @@ export default function AuthorSignup() {
         className="flex flex-col w-[500px] items-center space-y-3"
         onSubmit={handleSubmit}
       >
+        <input
+          type="text"
+          placeholder="Pen Name"
+          name="penName"
+          className="input input-bordered w-full max-w-xs"
+        />
         <input
           type="text"
           placeholder="Email"

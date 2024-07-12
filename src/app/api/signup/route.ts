@@ -11,7 +11,8 @@ import * as AuthorService from "@/lib/services/AuthorService";
 const JWT_SECRET = process.env.JWT_SECRET!;
 const PASSWORD_HASH_ROUNDS = process.env.PASSWORD_HASH_ROUNDS!;
 export async function POST(request: NextRequest) {
-  const { email, password, role } = await request.json();
+  const reqBody = await request.json();
+  const { email, password, role } = reqBody;
   await connectToDB();
   try {
     console.log("Signup route called");
@@ -26,13 +27,13 @@ export async function POST(request: NextRequest) {
       });
     }
     const emailValidation = validateEmail(email);
-    if(!emailValidation) {
+    if (!emailValidation) {
       return new NextResponse("Invalid email", {
         status: 400,
       });
     }
-    const passwordValidation = validatePassword(password)
-    if(passwordValidation != "") {
+    const passwordValidation = validatePassword(password);
+    if (passwordValidation != "") {
       return new NextResponse(passwordValidation, {
         status: 400,
       });
@@ -43,15 +44,15 @@ export async function POST(request: NextRequest) {
       sanatizedEmail,
     });
     if (user) {
-      return new NextResponse(
-        "User with that email already exists",
-        {
-          status: 404,
-        }
-      );
+      return new NextResponse("User with that email already exists", {
+        status: 404,
+      });
     }
 
-    const hashedPassword = await bcrypt.hash(password, parseInt(PASSWORD_HASH_ROUNDS));
+    const hashedPassword = await bcrypt.hash(
+      password,
+      parseInt(PASSWORD_HASH_ROUNDS)
+    );
     const newUser = await UserService.createUser({
       email: sanatizedEmail,
       password: hashedPassword,
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
     if (role === "author") {
       AuthorService.createAuthor({
         user: newUser._id,
-        penName: ""
+        penName: reqBody.penName,
       });
       //TODO Also create reader account with author so they can log in as a reader as well
     } else if (role === "reader") {

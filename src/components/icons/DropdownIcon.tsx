@@ -1,4 +1,4 @@
-export default function PlusIcon(props: any) {
+export default function DropdownIcon(props: any) {
   const color = props.color || "black";
   const size = props.size || "16";
   return (
@@ -7,12 +7,12 @@ export default function PlusIcon(props: any) {
       width={size}
       height={size}
       fill={color}
-      className="bi bi-plus-lg"
+      className="bi bi-chevron-down"
       viewBox="0 0 16 16"
     >
       <path
         fillRule="evenodd"
-        d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"
+        d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
       />
     </svg>
   );
