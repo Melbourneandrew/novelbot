@@ -1,5 +1,6 @@
 "use client";
 import PlusIcon from "@/components/icons/PlusIcon";
+import NewAccessCodeModal from "@/components/modals/NewAccessCodeModal";
 
 export default function AuthorReadersAccessCodesView() {
   return (
@@ -40,10 +41,19 @@ export default function AuthorReadersAccessCodesView() {
             </tr>
           </tbody>
         </table>
-        <button className="btn btn-outline">
+        <button
+          className="btn btn-outline"
+          onClick={() => {
+            const modal = document.getElementById(
+              "new_access_code_modal"
+            ) as HTMLDialogElement;
+            modal?.showModal();
+          }}
+        >
           Add Code <PlusIcon />
         </button>
       </div>
+      <NewAccessCodeModal />
     </div>
   );
 }
