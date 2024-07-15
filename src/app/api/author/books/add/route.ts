@@ -4,12 +4,14 @@ import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as BookService from "@/lib/services/BookService";
 import * as AuthorService from "@/lib/services/AuthorService";
+import * as CharacterService from "@/lib/services/CharacterService";
 
 export const POST = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
     console.log("Add book route called");
-    const { bookTitle, bookSummary, contentFileLink } = await request.json();
+    const { bookTitle, bookSummary, contentFileLink } =
+      await request.json();
     console.log(bookTitle, bookSummary, contentFileLink);
     if (!bookTitle || !bookSummary || !contentFileLink) {
       return new NextResponse("Missing required fields", {
@@ -17,7 +19,9 @@ export const POST = ProtectedRoute(
       });
     }
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(user.id);
+    const author = await AuthorService.findAuthorByUser(
+      user.id
+    );
     if (!author) {
       return new NextResponse("Author not found", {
         status: 404,
@@ -32,6 +36,16 @@ export const POST = ProtectedRoute(
     });
 
     //TODO: Process book content
+
+    //Mock book processing by generating random characters and dialogue
+    const characters =
+      await CharacterService.generateRandomCharacters(book._id);
+    characters.forEach(async (characterId) => {
+      await CharacterService.generateRandomDialogue(
+        book._id,
+        characterId
+      );
+    });
 
     return NextResponse.json({
       message: "Book added",
