@@ -1,9 +1,19 @@
 import { Character, ICharacter } from "@/lib/models/Character";
 import { Dialogue, IDialogue } from "@/lib/models/Dialogue";
 
-export async function deleteCharacterAndTheirDialogue(
+export async function getCharacter(
   characterId: string
-) {
+): Promise<ICharacter | null> {
+  return await Character.findById(characterId);
+}
+
+export async function getCharacterDialogue(
+  characterId: string
+): Promise<IDialogue[] | null> {
+  return await Dialogue.find({ character: characterId });
+}
+
+export async function deleteCharacterAndTheirDialogue(characterId: string) {
   await Dialogue.deleteMany({ character: characterId });
   return await Character.findByIdAndDelete(characterId);
 }
@@ -38,9 +48,7 @@ export async function generateRandomCharacters(bookId: string) {
   ];
   const characters = [];
   for (let i = 0; i < 5; i++) {
-    const randomIndex = Math.floor(
-      Math.random() * names.length
-    );
+    const randomIndex = Math.floor(Math.random() * names.length);
     const name = names[randomIndex];
     const character = new Character({
       name: name,
@@ -153,9 +161,7 @@ export async function generateRandomDialogue(
   for (let i = 0; i < 5; i++) {
     const randomWords = [];
     for (let j = 0; j < 15; j++) {
-      const randomIndex = Math.floor(
-        Math.random() * words.length
-      );
+      const randomIndex = Math.floor(Math.random() * words.length);
       randomWords.push(words[randomIndex]);
     }
     const dialogueLine = randomWords.join(" ");
