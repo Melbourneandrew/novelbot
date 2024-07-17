@@ -1,16 +1,28 @@
 import { Character, ICharacter } from "@/lib/models/Character";
 import { Dialogue, IDialogue } from "@/lib/models/Dialogue";
 
-export async function getCharacter(
-  characterId: string
+export async function findCharacterById(
+  id: string
 ): Promise<ICharacter | null> {
-  return await Character.findById(characterId);
+  return await Character.findById(id);
 }
 
-export async function getCharacterDialogue(
+export async function findCharactersByAuthor(
+  authorId: string
+): Promise<ICharacter[]> {
+  return await Character.find({ author: authorId });
+}
+
+export async function findDialogueByCharacter(
   characterId: string
-): Promise<IDialogue[] | null> {
+): Promise<IDialogue[]> {
   return await Dialogue.find({ character: characterId });
+}
+
+export async function findCharactersByBook(
+  bookId: string
+): Promise<ICharacter[]> {
+  return await Character.find({ book: bookId });
 }
 
 export async function deleteCharacterAndTheirDialogue(characterId: string) {
@@ -174,21 +186,4 @@ export async function generateRandomDialogue(
     dialogueLines.push(dialogueLine);
   }
   return dialogueLines;
-}
-export async function findCharacterById(
-  id: string
-): Promise<ICharacter | null> {
-  return await Character.findById(id);
-}
-
-export async function findCharactersByAuthor(
-  authorId: string
-): Promise<ICharacter[]> {
-  return await Character.find({ author: authorId });
-}
-
-export async function findDialogueByCharacter(
-  characterId: string
-): Promise<IDialogue[]> {
-  return await Dialogue.find({ character: characterId });
 }

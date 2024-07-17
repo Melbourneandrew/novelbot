@@ -12,11 +12,13 @@ export const GET = ProtectedRoute(
     if (!characterId) {
       return new NextResponse("Character ID not provided", { status: 400 });
     }
-    const character = await CharacterService.getCharacter(characterId);
+    const character = await CharacterService.findCharacterById(characterId);
     if (!character) {
       return new NextResponse("Character not found", { status: 404 });
     }
-    const dialogue = await CharacterService.getCharacterDialogue(characterId);
+    const dialogue = await CharacterService.findDialogueByCharacter(
+      characterId
+    );
     return NextResponse.json({ character, dialogue });
   }
 );

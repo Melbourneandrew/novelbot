@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { ICharacter } from "@/lib/models/Character";
 
 export default function AuthorCharactersView() {
-  const [characters, setCharacters] = useState<ICharacter[]>([]);
+  const [characters, setCharacters] = useState<ICharacter[]>([] as ICharacter[]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 

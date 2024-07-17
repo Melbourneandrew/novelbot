@@ -75,13 +75,17 @@ export default function AuthorCharacterSingleView() {
                 </tr>
               </thead>
               <tbody>
-                {dialogue.map((dialogue, index) => (
-                  <tr key={index} className="hover">
-                    <th>{index + 1}</th>
-                    <td>{dialogue.text}</td>
-                    <td>{dialogue.pageNumber ?? "?"}</td>
-                  </tr>
-                ))}
+                {dialogue.length === 0 ? (
+                  <p className="font-bold">No dialogue yet!</p>
+                ) : (
+                  dialogue.map((dialogue, index) => (
+                    <tr key={index} className="hover">
+                      <th>{index + 1}</th>
+                      <td>{dialogue.text}</td>
+                      <td>{dialogue.pageNumber ?? "?"}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
