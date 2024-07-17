@@ -8,15 +8,20 @@ import { IDialogue } from "@/lib/models/Dialogue";
 export default function AuthorCharacterSingleView() {
   const searchParams = useSearchParams();
   const characterId = searchParams.get("characterId");
-  const [character, setCharacter] = useState<ICharacter>({} as ICharacter);
-  const [dialogue, setDialogue] = useState<IDialogue[]>([] as IDialogue[]);
+  const [character, setCharacter] = useState<ICharacter>(
+    {} as ICharacter
+  );
+  const [dialogue, setDialogue] = useState<IDialogue[]>(
+    [] as IDialogue[]
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchCharacter = async () => {
     setIsLoading(true);
     const response = await fetch(
-      "/api/author/characters/single?characterId=" + characterId,
+      "/api/author/characters/single?characterId=" +
+        characterId,
       {
         method: "GET",
         headers: {
@@ -44,7 +49,9 @@ export default function AuthorCharacterSingleView() {
 
   return (
     <>
-      <h1 className="text-left">Character overview for: {character.name}</h1>
+      <h1 className="text-left">
+        Character overview for: {character.name}
+      </h1>
       <img
         src="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
         alt="Card Image"
@@ -60,9 +67,13 @@ export default function AuthorCharacterSingleView() {
             <div>Book Id: {character.book as string}</div>
             <div>Created at: {character.createdAt}</div>
             <div>
-              Description: {character.description ?? "No description yet added"}
+              Description:{" "}
+              {character.description ??
+                "No description yet added"}
             </div>
-            <div>Lore: {character.lore ?? "No lore yet added"}</div>
+            <div>
+              Lore: {character.lore ?? "No lore yet added"}
+            </div>
           </div>
           {/* Dialogue */}
           <div className="overflow-x-auto">
@@ -76,7 +87,11 @@ export default function AuthorCharacterSingleView() {
               </thead>
               <tbody>
                 {dialogue.length === 0 ? (
-                  <p className="font-bold">No dialogue yet!</p>
+                  <tr>
+                    <td colSpan={3} className="font-bold">
+                      No dialogue yet!
+                    </td>
+                  </tr>
                 ) : (
                   dialogue.map((dialogue, index) => (
                     <tr key={index} className="hover">
@@ -92,7 +107,9 @@ export default function AuthorCharacterSingleView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
     </>
   );
 }

@@ -31,8 +31,16 @@ export default function BasicModal() {
 
   const submitCode = async () => {
     setIsLoading(true);
+    console.log(
+      codeName,
+      codeValue,
+      selectedCharacters,
+      expirationDate,
+      neverExpires
+    );
+
     const createCodeResponse = await fetch(
-      "/api/author/codes/create",
+      "/api/author/readers/access-codes/add",
       {
         method: "POST",
         headers: {

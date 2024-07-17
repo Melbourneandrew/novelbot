@@ -23,7 +23,9 @@ export async function findAccessCodeByCode(
 export async function findAccessCodesByAuthor(
   authorId: string
 ): Promise<IAccessCode[] | null> {
-  return await AccessCode.find({ author: authorId });
+  return await AccessCode.find({ author: authorId }).populate(
+    "characters"
+  );
 }
 
 export async function findAccessCodesByCharacter(
