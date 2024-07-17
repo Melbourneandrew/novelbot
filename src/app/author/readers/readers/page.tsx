@@ -1,9 +1,40 @@
 "use client";
+import { useState, useEffect } from "react";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
-export default function AuthorReadersReadersView() {
+export default function AuthorReadersView() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/author/readers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: "This is some data",
+      }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      setErrorMessage(error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
     <div>
-      <h1 className="text-left">Your Codes</h1>
+      <h1 className="text-left">Your Readers</h1>
       <div className="overflow-x-auto">
         <table className="table">
           {/* head */}
