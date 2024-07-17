@@ -1,6 +1,6 @@
 "use client";
 import PlusIcon from "@/components/icons/PlusIcon";
-import NewAccessCodeModal from "@/components/modals/NewAccessCodeModal";
+import CreateAccessCodeModal from "@/components/modals/CreateAccessCodeModal";
 
 export default function AuthorReadersAccessCodesView() {
   return (
@@ -53,7 +53,7 @@ export default function AuthorReadersAccessCodesView() {
           Add Code <PlusIcon />
         </button>
       </div>
-      <NewAccessCodeModal />
+      <CreateAccessCodeModal />
     </div>
   );
 }

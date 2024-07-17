@@ -8,7 +8,7 @@ export default function DashboardNavbarLayout({
 }) {
   return (
     <>
-      <h1 className="text-3xl mb-[15px] text-left">
+      <h1 className="text-4xl mb-[20px] text-left">
         Author Dashboard
       </h1>
 
