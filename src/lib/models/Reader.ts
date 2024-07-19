@@ -13,7 +13,7 @@ const readerSchema: Schema = new Schema(
       ref: "User",
       required: true,
     },
-    readingList: {
+    displayName: {
       type: String,
       required: true,
     },

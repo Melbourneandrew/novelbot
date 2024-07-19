@@ -7,6 +7,7 @@ import * as UserService from "@/lib/services/UserService";
 import { cookies } from "next/headers";
 import { validateEmail, validatePassword } from "@/lib/util/validators";
 import * as AuthorService from "@/lib/services/AuthorService";
+import * as ReaderService from "@/lib/services/ReaderService";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 const PASSWORD_HASH_ROUNDS = process.env.PASSWORD_HASH_ROUNDS!;
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
   const { email, password, role } = reqBody;
   await connectToDB();
   try {
-    console.log("Signup route called");
+    console.log("Signup route called for: ", email, password, role);
     if (!email) {
       return new NextResponse("Email is required", {
         status: 400,
@@ -38,11 +39,23 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
+    let displayName = "";
+    if (role === "reader" && !reqBody.displayName) {
+      return new NextResponse("Display name is required", {
+        status: 400,
+      });
+    }
+    let penName = "";
+    if (role === "author" && !reqBody.penName) {
+      return new NextResponse("Pen name is required", {
+        status: 400,
+      });
+    }
     const sanatizedEmail = email.toLowerCase().trim();
 
-    const user: IUser | null = await UserService.findUser({
-      sanatizedEmail,
-    });
+    const user: IUser | null = await UserService.findUserByEmail(
+      sanatizedEmail
+    );
     if (user) {
       return new NextResponse("User with that email already exists", {
         status: 404,
@@ -68,9 +81,14 @@ export async function POST(request: NextRequest) {
         user: newUser._id,
         penName: reqBody.penName,
       });
+      console.log("Author created");
       //TODO Also create reader account with author so they can log in as a reader as well
     } else if (role === "reader") {
-      //TODO Create reader account
+      ReaderService.createReader({
+        user: newUser._id,
+        displayName: reqBody.displayName,
+      });
+      console.log("Reader created");
     }
 
     const token = jwt.sign(
@@ -80,7 +98,6 @@ export async function POST(request: NextRequest) {
       },
       JWT_SECRET
     );
-    console.log("returning next response");
     cookies().set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

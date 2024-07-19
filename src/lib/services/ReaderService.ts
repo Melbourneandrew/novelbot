@@ -16,7 +16,13 @@ export async function findReaderByUserId(
   return await Reader.findOne({ user: userId });
 }
 
-export async function createReader(reader: IReader): Promise<IReader> {
+type CreateAuthorParams = {
+  user: string;
+  displayName: string;
+};
+export async function createReader(
+  reader: CreateAuthorParams
+): Promise<IReader> {
   return await Reader.create(reader);
 }
 
