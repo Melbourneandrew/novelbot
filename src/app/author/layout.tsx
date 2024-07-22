@@ -8,16 +8,14 @@ export default function DashboardNavbarLayout({
 }) {
   return (
     <>
-      <h1 className="text-4xl mb-[20px] text-left">
-        Author Dashboard
-      </h1>
+      <h1 className="text-4xl mb-[20px] text-left">Author Dashboard</h1>
 
       <div className="flex flex-row">
         {/* SIDE NAV BAR */}
         <div className="flex flex-col items-center h-screen border border-1 rounded p-[15px] mr-[20px]">
           {/* <h1 className="text-2xl mb-[15px]">Dashboard</h1> */}
           <a
-            href=""
+            href="/author"
             className="py-2 border-b text-left w-[100%] text-xl no-underline hover:bg-gray-200"
           >
             🏠 Home
