@@ -12,3 +12,7 @@ export function generateRandomString(length: number): string {
 export function generateReaderAccessCode(): string {
   return generateRandomString(8);
 }
+
+export function generateBookContentFileName(): string {
+  return generateRandomString(16);
+}

@@ -21,18 +21,13 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-    const user: IUser | null = await UserService.findUser({
-      email,
-    });
+    const user: IUser | null = await UserService.findUserByEmail(email);
     if (!user) {
       return new NextResponse("User not found", {
         status: 404,
       });
     }
-    const match = await bcrypt.compare(
-      password,
-      user.password!
-    );
+    const match = await bcrypt.compare(password, user.password!);
     if (!match) {
       return new NextResponse("Password is incorrect", {
         status: 401,

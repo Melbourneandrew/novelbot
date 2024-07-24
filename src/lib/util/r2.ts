@@ -1,17 +1,24 @@
-import { S3Client } from '@aws-sdk/client-s3'
+import { S3Client } from "@aws-sdk/client-s3";
 
 const CLOUDFLARE_R2_ACCOUNT_ID = process.env.CLOUDFLARE_R2_ACCOUNT_ID;
 const CLOUDFLARE_R2_ACCESS_KEY_ID = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
-const CLOUDFLARE_R2_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
+const CLOUDFLARE_R2_SECRET_ACCESS_KEY =
+  process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY;
 
-if(!CLOUDFLARE_R2_ACCOUNT_ID || !CLOUDFLARE_R2_ACCESS_KEY_ID|| !CLOUDFLARE_R2_SECRET_ACCESS_KEY)
-    throw new Error('CLOUDFLARE_R2_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY must be set');
+if (
+  !CLOUDFLARE_R2_ACCOUNT_ID ||
+  !CLOUDFLARE_R2_ACCESS_KEY_ID ||
+  !CLOUDFLARE_R2_SECRET_ACCESS_KEY
+)
+  throw new Error(
+    "CLOUDFLARE_R2_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY must be set"
+  );
 
 export const r2 = new S3Client({
-    region: 'auto',
-    endpoint: `https://${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-    credentials: {
-        accessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID || '',
-        secretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY || '',
-    },
-})
+  region: "auto",
+  endpoint: `https://${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: CLOUDFLARE_R2_ACCESS_KEY_ID || "",
+    secretAccessKey: CLOUDFLARE_R2_SECRET_ACCESS_KEY || "",
+  },
+});
