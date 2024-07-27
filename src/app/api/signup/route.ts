@@ -89,6 +89,20 @@ export async function POST(request: NextRequest) {
         displayName: reqBody.displayName,
       });
       console.log("Reader created");
+
+      //Reader has the option to enter an access code at signup
+      if (reqBody.accessCode) {
+        const validCode = await ReaderService.createReaderEnteredCode(
+          newUser._id,
+          reqBody.accessCode
+        );
+        if (!validCode) {
+          return new NextResponse("Invalid access code", {
+            status: 400,
+          });
+        }
+        console.log("Added reader entered access code: ", reqBody.accessCode);
+      }
     }
 
     const token = jwt.sign(

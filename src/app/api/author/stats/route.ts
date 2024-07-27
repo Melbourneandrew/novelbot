@@ -2,20 +2,26 @@ import { NextResponse } from "next/server";
 import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
+import * as AuthorService from "@/lib/services/AuthorService";
+import { AuthorStatBoardData } from "@/app/author/page";
 
 export const GET = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
     console.log("Protected route called");
     const user = request.user;
-    if (false) {
-      return new NextResponse("Protected route call failed", { status: 401 });
+    const author = await AuthorService.findAuthorByUser(user.id);
+    if (!author) {
+      console.log("Author not found");
+      return new NextResponse("Author not found", {
+        status: 404,
+      });
     }
-    setTimeout(() => {
-      console.log("This runs once after 10 seconds");
-    }, 300 * 1000);
+    const readers = await AuthorService.countReaders(author._id);
+
     return NextResponse.json({
       message: "Protected route called",
+      readers,
     });
   }
 );

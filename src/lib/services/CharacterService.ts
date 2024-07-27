@@ -1,5 +1,6 @@
 import { Character, ICharacter } from "@/lib/models/Character";
 import { Dialogue, IDialogue } from "@/lib/models/Dialogue";
+import * as AuthorService from "@/lib/services/AuthorService";
 
 export async function findCharacterById(
   id: string
@@ -23,6 +24,25 @@ export async function findCharactersByBook(
   bookId: string
 ): Promise<ICharacter[]> {
   return await Character.find({ book: bookId });
+}
+
+export async function verifyCharacterBelongsToAuthor(
+  characterId: string,
+  authorId: string
+): Promise<boolean> {
+  const character = await Character.findById(characterId).populate("book");
+  if (!character) {
+    return false;
+  }
+  console.log(character._id);
+  const author = await AuthorService.findAuthorById(character.book.author);
+  if (!author) {
+    return false;
+  }
+  console.log("Author id: ", author._id.toString());
+  console.log("Author id from request: ", authorId);
+
+  return author._id.toString() === authorId;
 }
 
 export async function deleteCharacterAndTheirDialogue(characterId: string) {

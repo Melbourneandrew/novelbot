@@ -85,3 +85,7 @@ export async function resetPassword(
   });
   return user;
 }
+
+export async function findUsers(filter: Object) {
+  return await User.find(filter);
+}

@@ -32,11 +32,15 @@ export async function createReader(
  */
 export async function createReaderEnteredCode(
   reader: IReader,
-  accessCode: IAccessCode
-): Promise<IReaderEnteredCode> {
+  accessCode: string
+): Promise<IReaderEnteredCode | null> {
+  const accessCodeDoc = await AccessCode.findOne({ code: accessCode });
+  if (!accessCodeDoc || accessCodeDoc.expiresAt < new Date()) {
+    return null;
+  }
   return await ReaderEnteredCode.create({
     reader: reader._id,
-    accessCode: accessCode._id,
+    accessCode: accessCodeDoc._id,
   });
 }
 
@@ -65,4 +69,33 @@ export async function getReaderAllowedCharacters(
     }
   }
   return allowedCharacters;
+}
+
+export async function verifyReaderBelongsToAuthor(
+  readerId: string,
+  authorId: string
+): Promise<boolean> {
+  const reader = await Reader.findById(readerId);
+  if (!reader) {
+    return false;
+  }
+  const readerEnteredCodes = await ReaderEnteredCode.find({ reader: readerId });
+  if (!readerEnteredCodes) {
+    return false;
+  }
+  for (const readerEnteredCode of readerEnteredCodes) {
+    const accessCode = await AccessCode.findById(readerEnteredCode.accessCode);
+    if (!accessCode) {
+      return false;
+    }
+    if (accessCode.author.toString() === authorId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export async function deleteReaderAndTheirEnteredCodes(readerId: string) {
+  await ReaderEnteredCode.deleteMany({ reader: readerId });
+  return await Reader.findByIdAndDelete(readerId);
 }

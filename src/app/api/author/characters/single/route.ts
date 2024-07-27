@@ -2,6 +2,7 @@ import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import { AuthenticatedNextRequest } from "@/types";
 import * as CharacterService from "@/lib/services/CharacterService";
+import * as ConversationService from "@/lib/services/ConversationService";
 import { NextResponse } from "next/server";
 
 export const GET = ProtectedRoute(
@@ -19,6 +20,8 @@ export const GET = ProtectedRoute(
     const dialogue = await CharacterService.findDialogueByCharacter(
       characterId
     );
-    return NextResponse.json({ character, dialogue });
+    const conversationCount =
+      await ConversationService.countConversationsByCharacter(characterId);
+    return NextResponse.json({ character, dialogue, conversationCount });
   }
 );

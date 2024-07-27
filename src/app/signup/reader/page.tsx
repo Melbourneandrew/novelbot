@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import {
   validateEmail,
@@ -10,6 +11,9 @@ import {
 export default function ReaderSignup() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
+  const accessCodeFromSearchParams = searchParams.get("accessCode");
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
@@ -35,11 +39,19 @@ export default function ReaderSignup() {
       return;
     }
 
+    const accessCode = accessCodeFromSearchParams ?? form.accessCode.value;
+
     setIsLoading(true);
     const signupResponse = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, displayName, role: "reader" }),
+      body: JSON.stringify({
+        email,
+        password,
+        role: "reader",
+        accessCode,
+        displayName,
+      }),
     });
     setIsLoading(false);
     if (signupResponse.ok) {
@@ -74,10 +86,19 @@ export default function ReaderSignup() {
           type="password"
           name="password"
           placeholder="Password"
-          className="input input-bordered w-full max-w-xs"
+          className="input input-bordered w-full max-w-xs mb-[10px]"
           required
           current-password="true"
         />
+        {!accessCodeFromSearchParams && (
+          <input
+            type="text"
+            name="accessCode"
+            placeholder="Access Code (Optional)"
+            className="input input-bordered w-full max-w-xs"
+          />
+        )}
+
         {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         {isLoading ? (
           <LoadingIndicator />

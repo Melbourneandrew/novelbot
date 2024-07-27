@@ -31,7 +31,7 @@ export default function DbControls() {
   };
   const viewCollection = async (collection: Collection) => {
     const baseUrl =
-      "https://cloud.mongodb.com/v2/60a5844691a56a30086abff9#/serverless/explorer/MelbourneDev/boilerplate";
+      "https://cloud.mongodb.com/v2/60a5844691a56a30086abff9#/serverless/explorer/MelbourneDev/novelbot";
     const viewUrl = baseUrl + `/${collection.name}/find`;
     window.open(viewUrl, "_blank");
   };

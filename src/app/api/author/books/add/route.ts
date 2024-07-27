@@ -52,6 +52,9 @@ export const POST = ProtectedRoute(
     });
 
     //TODO: Process book content
+    setTimeout(() => {
+      console.log("This runs once after 10 seconds");
+    }, 10000);
 
     //Mock book processing by generating random characters and dialogue
     const characters = await CharacterService.generateRandomCharacters(

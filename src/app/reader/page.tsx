@@ -66,7 +66,7 @@ export default function Chat() {
             </div>
           </div>
           <div className="chat-bubble bg-[#009781] text-white">
-            Hello! I am Elly.
+            Hello! I am The Character.
           </div>
         </div>
         {messages.map((message, index) => {
@@ -110,7 +110,7 @@ export default function Chat() {
             autoComplete="off"
             type="text"
             name="newMessage"
-            placeholder="Send a message to Elly"
+            placeholder="Send a message to The Character"
             className="input input-bordered w-full max-w"
             value={newMessage}
             onChange={(event) => setNewMessage(event.target.value)}

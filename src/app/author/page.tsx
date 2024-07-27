@@ -1,10 +1,24 @@
 "use client";
+import { ICharacter } from "@/lib/models/Character";
+
+export type AuthorStatBoardData = {
+  readers: number;
+  conversations: number;
+  totalMessages: number;
+  averageConvoLength: number;
+  characterStats: {
+    character: ICharacter;
+    totalConvos: number;
+    averageConvoLength: number;
+  }[];
+};
 
 export default function AuthorHomeView() {
   return (
     <>
-      <h1 className="text-left">Home</h1>
-      <div className="stats shadow">
+      <h1 className="text-left">All-Time Stats</h1>
+      <div className="stats shadow mb-[25px]">
+        {/* TOTAL READERS STAT */}
         <div className="stat">
           <div className="stat-figure text-secondary">
             <svg
@@ -22,11 +36,11 @@ export default function AuthorHomeView() {
               ></path>
             </svg>
           </div>
-          <div className="stat-title">Chat Messages</div>
+          <div className="stat-title">Readers</div>
           <div className="stat-value">31K</div>
-          <div className="stat-desc">Jan 1st - Feb 1st</div>
+          <div className="stat-desc">All-time</div>
         </div>
-
+        {/* TOTAL CONVOS STAT*/}
         <div className="stat">
           <div className="stat-figure text-secondary">
             <svg
@@ -44,11 +58,11 @@ export default function AuthorHomeView() {
               ></path>
             </svg>
           </div>
-          <div className="stat-title">New Readers</div>
+          <div className="stat-title">Conversations Had</div>
           <div className="stat-value">4,200</div>
           <div className="stat-desc">↗︎ 400 (22%)</div>
         </div>
-
+        {/* TOTAL MESSAGES STAT */}
         <div className="stat">
           <div className="stat-figure text-secondary">
             <svg
@@ -66,10 +80,60 @@ export default function AuthorHomeView() {
               ></path>
             </svg>
           </div>
-          <div className="stat-title">Chat Hours</div>
+          <div className="stat-title">Total Messages</div>
           <div className="stat-value">1,200</div>
           <div className="stat-desc">↘︎ 90 (14%)</div>
         </div>
+        {/* AVERAGE CHAT LENGTH STAT */}
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="black"
+              className="inline-block h-8 w-8 "
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div className="stat-title">Avg. Convo Length</div>
+          <div className="stat-value">11</div>
+          <div className="stat-desc">Messages</div>
+        </div>
+        {/* VIEW ALL HISTORY */}
+        <div className="stat">
+          <div className="stat-title">Chat History</div>
+          <button className="btn btn-primary">View All</button>
+        </div>
+      </div>
+      <h1 className="text-left">Character Stats</h1>
+      <div className="flex overflow-x-auto gap-4 w-[1250px]">
+        {Array(10)
+          .fill(0)
+          .map((_, index) => (
+            <div className="card bg-base-100 w-[384px] shadow-xl flex-shrink-0">
+              <figure>
+                <img
+                  src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+                  alt="Shoes"
+                />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">Shoes!</h2>
+                <p>Total Convos: 100</p>
+                <p>Avg. Convo Length: 10</p>
+                <div className="card-actions justify-end">
+                  <button className="btn btn-primary">View History</button>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </>
   );

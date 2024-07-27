@@ -60,6 +60,24 @@ export default function AuthorBookSingleView() {
             <div>Created at: {book.createdAt}</div>
             <div>Description: {book.summary ?? "No summary yet added"}</div>
           </div>
+          {/* Action Menu */}
+          <div className="flex gap-1">
+            <button
+              className="btn btn-primary"
+              onClick={() => console.log("Not implemented")}
+            >
+              Re-Process
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() =>
+                (window.location.href =
+                  "/author/conversations?bookId=" + bookId)
+              }
+            >
+              Conversation History
+            </button>
+          </div>
           {/* Characters */}
           <h2 className="text-left">Characters</h2>
           <div className="flex flex-wrap">

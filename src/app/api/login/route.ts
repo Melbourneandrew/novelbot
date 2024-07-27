@@ -8,6 +8,7 @@ import * as UserService from "@/lib/services/UserService";
 
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
+  const sanatizedEmail = email.toLowerCase().trim();
   await connectToDB();
   try {
     console.log("Login route called");
@@ -21,7 +22,9 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
-    const user: IUser | null = await UserService.findUserByEmail(email);
+    const user: IUser | null = await UserService.findUserByEmail(
+      sanatizedEmail
+    );
     if (!user) {
       return new NextResponse("User not found", {
         status: 404,
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
     const token = jwt.sign(
       {
-        email: user.email,
+        email: sanatizedEmail,
         id: user._id,
       },
       process.env.JWT_SECRET!
