@@ -60,10 +60,6 @@ export const POST = ProtectedRoute(
     const characters = await CharacterService.generateRandomCharacters(
       book._id
     );
-    characters.forEach(async (characterId) => {
-      await CharacterService.generateRandomDialogue(book._id, characterId);
-    });
-
     return NextResponse.json({
       message: "Book added",
       bookId: book._id,

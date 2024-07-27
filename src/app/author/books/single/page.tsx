@@ -12,7 +12,7 @@ export default function AuthorBookSingleView() {
   const [characters, setCharacters] = useState<ICharacter[]>(
     [] as ICharacter[]
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchBook = async () => {

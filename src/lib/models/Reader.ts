@@ -4,6 +4,8 @@ import { IUser } from "./User";
 interface IReader extends Document {
   user: IUser | string;
   displayName: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 const readerSchema: Schema = new Schema(

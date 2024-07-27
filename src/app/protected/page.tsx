@@ -21,6 +21,7 @@ export default function StarterTemplateView() {
       const error = await response.text();
       console.error(error);
       setErrorMessage(error);
+      setIsLoading(false);
       return;
     }
 

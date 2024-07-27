@@ -36,6 +36,12 @@ export const POST = ProtectedRoute(
     }
 
     // Mock character creation process
+    for (let i = 0; i < 10; i++) {
+      await CharacterService.generateRandomDialogue(
+        character.book as string,
+        characterId
+      );
+    }
     for (let i = 0; i < 25; i++) {
       await ConversationService.generateRandomConversation(characterId);
     }

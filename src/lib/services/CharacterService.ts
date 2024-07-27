@@ -50,6 +50,7 @@ export async function deleteCharacterAndTheirDialogue(characterId: string) {
   return await Character.findByIdAndDelete(characterId);
 }
 export async function generateRandomCharacters(bookId: string) {
+  console.log("Generating random characters");
   const names = [
     "Alice",
     "Bob",
@@ -95,6 +96,7 @@ export async function generateRandomDialogue(
   bookId: string,
   characterId: string
 ) {
+  console.log("Generating random dialogue")
   const words = [
     "adventure",
     "brave",

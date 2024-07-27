@@ -8,7 +8,7 @@ import { IReader } from "@/lib/models/Reader";
 import DropdownIcon from "@/components/icons/DropdownIcon";
 
 export default function ConversationsView() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [conversations, setConversations] = useState<IConversation[]>(
     [] as IConversation[]

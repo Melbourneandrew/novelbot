@@ -16,6 +16,25 @@ export async function findReaderByUserId(
   return await Reader.findOne({ user: userId });
 }
 
+export async function findReadersByAuthor(
+  authorId: string
+): Promise<IReader[]> {
+  const accessCodes = await AccessCode.find({ author: authorId });
+
+  const readerEnteredCodes = await ReaderEnteredCode.find({
+    accessCode: { $in: accessCodes.map((accessCode) => accessCode._id) },
+  });
+
+  const readers = await Reader.find({
+    id: {
+      $in: readerEnteredCodes.map(
+        (readerEnteredCode) => readerEnteredCode.reader._id
+      ),
+    },
+  });
+  return readers;
+}
+
 type CreateAuthorParams = {
   user: string;
   displayName: string;
@@ -75,16 +94,23 @@ export async function verifyReaderBelongsToAuthor(
   readerId: string,
   authorId: string
 ): Promise<boolean> {
+  console.log("readerId: ", readerId);
+  console.log("authorId: ", authorId);
   const reader = await Reader.findById(readerId);
   if (!reader) {
     return false;
   }
-  const readerEnteredCodes = await ReaderEnteredCode.find({ reader: readerId });
+  // console.log("Reader", reader);
+  const readerEnteredCodes = await ReaderEnteredCode.find({
+    reader: reader._id,
+  }).lean();
+  console.log(readerEnteredCodes);
   if (!readerEnteredCodes) {
     return false;
   }
   for (const readerEnteredCode of readerEnteredCodes) {
     const accessCode = await AccessCode.findById(readerEnteredCode.accessCode);
+    console.log(readerEnteredCode);
     if (!accessCode) {
       return false;
     }

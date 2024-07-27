@@ -52,7 +52,10 @@ export async function findConversations(
     queryFilters.character = { $in: characterIds };
   }
 
-  return await Conversation.find(queryFilters).populate(["character", "reader"]);
+  return await Conversation.find(queryFilters).populate([
+    "character",
+    "reader",
+  ]);
 }
 export async function findConversationById(
   id: string
@@ -115,6 +118,7 @@ export async function addMessagesToConversation(
 }
 
 export async function generateRandomConversation(characterId: string) {
+  console.log("Generating random conversation");
   const readers: IReader[] = await Reader.find();
   const randomReader: IReader =
     readers[Math.floor(Math.random() * readers.length)];
@@ -140,7 +144,6 @@ export async function generateRandomConversation(characterId: string) {
   }
   const conversation = await createConversation(randomReader._id, characterId);
   await addMessagesToConversation(conversation._id, messages);
-  console.log("Conversation created with ID:", conversation._id);
 }
 
 var words = [

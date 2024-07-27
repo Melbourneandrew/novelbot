@@ -3,6 +3,7 @@ import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AccessCodeService from "@/lib/services/AccessCodeService";
+import * as AuthorService from "@/lib/services/AuthorService";
 import { IAccessCode } from "@/lib/models/AccessCode";
 import { ICharacter } from "@/lib/models/Character";
 
@@ -11,10 +12,8 @@ export const POST = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("Protected route called");
     const user = request.user;
+    const author = await AuthorService.findAuthorByUser(user._id);
 
-    const authorId = user.id;
-    const author =
-      await AccessCodeService.findAccessCodesByAuthor(authorId);
     if (!author) {
       return new NextResponse("No author found for this user", {
         status: 400,
@@ -54,17 +53,14 @@ export const POST = ProtectedRoute(
         characters: selectedCharacterOptions.map(
           (character: ICharacter) => character._id
         ),
-        author: authorId,
+        author: author._id,
         expires: expirationDateObject,
       } as IAccessCode);
     } catch (error) {
       console.error(error);
-      return new NextResponse(
-        "Error creating access code record:" + error,
-        {
-          status: 500,
-        }
-      );
+      return new NextResponse("Error creating access code record:" + error, {
+        status: 500,
+      });
     }
 
     return NextResponse.json({

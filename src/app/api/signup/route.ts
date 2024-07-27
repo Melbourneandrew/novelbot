@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       console.log("Author created");
       //TODO Also create reader account with author so they can log in as a reader as well
     } else if (role === "reader") {
-      ReaderService.createReader({
+      const reader = await ReaderService.createReader({
         user: newUser._id,
         displayName: reqBody.displayName,
       });
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
       //Reader has the option to enter an access code at signup
       if (reqBody.accessCode) {
         const validCode = await ReaderService.createReaderEnteredCode(
-          newUser._id,
+          reader._id,
           reqBody.accessCode
         );
         if (!validCode) {
