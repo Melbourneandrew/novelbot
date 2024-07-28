@@ -15,6 +15,7 @@ export default function AuthorReadersView() {
       const error = await response.text();
       console.error(error);
       setErrorMessage(error);
+      setIsLoading(false);
       return;
     }
 
@@ -33,45 +34,46 @@ export default function AuthorReadersView() {
       {isLoading ? (
         <LoadingIndicator />
       ) : (
-      <div className="overflow-x-auto">
-        <table className="table">
-          {/* head */}
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Chats</th>
-              <th>Joined</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* row 1 */}
-            {readers.map((reader, index) => (
-              <tr key={index} className="hover">
-                <th>{index + 1}</th>
-                <td>{reader.displayName}</td>
-                <td>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() =>
-                      (window.location.href =
-                        "/author/conversations?readerId=" + reader._id)
-                    }
-                  >
-                    View Chats
-                  </button>
-                </td>
-                <td>
-                  {new Date(reader.createdAt as string).toLocaleDateString(
-                    "en-US"
-                  )}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="table">
+            {/* head */}
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Chats</th>
+                <th>Joined</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {/* row 1 */}
+              {readers.map((reader, index) => (
+                <tr key={index} className="hover">
+                  <th>{index + 1}</th>
+                  <td>{reader.displayName}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() =>
+                        (window.location.href =
+                          "/author/conversations?readerId=" + reader._id)
+                      }
+                    >
+                      View Chats
+                    </button>
+                  </td>
+                  <td>
+                    {new Date(reader.createdAt as string).toLocaleDateString(
+                      "en-US"
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
     </div>
   );
 }

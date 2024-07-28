@@ -1,7 +1,7 @@
 import { Character, ICharacter } from "@/lib/models/Character";
 import { Dialogue, IDialogue } from "@/lib/models/Dialogue";
 import * as AuthorService from "@/lib/services/AuthorService";
-
+import { generateRandomWords } from "../util/random";
 export async function findCharacterById(
   id: string
 ): Promise<ICharacter | null> {
@@ -26,6 +26,20 @@ export async function findCharactersByBook(
   return await Character.find({ book: bookId });
 }
 
+export async function updateCharacter(
+  characterId: string,
+  characterDescription: string,
+  characterBackstory: string
+): Promise<ICharacter | null> {
+  let updatePayload: any = {};
+  if (characterDescription) updatePayload.description = characterDescription;
+  if (characterBackstory) updatePayload.backstory = characterBackstory;
+
+  return await Character.findByIdAndUpdate(characterId, updatePayload, {
+    new: true,
+  });
+}
+
 export async function verifyCharacterBelongsToAuthor(
   characterId: string,
   authorId: string
@@ -34,17 +48,17 @@ export async function verifyCharacterBelongsToAuthor(
   if (!character) {
     return false;
   }
-  console.log(character._id);
   const author = await AuthorService.findAuthorById(character.book.author);
   if (!author) {
     return false;
   }
-  console.log("Author id: ", author._id.toString());
-  console.log("Author id from request: ", authorId);
 
-  return author._id.toString() === authorId;
+  return author._id.toString() === authorId.toString();
 }
 
+export function deleteDialogue(characterId: string) {
+  return Dialogue.deleteMany({ character: characterId });
+}
 export async function deleteCharacterAndTheirDialogue(characterId: string) {
   await Dialogue.deleteMany({ character: characterId });
   return await Character.findByIdAndDelete(characterId);
@@ -96,109 +110,11 @@ export async function generateRandomDialogue(
   bookId: string,
   characterId: string
 ) {
-  console.log("Generating random dialogue")
-  const words = [
-    "adventure",
-    "brave",
-    "curious",
-    "danger",
-    "eager",
-    "fearless",
-    "gallant",
-    "heroic",
-    "imagine",
-    "journey",
-    "kind",
-    "legend",
-    "mystery",
-    "noble",
-    "optimistic",
-    "puzzle",
-    "quest",
-    "rescue",
-    "secret",
-    "treasure",
-    "unite",
-    "victory",
-    "wonder",
-    "xenial",
-    "youthful",
-    "zealous",
-    "ancient",
-    "battle",
-    "courage",
-    "discover",
-    "enigma",
-    "fortune",
-    "glory",
-    "honor",
-    "inspire",
-    "justice",
-    "kingdom",
-    "loyal",
-    "magic",
-    "narrative",
-    "oath",
-    "prophecy",
-    "realm",
-    "saga",
-    "tale",
-    "unravel",
-    "valor",
-    "whisper",
-    "xenon",
-    "yearn",
-    "zenith",
-    "artifact",
-    "beacon",
-    "champion",
-    "destiny",
-    "epic",
-    "fable",
-    "guardian",
-    "haven",
-    "illusion",
-    "jewel",
-    "knight",
-    "lore",
-    "myth",
-    "nurture",
-    "oracle",
-    "pioneer",
-    "relic",
-    "sorcery",
-    "triumph",
-    "unveil",
-    "venture",
-    "wisdom",
-    "xylophone",
-    "yonder",
-    "zephyr",
-    "armor",
-    "bounty",
-    "conquer",
-    "dragon",
-    "empire",
-    "fate",
-    "giant",
-    "horizon",
-    "invincible",
-    "jungle",
-    "keystone",
-    "labyrinth",
-    "mystic",
-    "nebula",
-    "omen",
-  ];
+  console.log("Generating random dialogue");
 
   const dialogueLines = [];
   for (let i = 0; i < 5; i++) {
-    const randomWords = [];
-    for (let j = 0; j < 15; j++) {
-      const randomIndex = Math.floor(Math.random() * words.length);
-      randomWords.push(words[randomIndex]);
-    }
-    const dialogueLine = randomWords.join(" ");
+    const dialogueLine = generateRandomWords(15);
     const dialogue = new Dialogue({
       character: characterId,
       text: dialogueLine,
@@ -208,4 +124,23 @@ export async function generateRandomDialogue(
     dialogueLines.push(dialogueLine);
   }
   return dialogueLines;
+}
+export async function generateRandomDescription(characterId: string) {
+  console.log("Generating random description");
+  const randomDescription = generateRandomWords(40);
+  await Character.findByIdAndUpdate(
+    characterId,
+    { description: randomDescription },
+    { new: true }
+  );
+}
+
+export async function generateRandomBackstory(characterId: string) {
+  console.log("Generating random backstory");
+  const randomBackstory = generateRandomWords(40);
+  await Character.findByIdAndUpdate(
+    characterId,
+    { backstory: randomBackstory },
+    { new: true }
+  );
 }

@@ -10,6 +10,7 @@ import * as CharacterService from "@/lib/services/CharacterService";
 import * as BookService from "@/lib/services/BookService";
 import * as AuthorService from "@/lib/services/AuthorService";
 import { IBook } from "@/lib/models/Book";
+import { generateRandomWords } from "../util/random";
 
 export type FindConversationFilters = {
   characterId?: string | null;
@@ -117,9 +118,20 @@ export async function addMessagesToConversation(
   );
 }
 
+export async function countConversationsByBook(bookId: string) {
+  const characters = await Character.find({ book: bookId }).lean();
+  const characterIds = characters.map(
+    (character: Partial<ICharacter>) => character._id
+  );
+  return Conversation.countDocuments({ character: { $in: characterIds } });
+}
+
 export async function generateRandomConversation(characterId: string) {
   console.log("Generating random conversation");
   const readers: IReader[] = await Reader.find();
+  if (readers.length == 0) {
+    console.log("Can't generate conversation, there are no reader documents!");
+  }
   const randomReader: IReader =
     readers[Math.floor(Math.random() * readers.length)];
   const messageCount = 10;
@@ -130,15 +142,10 @@ export async function generateRandomConversation(characterId: string) {
     },
   ];
   for (let i = 0; i < messageCount; i++) {
-    const randomWords = [];
-    for (let j = 0; j < 15; j++) {
-      const randomIndex = Math.floor(Math.random() * words.length);
-      randomWords.push(words[randomIndex]);
-    }
-    const chat = randomWords.join(" ");
+    const randomWords = generateRandomWords(15);
     const message: Message = {
       role: i % 2 == 0 ? "user" : "assistant",
-      content: chat,
+      content: randomWords,
     };
     messages.push(message);
   }

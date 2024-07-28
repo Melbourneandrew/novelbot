@@ -5,6 +5,7 @@ import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as BookService from "@/lib/services/BookService";
 import * as CharacterService from "@/lib/services/CharacterService";
+import * as ConversationService from "@/lib/services/ConversationService";
 
 export const GET = ProtectedRoute(
   UserAuthenticator,
@@ -31,6 +32,9 @@ export const GET = ProtectedRoute(
     }
 
     const characters = await CharacterService.findCharactersByBook(bookId);
+
+    const conversationCount =
+      await ConversationService.countConversationsByBook(bookId);
 
     return NextResponse.json({ book, characters });
   }

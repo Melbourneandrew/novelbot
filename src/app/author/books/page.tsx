@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import PlusIcon from "@/components/icons/PlusIcon";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { useState, useEffect } from "react";

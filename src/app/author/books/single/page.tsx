@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { IBook } from "@/lib/models/Book";
 import { ICharacter } from "@/lib/models/Character";
+import BackArrowIcon from "@/components/icons/BackArrowIcon";
 
 export default function AuthorBookSingleView() {
   const searchParams = useSearchParams();
@@ -43,7 +44,15 @@ export default function AuthorBookSingleView() {
 
   return (
     <>
-      <h1 className="text-left">Book overview for: {book.title}</h1>
+      <div className="flex gap-2 mb-[10px]">
+        <button
+          className="btn btn-outline"
+          onClick={() => window.history.back()}
+        >
+          <BackArrowIcon size="20" />
+        </button>
+        <h1 className="text-left">Book overview for: {book.title}</h1>
+      </div>
       <img
         src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTM1LWJvb2stMDJhXzEucG5n.png"
         alt="Card Image"
@@ -67,6 +76,12 @@ export default function AuthorBookSingleView() {
               onClick={() => console.log("Not implemented")}
             >
               Re-Process
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => console.log("Not implemented")}
+            >
+              Change Thumbnail
             </button>
             <button
               className="btn btn-primary"

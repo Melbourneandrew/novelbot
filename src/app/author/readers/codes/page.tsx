@@ -10,20 +10,17 @@ export default function AuthorReadersAccessCodesView() {
   const [accessCodes, setAccessCodes] = useState<IAccessCode[]>(
     [] as IAccessCode[]
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchAccessCodes = async () => {
     setIsLoading(true);
-    const response = await fetch(
-      "/api/author/readers/access-codes/list",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch("/api/author/readers/access-codes/list", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!response.ok) {
       const error = await response.text();
       console.error(error);
@@ -68,11 +65,9 @@ export default function AuthorReadersAccessCodesView() {
                   <td>
                     {code.characters
                       .map((character) =>
-                        (character as ICharacter).name?.length >
-                        10
-                          ? (
-                              character as ICharacter
-                            ).name.substring(0, 10) + "..."
+                        (character as ICharacter).name?.length > 10
+                          ? (character as ICharacter).name.substring(0, 10) +
+                            "..."
                           : (character as ICharacter).name
                       )
                       .join(", ")}
@@ -81,9 +76,7 @@ export default function AuthorReadersAccessCodesView() {
                     {new Date(code.expires).getFullYear() >
                     new Date().getFullYear() + 90
                       ? "Never"
-                      : new Date(
-                          code.expires
-                        ).toLocaleDateString()}
+                      : new Date(code.expires).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
@@ -102,7 +95,7 @@ export default function AuthorReadersAccessCodesView() {
           </button>
         </div>
       )}
-
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <CreateAccessCodeModal />
     </div>
   );

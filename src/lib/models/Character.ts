@@ -4,7 +4,7 @@ import { IBook } from "./Book";
 interface ICharacter extends Document {
   name: string;
   description?: string;
-  lore?: string;
+  backstory?: string;
   book: IBook | string;
   profilePictureLink?: string;
   createdAt?: string;
@@ -15,7 +15,7 @@ const characterSchema: Schema = new Schema(
   {
     name: { type: String, required: true },
     description: { type: String, required: false },
-    lore: { type: String, required: false },
+    backstory: { type: String, required: false },
     book: {
       type: Schema.Types.ObjectId,
       ref: "Book",

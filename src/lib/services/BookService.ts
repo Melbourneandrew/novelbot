@@ -30,5 +30,5 @@ export async function verifyBookBelongsToAuthor(
   if (!book) {
     return false;
   }
-  return book.author.toString() === authorId;
+  return book.author.toString() === authorId.toString();
 }

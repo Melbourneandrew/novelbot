@@ -94,27 +94,22 @@ export async function verifyReaderBelongsToAuthor(
   readerId: string,
   authorId: string
 ): Promise<boolean> {
-  console.log("readerId: ", readerId);
-  console.log("authorId: ", authorId);
   const reader = await Reader.findById(readerId);
   if (!reader) {
     return false;
   }
-  // console.log("Reader", reader);
   const readerEnteredCodes = await ReaderEnteredCode.find({
     reader: reader._id,
   }).lean();
-  console.log(readerEnteredCodes);
   if (!readerEnteredCodes) {
     return false;
   }
   for (const readerEnteredCode of readerEnteredCodes) {
     const accessCode = await AccessCode.findById(readerEnteredCode.accessCode);
-    console.log(readerEnteredCode);
     if (!accessCode) {
       return false;
     }
-    if (accessCode.author.toString() === authorId) {
+    if (accessCode.author.toString() === authorId.toString()) {
       return true;
     }
   }

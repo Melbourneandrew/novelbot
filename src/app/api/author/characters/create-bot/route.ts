@@ -36,6 +36,10 @@ export const POST = ProtectedRoute(
     }
 
     // Mock character creation process
+    await CharacterService.generateRandomDescription(characterId);
+    await CharacterService.generateRandomBackstory(characterId);
+
+    await CharacterService.deleteDialogue(characterId);
     for (let i = 0; i < 10; i++) {
       await CharacterService.generateRandomDialogue(
         character.book as string,
@@ -45,12 +49,7 @@ export const POST = ProtectedRoute(
     for (let i = 0; i < 25; i++) {
       await ConversationService.generateRandomConversation(characterId);
     }
-    if (false) {
-      return new NextResponse("Protected route call failed", { status: 401 });
-    }
-    setTimeout(() => {
-      console.log("This runs once after 10 seconds");
-    }, 300 * 1000);
+
     return NextResponse.json({
       message: "Protected route called",
     });
