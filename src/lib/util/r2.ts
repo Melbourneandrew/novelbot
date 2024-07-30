@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 // import { Upload } from "@aws-sdk/lib-storage";
 
 const CLOUDFLARE_R2_ACCOUNT_ID = process.env.CLOUDFLARE_R2_ACCOUNT_ID;
@@ -25,27 +25,25 @@ export const r2 = new S3Client({
   },
 });
 
-// export async function uploadImageToBucket(file: File, filename: string) {
-//   let res;
+export async function uploadImageToR2(
+  imageFileName: string,
+  imageFile: File
+): Promise<boolean> {
+  //TODO: Check that image is the correct type
+  // if (!imageFile.type.startsWith("image/")) {
+  //   throw new Error("Invalid image type");
+  // }
 
-//   try {
-//     const parallelUploads = new Upload({
-//       client: r2,
-//       params: {
-//         CLOUDFLARE_R2_BUCKET_NAME,
-//         filename,
-//         Body: file.stream(),
-//         ACL: "public-read",
-//         ContentType: file.type,
-//       },
-//       queueSize: 4,
-//       leavePartsOnError: false,
-//     });
+  const imageFileBuffer = Buffer.from(await imageFile.arrayBuffer());
 
-//     res = await parallelUploads.done();
-//   } catch (e) {
-//     throw e;
-//   }
+  const uploaded = await r2.send(
+    new PutObjectCommand({
+      Bucket: CLOUDFLARE_R2_BUCKET_NAME,
+      Key: imageFileName,
+      Body: imageFileBuffer,
+      ContentType: imageFile.type,
+    })
+  );
 
-//   return res;
-// }
+  return uploaded ? true : false;
+}

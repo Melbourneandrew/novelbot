@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
-import { r2 } from "@/lib/util/r2";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { uploadImageToR2 } from "@/lib/util/r2";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as CharacterService from "@/lib/services/CharacterService";
 import { generateCharacterThumbnailFileName } from "@/lib/util/random";
@@ -47,16 +46,7 @@ export const POST = ProtectedRoute(
     }
 
     const thumbnailFileName = generateCharacterThumbnailFileName();
-    const thumbnailFileBuffer = Buffer.from(await thumbnailFile.arrayBuffer());
-
-    const uploaded = await r2.send(
-      new PutObjectCommand({
-        Bucket: CLOUDFLARE_R2_BUCKET_NAME,
-        Key: thumbnailFileName,
-        Body: thumbnailFileBuffer,
-        ContentType: thumbnailFile.type,
-      })
-    );
+    const uploaded = await uploadImageToR2(thumbnailFileName, thumbnailFile);
 
     if (!uploaded) {
       return new NextResponse("Thumbnail upload failed", {
