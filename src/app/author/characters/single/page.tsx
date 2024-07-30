@@ -5,6 +5,8 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import { ICharacter } from "@/lib/models/Character";
 import { IDialogue } from "@/lib/models/Dialogue";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
+import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
+import { StringExpression } from "mongoose";
 
 export default function AuthorCharacterSingleView() {
   const searchParams = useSearchParams();
@@ -138,15 +140,18 @@ export default function AuthorCharacterSingleView() {
   return (
     <>
       <div className="flex gap-2 mb-[10px]">
-        <button className="btn btn-outline" onClick={()=>(window.history.back())}>
+        <button
+          className="btn btn-outline"
+          onClick={() => window.history.back()}
+        >
           <BackArrowIcon size="20" />
         </button>
         <h1 className="text-left">Character overview for: {character.name}</h1>
       </div>
       <img
-        src="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
-        alt="Card Image"
-        className="h-40 object-cover rounded-md mb-2"
+        className="mask mask-squircle h-40 object-cover rounded-md mb-2"
+        src={character.thumbnailFileLink ?? ""}
+        alt="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
       />
       {isLoading ? (
         <LoadingIndicator />
@@ -209,7 +214,12 @@ export default function AuthorCharacterSingleView() {
             </button>
             <button
               className="btn btn-primary"
-              onClick={() => console.log("Not implemented")}
+              onClick={() => {
+                const modal = document.getElementById(
+                  "change_thumbnail_modal"
+                ) as HTMLDialogElement;
+                modal?.showModal();
+              }}
             >
               Change Thumbnail
             </button>
@@ -257,6 +267,12 @@ export default function AuthorCharacterSingleView() {
       )}
 
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+      <UploadThumbnailModal
+        headerText={"Upload a new thumbnail for this character."}
+        uploadRoute={"/api/author/characters/thumbnail"}
+        documentId={characterId as string}
+      />
     </>
   );
 }

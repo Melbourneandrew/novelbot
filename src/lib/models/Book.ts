@@ -2,26 +2,28 @@ import mongoose, { models, Schema, Document } from "mongoose";
 import { IAuthor } from "./Author";
 
 interface IBook extends Document {
-    title: string;
-    summary?: string;
-    author: IAuthor | string;
-    contentFileLink: string;
-    createdAt?: string;
-    updatedAt?: string;
+  title: string;
+  summary?: string;
+  author: IAuthor | string;
+  contentFileLink: string;
+  thumnbailFileLink: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 const bookSchema: Schema = new Schema(
-    {
-        title: { type: String, required: true },
-        summary: { type: String, required: false },
-        author: {
-            type: Schema.Types.ObjectId,
-            ref: "Author",
-            required: true,
-        },
-        contentFileLink: { type: String, required: false }
+  {
+    title: { type: String, required: true },
+    summary: { type: String, required: false },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "Author",
+      required: true,
     },
-    { timestamps: true }
+    contentFileLink: { type: String, required: false },
+    thumnbailFileLink: { type: String, required: false },
+  },
+  { timestamps: true }
 );
 
 const BookModel = models.Book || mongoose.model<IBook>("Book", bookSchema);

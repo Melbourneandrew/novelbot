@@ -14,9 +14,16 @@ export function generateReaderAccessCode(): string {
 }
 
 export function generateBookContentFileName(): string {
-  return generateRandomString(16);
+  return "book_content_" + generateRandomString(16);
 }
 
+export function generateBookThumbnailFileName(): string {
+  return "book_thumbnail_" + generateRandomString(16);
+}
+
+export function generateCharacterThumbnailFileName(): string {
+  return "character_thumbnail_" + generateRandomString(16);
+}
 export function generateRandomWords(wordCount: number): string {
   const randomWords = [];
   for (let j = 0; j < wordCount; j++) {

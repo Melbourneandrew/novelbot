@@ -41,7 +41,7 @@ export const POST = ProtectedRoute(
         Bucket: CLOUDFLARE_R2_BUCKET_NAME,
         Key: contentFileName,
       }),
-      { expiresIn: 60 }
+      { expiresIn: 240 }
     );
 
     const book = await BookService.createBook({

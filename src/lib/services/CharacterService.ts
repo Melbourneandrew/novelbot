@@ -144,3 +144,23 @@ export async function generateRandomBackstory(characterId: string) {
     { new: true }
   );
 }
+
+const CLOUDFLARE_R2_PUBLIC_URL = process.env.CLOUDFLARE_R2_PUBLIC_URL;
+if (!CLOUDFLARE_R2_PUBLIC_URL) {
+  throw new Error("CLOUDFLARE_R2_PUBLIC_URL must be set");
+}
+
+export async function updateCharacterThumbnail(
+  characterId: string,
+  thumbnailFileName: string
+) {
+  return Character.findByIdAndUpdate(
+    characterId,
+    {
+      thumbnailFileLink: CLOUDFLARE_R2_PUBLIC_URL + "/" + thumbnailFileName,
+    },
+    {
+      new: true,
+    }
+  );
+}
