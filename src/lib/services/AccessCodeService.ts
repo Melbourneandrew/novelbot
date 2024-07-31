@@ -1,4 +1,6 @@
+import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_FORM_ACTIONS } from "react";
 import { AccessCode, IAccessCode } from "../models/AccessCode";
+import { ReaderEnteredCode } from "../models/ReaderEnteredCode";
 
 export async function findAccessCodeById(
   id: string
@@ -23,13 +25,29 @@ export async function findAccessCodeByCode(
 export async function findAccessCodesByAuthor(
   authorId: string
 ): Promise<IAccessCode[] | null> {
-  return await AccessCode.find({ author: authorId }).populate(
-    "characters"
-  );
+  return await AccessCode.find({ author: authorId }).populate("characters");
 }
 
 export async function findAccessCodesByCharacter(
   characterId: string
 ): Promise<IAccessCode[] | null> {
   return await AccessCode.find({ characters: characterId });
+}
+
+export async function findAccessCodesByReaderId(
+  readerId: string
+): Promise<IAccessCode[] | null> {
+  const readerEnteredCodes = await ReaderEnteredCode.find({
+    reader: readerId,
+  })
+    .populate("accessCode")
+    .lean();
+  if (!readerEnteredCodes) {
+    return null;
+  }
+  const accessCodes = [];
+  for (const readerEnteredCode of readerEnteredCodes) {
+    accessCodes.push(readerEnteredCode.accessCode);
+  }
+  return accessCodes;
 }

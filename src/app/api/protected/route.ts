@@ -11,9 +11,6 @@ export const GET = ProtectedRoute(
     if (false) {
       return new NextResponse("Protected route call failed", { status: 401 });
     }
-    setTimeout(() => {
-      console.log("This runs once after 10 seconds");
-    }, 300 * 1000);
     return NextResponse.json({
       message: "Protected route called",
     });
