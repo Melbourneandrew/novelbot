@@ -63,6 +63,13 @@ export async function findConversationById(
 ): Promise<IConversation | null> {
   return await Conversation.findById(id);
 }
+export async function findConversationWithCharacterAndReaderById(
+  id: string
+): Promise<IConversation | null> {
+  return await Conversation.findById(id)
+    .populate(["character", "reader"])
+    .lean();
+}
 
 export async function findConversationsByCharacter(
   characterId: string
