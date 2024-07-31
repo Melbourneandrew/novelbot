@@ -6,29 +6,37 @@ import { ICharacter } from "@/lib/models/Character";
 import { IDialogue } from "@/lib/models/Dialogue";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
-import { StringExpression } from "mongoose";
 
 export default function AuthorCharacterSingleView() {
   const searchParams = useSearchParams();
   const characterId = searchParams.get("characterId");
-  const [character, setCharacter] = useState<ICharacter>({} as ICharacter);
-  const [characterDescription, setCharacterDescription] = useState<string>("");
-  const [characterBackstory, setCharacterBackstory] = useState<string>("");
-  const [dialogue, setDialogue] = useState<IDialogue[]>([] as IDialogue[]);
+  const [character, setCharacter] = useState<ICharacter>(
+    {} as ICharacter
+  );
+  const [characterDescription, setCharacterDescription] =
+    useState<string>("");
+  const [characterBackstory, setCharacterBackstory] =
+    useState<string>("");
+  const [dialogue, setDialogue] = useState<IDialogue[]>(
+    [] as IDialogue[]
+  );
   const [conversationCount, setConversationCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [
     isSaveCharacterDescriptionLoading,
     setIsSaveCharacterDescriptionLoading,
   ] = useState(false);
-  const [isSaveCharacterBackstoryLoading, setIsSaveCharacterBackstoryLoading] =
-    useState(false);
+  const [
+    isSaveCharacterBackstoryLoading,
+    setIsSaveCharacterBackstoryLoading,
+  ] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const fetchCharacter = async () => {
     setIsLoading(true);
     const response = await fetch(
-      "/api/author/characters/single?characterId=" + characterId,
+      "/api/author/characters/single?characterId=" +
+        characterId,
       {
         method: "GET",
         headers: {
@@ -51,23 +59,28 @@ export default function AuthorCharacterSingleView() {
     setCharacterBackstory(data.character.backstory ?? "");
     setDialogue(data.dialogue);
     setConversationCount(data.conversationCount ?? 0);
-    console.log(characterBackstory == (character.backstory ?? ""));
+    console.log(
+      characterBackstory == (character.backstory ?? "")
+    );
     setIsLoading(false);
   };
 
   const updateCharacterDescription = async () => {
     setIsSaveCharacterDescriptionLoading(true);
 
-    const response = await fetch("/api/author/characters/single/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        characterId: characterId,
-        characterDescription: characterDescription,
-      }),
-    });
+    const response = await fetch(
+      "/api/author/characters/single/update",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          characterId: characterId,
+          characterDescription: characterDescription,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const error = await response.text();
@@ -84,16 +97,19 @@ export default function AuthorCharacterSingleView() {
 
   const updateCharacterBackstory = async () => {
     setIsSaveCharacterBackstoryLoading(true);
-    const response = await fetch("/api/author/characters/single/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        characterId: characterId,
-        characterBackstory: characterBackstory,
-      }),
-    });
+    const response = await fetch(
+      "/api/author/characters/single/update",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          characterId: characterId,
+          characterBackstory: characterBackstory,
+        }),
+      }
+    );
 
     if (!response.ok) {
       const error = await response.text();
@@ -131,6 +147,7 @@ export default function AuthorCharacterSingleView() {
     const data = await generateBotResponse.json();
     console.log(data);
     setIsLoading(false);
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -146,7 +163,9 @@ export default function AuthorCharacterSingleView() {
         >
           <BackArrowIcon size="20" />
         </button>
-        <h1 className="text-left">Character overview for: {character.name}</h1>
+        <h1 className="text-left">
+          Character overview for: {character.name}
+        </h1>
       </div>
       <img
         className="mask mask-squircle h-40 object-cover rounded-md mb-2"
@@ -164,14 +183,21 @@ export default function AuthorCharacterSingleView() {
             <div>Created at: {character.createdAt}</div>
             <div>Conversations had: {conversationCount}</div>
             <div className="relative w-fit">
-              <div className="font-bold">Character Description</div>
+              <div className="font-bold">
+                Character Description
+              </div>
               <textarea
                 className="textarea textarea-bordered w-[1000px] h-[200px] resize-none"
                 placeholder="Add some lore here or press 'Generate Bot' to get an AI suggested character description"
                 value={characterDescription}
-                onChange={(e) => setCharacterDescription(e.target.value)}
+                onChange={(e) =>
+                  setCharacterDescription(e.target.value)
+                }
               ></textarea>
-              {!(characterDescription == (character.description ?? "")) && (
+              {!(
+                characterDescription ==
+                (character.description ?? "")
+              ) && (
                 <button
                   className="btn btn-primary absolute bottom-[15px] right-[10px]"
                   onClick={() => updateCharacterDescription()}
@@ -186,9 +212,14 @@ export default function AuthorCharacterSingleView() {
                 className="textarea textarea-bordered w-[1000px] h-[200px] resize-none"
                 placeholder="Add some lore here or press 'Generate Bot' to get an AI suggested backstory"
                 value={characterBackstory}
-                onChange={(e) => setCharacterBackstory(e.target.value)}
+                onChange={(e) =>
+                  setCharacterBackstory(e.target.value)
+                }
               ></textarea>
-              {!(characterBackstory == (character.backstory ?? "")) &&
+              {!(
+                characterBackstory ==
+                (character.backstory ?? "")
+              ) &&
                 (isSaveCharacterDescriptionLoading ? (
                   <LoadingIndicator />
                 ) : (
@@ -203,7 +234,10 @@ export default function AuthorCharacterSingleView() {
           </div>
           {/* Action Menu */}
           <div className="flex gap-1">
-            <button className="btn btn-primary" onClick={() => generateBot()}>
+            <button
+              className="btn btn-primary"
+              onClick={() => generateBot()}
+            >
               Generate Bot
             </button>
             <button
@@ -227,7 +261,8 @@ export default function AuthorCharacterSingleView() {
               className="btn btn-primary"
               onClick={() =>
                 (window.location.href =
-                  "/author/conversations?characterId=" + characterId)
+                  "/author/conversations?characterId=" +
+                  characterId)
               }
             >
               Conversation History
@@ -266,10 +301,14 @@ export default function AuthorCharacterSingleView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
 
       <UploadThumbnailModal
-        headerText={"Upload a new thumbnail for this character."}
+        headerText={
+          "Upload a new thumbnail image for this character."
+        }
         uploadRoute={"/api/author/characters/thumbnail"}
         documentId={characterId as string}
       />

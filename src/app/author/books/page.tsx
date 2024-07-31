@@ -50,10 +50,12 @@ export default function AuthorBooksDashboard() {
                   "/author/books/single?bookId=" + book._id)
               }
             >
-              <h2 className="text-lg font-semibold mb-2">{book.title}</h2>
+              <h2 className="text-lg font-semibold mb-2">
+                {book.title}
+              </h2>
               <img
-                src="https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTEwL3JtNTM1LWJvb2stMDJhXzEucG5n.png"
-                alt="Card Image"
+                src={book.thumbnailFileLink}
+                alt="Book Image"
                 className="w-full h-40 object-cover rounded-md mb-2"
               />
               <p className="text-gray-600">{book.summary}</p>
@@ -62,14 +64,20 @@ export default function AuthorBooksDashboard() {
           {/* ADD BOOK BUTTON */}
           <div
             className="flex flex-col justify-center items-center rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]"
-            onClick={() => (window.location.href = "/author/books/add")}
+            onClick={() =>
+              (window.location.href = "/author/books/add")
+            }
           >
             <PlusIcon size="64" />
-            <p className="font-bold text-[25px] mt-[10px]">Add new book</p>
+            <p className="font-bold text-[25px] mt-[10px]">
+              Add new book
+            </p>
           </div>
         </div>
       )}
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
     </>
   );
 }

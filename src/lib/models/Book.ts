@@ -6,7 +6,7 @@ interface IBook extends Document {
   summary?: string;
   author: IAuthor | string;
   contentFileLink: string;
-  thumnbailFileLink: string;
+  thumbnailFileLink: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -21,11 +21,16 @@ const bookSchema: Schema = new Schema(
       required: true,
     },
     contentFileLink: { type: String, required: false },
-    thumnbailFileLink: { type: String, required: false },
+    thumbnailFileLink: {
+      type: String,
+      default:
+        "https://pub-d83e34d9fafc4ffcbe840bd347e399eb.r2.dev/book_thumbnail_ac2MtV90lgshIHsY",
+    },
   },
   { timestamps: true }
 );
 
-const BookModel = models.Book || mongoose.model<IBook>("Book", bookSchema);
+const BookModel =
+  models.Book || mongoose.model<IBook>("Book", bookSchema);
 export { BookModel as Book };
 export type { IBook };
