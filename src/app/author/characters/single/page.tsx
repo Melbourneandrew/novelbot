@@ -6,6 +6,7 @@ import { ICharacter } from "@/lib/models/Character";
 import { IDialogue } from "@/lib/models/Dialogue";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
+import RemoveModal from "@/components/modals/RemoveModal";
 
 export default function AuthorCharacterSingleView() {
   const searchParams = useSearchParams();
@@ -267,6 +268,17 @@ export default function AuthorCharacterSingleView() {
             >
               Conversation History
             </button>
+            <button
+              className="btn btn-error"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "remove_modal"
+                ) as HTMLDialogElement;
+                modal?.showModal();
+              }}
+            >
+              Remove Character
+            </button>
           </div>
 
           {/* Dialogue */}
@@ -310,6 +322,13 @@ export default function AuthorCharacterSingleView() {
           "Upload a new thumbnail image for this character."
         }
         uploadRoute={"/api/author/characters/thumbnail"}
+        documentId={characterId as string}
+      />
+      <RemoveModal
+        headerText={"Remove Character: " + character.name}
+        removeRoute={
+          "/api/author/characters/remove?characterId="
+        }
         documentId={characterId as string}
       />
     </>

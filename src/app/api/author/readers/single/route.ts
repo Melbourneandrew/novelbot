@@ -5,16 +5,16 @@ import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as ReaderService from "@/lib/services/ReaderService";
 import * as AccessCodeService from "@/lib/services/AccessCodeService";
-import * as ReaderEnteredCodeService from "@/lib/services/ReaderEnteredCodeService";
+import * as ConversationService from "@/lib/services/ConversationService";
 export const GET = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
-    console.log("Protected route called");
+    console.log("Single reader route called");
     const user = request.user;
-    if (false) {
-      return new NextResponse("Protected route call failed", { status: 401 });
-    }
-    const author = await AuthorService.findAuthorByUser(user.id);
+
+    const author = await AuthorService.findAuthorByUser(
+      user.id
+    );
     if (!author) {
       return new NextResponse("Author not found", {
         status: 404,
@@ -35,9 +35,10 @@ export const GET = ProtectedRoute(
       });
     }
 
-    const accessCodes = await AccessCodeService.findAccessCodesByReaderId(
-      readerId
-    );
+    const accessCodes =
+      await AccessCodeService.findAccessCodesByReaderId(
+        readerId
+      );
     if (!accessCodes) {
       return new NextResponse("Access codes not found", {
         status: 404,
@@ -45,7 +46,9 @@ export const GET = ProtectedRoute(
     }
 
     const conversationCount =
-      await ReaderEnteredCodeService.countConversationsByReaderId(readerId);
+      await ConversationService.countConversationsByReader(
+        readerId
+      );
 
     return NextResponse.json({
       reader,

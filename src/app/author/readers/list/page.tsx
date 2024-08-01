@@ -6,7 +6,9 @@ import { IReader } from "@/lib/models/Reader";
 export default function AuthorReadersView() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [readers, setReaders] = useState<IReader[]>([] as IReader[]);
+  const [readers, setReaders] = useState<IReader[]>(
+    [] as IReader[]
+  );
 
   const fetchReaders = async () => {
     setIsLoading(true);
@@ -48,7 +50,15 @@ export default function AuthorReadersView() {
             <tbody>
               {/* row 1 */}
               {readers.map((reader, index) => (
-                <tr key={index} className="hover">
+                <tr
+                  key={index}
+                  className="hover cursor-pointer"
+                  onClick={() =>
+                    (window.location.href =
+                      "/author/readers/single?readerId=" +
+                      reader._id.toString())
+                  }
+                >
                   <th>{index + 1}</th>
                   <td>{reader.displayName}</td>
                   <td>
@@ -56,16 +66,17 @@ export default function AuthorReadersView() {
                       className="btn btn-primary"
                       onClick={() =>
                         (window.location.href =
-                          "/author/conversations?readerId=" + reader._id)
+                          "/author/conversations?readerId=" +
+                          reader._id)
                       }
                     >
-                      View Chats
+                      Chat History
                     </button>
                   </td>
                   <td>
-                    {new Date(reader.createdAt as string).toLocaleDateString(
-                      "en-US"
-                    )}
+                    {new Date(
+                      reader.createdAt as string
+                    ).toLocaleDateString("en-US")}
                   </td>
                 </tr>
               ))}
@@ -73,7 +84,9 @@ export default function AuthorReadersView() {
           </table>
         </div>
       )}
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
     </div>
   );
 }

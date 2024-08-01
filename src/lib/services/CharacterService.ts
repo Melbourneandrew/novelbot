@@ -3,6 +3,8 @@ import { Dialogue, IDialogue } from "@/lib/models/Dialogue";
 import * as AuthorService from "@/lib/services/AuthorService";
 import { generateRandomWords } from "../util/random";
 import { makeR2PublicUrl } from "../util/r2";
+import { AccessCode } from "../models/AccessCode";
+import { Conversation } from "../models/Conversation";
 export async function findCharacterById(
   id: string
 ): Promise<ICharacter | null> {
@@ -183,4 +185,24 @@ export async function updateCharacterThumbnail(
       new: true,
     }
   );
+}
+export async function removeCharacter(
+  characterId: string
+): Promise<boolean> {
+  const character = await Character.findByIdAndDelete(
+    characterId
+  );
+  if (!character) {
+    return false;
+  }
+  await Dialogue.deleteMany({ character: characterId });
+  await AccessCode.updateMany(
+    { characters: characterId },
+    { $pull: { characters: characterId } }
+  );
+  await Conversation.deleteMany({
+    character: characterId,
+  });
+
+  return true;
 }

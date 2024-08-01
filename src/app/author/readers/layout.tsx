@@ -26,9 +26,11 @@ export default function AuthorReadersView({
     <div>
       <div role="tablist" className="tabs tabs-bordered">
         <a
-          href="/author/readers/readers"
+          href="/author/readers/list"
           role="tab"
-          className={activeTab === "readers" ? "tab tab-active" : "tab"}
+          className={
+            activeTab === "readers" ? "tab tab-active" : "tab"
+          }
           onClick={() => handleTabClick("readers")}
         >
           Readers
@@ -36,7 +38,11 @@ export default function AuthorReadersView({
         <a
           href="/author/readers/codes"
           role="tab"
-          className={activeTab === "access-codes" ? "tab tab-active" : "tab"}
+          className={
+            activeTab === "access-codes"
+              ? "tab tab-active"
+              : "tab"
+          }
           onClick={() => handleTabClick("access-codes")}
         >
           Access Codes

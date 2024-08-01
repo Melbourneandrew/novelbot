@@ -4,17 +4,17 @@ import { useSearchParams } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { ICharacter } from "@/lib/models/Character";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
-import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import { IReader } from "@/lib/models/Reader";
 import { IAccessCode } from "@/lib/models/AccessCode";
+import RemoveModal from "@/components/modals/RemoveModal";
 
 export default function AuthorReaderSingleView() {
   const searchParams = useSearchParams();
   const readerId = searchParams.get("readerId");
   const [reader, setReader] = useState<IReader>({} as IReader);
-  const [readerAccessCodes, setReaderAccessCodes] = useState<IAccessCode[]>(
-    [] as IAccessCode[]
-  );
+  const [readerAccessCodes, setReaderAccessCodes] = useState<
+    IAccessCode[]
+  >([] as IAccessCode[]);
   const [conversationCount, setConversationCount] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -23,7 +23,7 @@ export default function AuthorReaderSingleView() {
   const fetchReader = async () => {
     setIsLoading(true);
     const response = await fetch(
-      "/api/author/readers/single?readerId?=" + readerId,
+      "/api/author/readers/single?readerId=" + readerId,
       {
         method: "GET",
         headers: {
@@ -42,7 +42,7 @@ export default function AuthorReaderSingleView() {
     const data = await response.json();
     console.log(data);
     setReader(data.reader);
-    setReaderAccessCodes(data.readerAccessCodes);
+    setReaderAccessCodes(data.accessCodes);
     setConversationCount(data.conversationCount ?? 0);
     setIsLoading(false);
   };
@@ -60,7 +60,9 @@ export default function AuthorReaderSingleView() {
         >
           <BackArrowIcon size="20" />
         </button>
-        <h1 className="text-left">Reader overview for: {reader.displayName}</h1>
+        <h1 className="text-left">
+          Reader overview for: {reader.displayName}
+        </h1>
       </div>
       {isLoading ? (
         <LoadingIndicator />
@@ -68,7 +70,10 @@ export default function AuthorReaderSingleView() {
         <div>
           {/* Reader Info */}
           <div className="mb-[20px]">
-            <div>Reader Display Name: {reader.displayName as string}</div>
+            <div>
+              Reader Display Name:{" "}
+              {reader.displayName as string}
+            </div>
             <div>Reader Id: {reader._id as string}</div>
             <div>Created at: {reader.createdAt}</div>
             <div>Conversations had: {conversationCount}</div>
@@ -85,10 +90,15 @@ export default function AuthorReaderSingleView() {
               Conversation History
             </button>
             <button
-              className="btn btn-primary"
-              onClick={() => console.log("Not implemented")}
+              className="btn btn-error"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "remove_modal"
+                ) as HTMLDialogElement;
+                modal?.showModal();
+              }}
             >
-              Ban Reader
+              Remove Reader
             </button>
           </div>
 
@@ -107,16 +117,18 @@ export default function AuthorReaderSingleView() {
               </thead>
               <tbody>
                 {readerAccessCodes.map((code, index) => (
-                  <tr className="hover" key={index}>
+                  <tr key={index}>
                     <th>{index + 1}</th>
                     <td>{code.name}</td>
                     <td>{code.code}</td>
                     <td>
                       {code.characters
                         .map((character) =>
-                          (character as ICharacter).name?.length > 10
-                            ? (character as ICharacter).name.substring(0, 10) +
-                              "..."
+                          (character as ICharacter).name
+                            ?.length > 10
+                            ? (
+                                character as ICharacter
+                              ).name.substring(0, 10) + "..."
                             : (character as ICharacter).name
                         )
                         .join(", ")}
@@ -125,7 +137,9 @@ export default function AuthorReaderSingleView() {
                       {new Date(code.expires).getFullYear() >
                       new Date().getFullYear() + 90
                         ? "Never"
-                        : new Date(code.expires).toLocaleDateString()}
+                        : new Date(
+                            code.expires
+                          ).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
@@ -135,12 +149,14 @@ export default function AuthorReaderSingleView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
 
-      <UploadThumbnailModal
-        headerText={"Upload a new thumbnail image for this character."}
-        uploadRoute={"/api/author/characters/thumbnail"}
-        documentId={characterId as string}
+      <RemoveModal
+        headerText={"Remove Reader: " + reader.displayName}
+        removeRoute={"/api/author/readers/remove?readerId="}
+        documentId={readerId as string}
       />
     </>
   );

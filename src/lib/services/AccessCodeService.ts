@@ -25,7 +25,9 @@ export async function findAccessCodeByCode(
 export async function findAccessCodesByAuthor(
   authorId: string
 ): Promise<IAccessCode[] | null> {
-  return await AccessCode.find({ author: authorId }).populate("characters");
+  return await AccessCode.find({ author: authorId }).populate(
+    "characters"
+  );
 }
 
 export async function findAccessCodesByCharacter(
@@ -40,7 +42,12 @@ export async function findAccessCodesByReaderId(
   const readerEnteredCodes = await ReaderEnteredCode.find({
     reader: readerId,
   })
-    .populate("accessCode")
+    .populate({
+      path: "accessCode",
+      populate: {
+        path: "characters",
+      },
+    })
     .lean();
   if (!readerEnteredCodes) {
     return null;

@@ -129,7 +129,7 @@ export default function ConversationsView() {
                 {conversations.map((conversation, index) => (
                   <tr
                     key={index}
-                    className="hover"
+                    className="hover cursor-pointer"
                     onClick={() => {
                       window.location.href =
                         "/author/conversations/single?conversationId=" +
@@ -138,10 +138,8 @@ export default function ConversationsView() {
                   >
                     <th>{index + 1}</th>
                     <td>
-                      {
-                        (conversation.character as ICharacter)
-                          .name
-                      }
+                      {(conversation.character as ICharacter)
+                        ?.name ?? "[deleted]"}
                     </td>
                     <td>
                       {

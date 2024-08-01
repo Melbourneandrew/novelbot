@@ -4,7 +4,7 @@ import DropdownIcon from "@/components/icons/DropdownIcon";
 import { ICharacter } from "@/lib/models/Character";
 import XIcon from "../icons/XIcon";
 import { generateReaderAccessCode } from "@/lib/util/random";
-export default function BasicModal() {
+export default function CreateAccessCodeModal() {
   /**
    * Enable this modal with
    * <button className="btn" onClick={()=>document.getElementById('my_modal_1').showModal()}>open modal</button>

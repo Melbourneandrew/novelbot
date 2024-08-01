@@ -1,11 +1,16 @@
 import { Author, IAuthor } from "@/lib/models/Author";
-import { AccessCode, IAccessCode } from "@/lib/models/AccessCode";
+import {
+  AccessCode,
+  IAccessCode,
+} from "@/lib/models/AccessCode";
 import {
   ReaderEnteredCode,
   IReaderEnteredCode,
 } from "@/lib/models/ReaderEnteredCode";
 
-export async function findAuthorById(id: string): Promise<IAuthor | null> {
+export async function findAuthorById(
+  id: string
+): Promise<IAuthor | null> {
   //TODO: Implement caching
   return await Author.findById(id);
 }
@@ -27,9 +32,13 @@ export async function findAuthorByUser(
   return await Author.findOne({ user: userId });
 }
 
-export async function countReaders(authorId: string): Promise<number> {
+export async function countReaders(
+  authorId: string
+): Promise<number> {
   const author = await findAuthorById(authorId);
-  const accessCodes = await AccessCode.find({ author: authorId });
+  const accessCodes = await AccessCode.find({
+    author: authorId,
+  });
 
   const readers = await ReaderEnteredCode.find({
     accessCode: { $in: accessCodes.map((code) => code._id) },

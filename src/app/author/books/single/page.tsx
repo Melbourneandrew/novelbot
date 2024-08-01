@@ -6,7 +6,7 @@ import { IBook } from "@/lib/models/Book";
 import { ICharacter } from "@/lib/models/Character";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
-
+import RemoveModal from "@/components/modals/RemoveModal";
 export default function AuthorBookSingleView() {
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
@@ -106,6 +106,17 @@ export default function AuthorBookSingleView() {
             >
               Conversation History
             </button>
+            <button
+              className="btn btn-error"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "remove_modal"
+                ) as HTMLDialogElement;
+                modal?.showModal();
+              }}
+            >
+              Remove Book
+            </button>
           </div>
           {/* Characters */}
           <h2 className="text-left">Characters</h2>
@@ -145,6 +156,11 @@ export default function AuthorBookSingleView() {
           "Upload a new thumbnail image for this book."
         }
         uploadRoute={"/api/author/books/thumbnail"}
+        documentId={bookId as string}
+      />
+      <RemoveModal
+        headerText={"Remove Book: " + book.title}
+        removeRoute={"/api/author/books/remove?bookId="}
         documentId={bookId as string}
       />
       {errorMessage && (

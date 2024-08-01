@@ -8,18 +8,20 @@ import { IReader } from "@/lib/models/Reader";
 export default function StarterTemplateView() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [conversation, setConversation] = useState<IConversation>(
-    {} as IConversation
-  );
+  const [conversation, setConversation] =
+    useState<IConversation>({} as IConversation);
   const [reader, setReader] = useState<IReader>({} as IReader);
-  const [character, setCharacter] = useState<ICharacter>({} as ICharacter);
+  const [character, setCharacter] = useState<ICharacter>(
+    {} as ICharacter
+  );
   const searchParams = useSearchParams();
   const conversationId = searchParams.get("conversationId");
 
   const fetchConversation = async () => {
     setIsLoading(true);
     const response = await fetch(
-      "/api/author/conversations/single?conversationId=" + conversationId
+      "/api/author/conversations/single?conversationId=" +
+        conversationId
     );
     if (!response.ok) {
       const error = await response.text();
@@ -33,7 +35,7 @@ export default function StarterTemplateView() {
     console.log(data);
     setConversation(data.conversation);
     setReader(data.conversation.reader);
-    setCharacter(data.conversation.character);
+    setCharacter(data.conversation.character ?? {});
     setIsLoading(false);
   };
 
@@ -50,11 +52,20 @@ export default function StarterTemplateView() {
           {/* CONVERSATION BETWEEN HEADER */}
           <h2 className="text-left">
             Conversation between character{" "}
-            <a href={"/author/character/single?characterId=" + character._id}>
-              {character.name}
+            <a
+              href={
+                "/author/character/single?characterId=" +
+                character._id
+              }
+            >
+              {character.name ?? "[deleted]"}
             </a>{" "}
             and reader{" "}
-            <a href={"/author/reader/single?readerId=" + reader._id}>
+            <a
+              href={
+                "/author/readers/single?readerId=" + reader._id
+              }
+            >
               {reader.displayName}
             </a>
           </h2>
@@ -79,7 +90,9 @@ export default function StarterTemplateView() {
                     />
                     <div>
                       <h2 className="card-title">
-                        {isReader ? reader.displayName : character.name}
+                        {isReader
+                          ? reader.displayName
+                          : character.name ?? "[deleted]"}
                         {isReader ? (
                           <p className="text-sm text-gray-400 text-left w-fit">
                             Reader
@@ -100,7 +113,9 @@ export default function StarterTemplateView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-red-500">{errorMessage}</p>
+      )}
     </div>
   );
 }
