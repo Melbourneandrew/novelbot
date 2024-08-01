@@ -7,6 +7,7 @@ import { IDialogue } from "@/lib/models/Dialogue";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
+import DialogueTable from "@/components/tables/DialogueTable";
 
 export default function AuthorCharacterSingleView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -327,34 +328,8 @@ export default function AuthorCharacterSingleView() {
           </div>
 
           {/* Dialogue */}
-          <div className="overflow-x-auto">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Text</th>
-                  <th>Page No.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dialogue.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="font-bold">
-                      No dialogue yet!
-                    </td>
-                  </tr>
-                ) : (
-                  dialogue.map((dialogue, index) => (
-                    <tr key={index} className="hover">
-                      <th>{index + 1}</th>
-                      <td>{dialogue.text}</td>
-                      <td>{dialogue.pageNumber ?? "?"}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <h1 className="font-bold mt-[30px] text-left">Dialogue</h1>
+          <DialogueTable dialogue={dialogue} />
         </div>
       )}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
