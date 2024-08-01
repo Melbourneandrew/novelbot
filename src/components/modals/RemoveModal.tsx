@@ -29,22 +29,19 @@ export default function RemoveModal({
     console.log(data);
     setIsLoading(false);
 
-    const modal = document.getElementById(
-      "remove_modal"
-    ) as HTMLDialogElement;
+    const modal = document.getElementById("remove_modal") as HTMLDialogElement;
     modal?.close();
+    window.history.back();
   };
   return (
     <dialog id="remove_modal" className="modal">
       <div className="modal-box">
         <h3 className="font-bold text-lg">{headerText}</h3>
         <p className="py-4 text-center">
-          This operation is PERMANENT and cannot be undone. Are
-          you sure you want to proceed?
+          This operation is PERMANENT and cannot be undone. Are you sure you
+          want to proceed?
         </p>
-        {errorMessage && (
-          <p className="text-red-500">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         <div className="modal-action justify-center">
           {isLoading ? (
             <LoadingIndicator />

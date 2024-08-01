@@ -13,21 +13,17 @@ export default function CreateAccessCodeModal() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [codeName, setCodeName] = useState("");
-  const [codeValue, setCodeValue] = useState(
-    generateReaderAccessCode()
-  );
-  const [selectedCharacters, setSelectedCharacters] =
-    useState("");
+  const [codeValue, setCodeValue] = useState(generateReaderAccessCode());
+  const [selectedCharacters, setSelectedCharacters] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [neverExpires, setNeverExpires] = useState(false);
 
-  const [characterOptions, setCharacterOptions] = useState<
+  const [characterOptions, setCharacterOptions] = useState<ICharacter[]>(
+    [] as ICharacter[]
+  );
+  const [selectedCharacterOptions, setSelectedCharacterOptions] = useState<
     ICharacter[]
   >([] as ICharacter[]);
-  const [
-    selectedCharacterOptions,
-    setSelectedCharacterOptions,
-  ] = useState<ICharacter[]>([] as ICharacter[]);
 
   const submitCode = async () => {
     setIsLoading(true);
@@ -75,15 +71,12 @@ export default function CreateAccessCodeModal() {
 
   const fetchCharacters = async () => {
     setIsLoading(true);
-    const response = await fetch(
-      "/api/author/characters/list",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch("/api/author/characters/list", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!response.ok) {
       const error = await response.text();
       console.error(error);
@@ -100,9 +93,7 @@ export default function CreateAccessCodeModal() {
   useEffect(() => {
     fetchCharacters();
     setExpirationDate(
-      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .slice(0, 10)
+      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
     );
   }, []);
 
@@ -113,15 +104,13 @@ export default function CreateAccessCodeModal() {
           Create a New Reader Access Code
         </div>
         <p className="py-4">
-          Access codes are used to allow readers to access your
-          publication. You can create a new access code here.
+          Access codes are used to allow readers to access your publication. You
+          can create a new access code here.
         </p>
         <div className="flex flex-col gap-4">
           {/* CODE NAME */}
           <div>
-            <div className="text-[18px] font-bold">
-              Code Name
-            </div>
+            <div className="text-[18px] font-bold">Code Name</div>
             <input
               type="text"
               placeholder="Type here"
@@ -145,9 +134,7 @@ export default function CreateAccessCodeModal() {
           </div>
           {/* CHARACTER SELECT */}
           <div>
-            <div className="text-[18px] font-bold">
-              Character(s)
-            </div>
+            <div className="text-[18px] font-bold">Character(s)</div>
             <details className="dropdown">
               <summary className="btn m-1">
                 Select Characters <DropdownIcon />
@@ -159,32 +146,20 @@ export default function CreateAccessCodeModal() {
                       <input
                         type="checkbox"
                         className="checkbox"
-                        checked={selectedCharacterOptions.includes(
-                          character
-                        )}
+                        checked={selectedCharacterOptions.includes(character)}
                         onChange={() => {
                           const newSelectedCharacters = [
                             ...selectedCharacterOptions,
                           ];
-                          if (
-                            newSelectedCharacters.includes(
-                              character
-                            )
-                          ) {
+                          if (newSelectedCharacters.includes(character)) {
                             newSelectedCharacters.splice(
-                              newSelectedCharacters.indexOf(
-                                character
-                              ),
+                              newSelectedCharacters.indexOf(character),
                               1
                             );
                           } else {
-                            newSelectedCharacters.push(
-                              character
-                            );
+                            newSelectedCharacters.push(character);
                           }
-                          setSelectedCharacterOptions(
-                            newSelectedCharacters
-                          );
+                          setSelectedCharacterOptions(newSelectedCharacters);
                         }}
                       />
                       {character.name}
@@ -197,75 +172,59 @@ export default function CreateAccessCodeModal() {
           {/* CHARACTER DISPLAY */}
           <div>
             <div className="flex gap-1">
-              {selectedCharacterOptions.map(
-                (character, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 rounded-xl bg-gray-100 px-3 py-1 w-fit"
-                  >
-                    <div className="text-[15px] font-bold">
-                      {character.name}
-                    </div>
-                    <button
-                      className="text-gray-500 hover:text-gray-700"
-                      onClick={() => {
-                        const newSelectedCharacters = [
-                          ...selectedCharacterOptions,
-                        ];
-                        newSelectedCharacters.splice(
-                          newSelectedCharacters.indexOf(
-                            character
-                          ),
-                          1
-                        );
-                        setSelectedCharacterOptions(
-                          newSelectedCharacters
-                        );
-                      }}
-                    >
-                      <XIcon size="16" />
-                    </button>
+              {selectedCharacterOptions.map((character, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 rounded-xl bg-gray-100 px-3 py-1 w-fit"
+                >
+                  <div className="text-[15px] font-bold">
+                    {character.name +
+                      (!character.published ? " (Unpublished)" : "")}
                   </div>
-                )
-              )}
+                  <button
+                    className="text-gray-500 hover:text-gray-700"
+                    onClick={() => {
+                      const newSelectedCharacters = [
+                        ...selectedCharacterOptions,
+                      ];
+                      newSelectedCharacters.splice(
+                        newSelectedCharacters.indexOf(character),
+                        1
+                      );
+                      setSelectedCharacterOptions(newSelectedCharacters);
+                    }}
+                  >
+                    <XIcon size="16" />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
           {/* EXPIRATION DATE */}
           <div>
-            <div className="text-[18px] font-bold">
-              Expiration Date
-            </div>
+            <div className="text-[18px] font-bold">Expiration Date</div>
             <p>(Defaults to 30 days out)</p>
             <input
               type="date"
               id="expires"
               name="expires"
               value={expirationDate}
-              onChange={(e) =>
-                setExpirationDate(e.target.value)
-              }
+              onChange={(e) => setExpirationDate(e.target.value)}
             />
           </div>
           {/* NEVER EXPIRES CHECKBOX */}
           <div className="flex">
-            <div className="text-[17px] mr-[30px]">
-              Never expires
-            </div>
+            <div className="text-[17px] mr-[30px]">Never expires</div>
             <input
               type="checkbox"
               className="checkbox checkbox-primary"
               defaultChecked={neverExpires}
-              onChange={(e) =>
-                setNeverExpires(e.target.checked)
-              }
+              onChange={(e) => setNeverExpires(e.target.checked)}
             />
           </div>
         </div>
         <div className="modal-action">
-          <button
-            className="btn btn-primary"
-            onClick={() => submitCode()}
-          >
+          <button className="btn btn-primary" onClick={() => submitCode()}>
             Create
           </button>
         </div>

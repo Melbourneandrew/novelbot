@@ -54,14 +54,17 @@ export default function AuthorCharactersView() {
                   "/author/characters/single?characterId=" + character._id)
               }
             >
-              <h2 className="text-lg font-semibold mb-2">{character.name}</h2>
+              <h2 className="text-lg font-semibold mb-2">
+                {character.name +
+                  (!character.published ? " (Unpublished)":"")}
+              </h2>
               <img
                 src="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
                 alt="Card Image"
                 className="w-full h-40 object-cover rounded-md mb-2"
               />
               <p className="text-gray-600">
-                {character.description?.substring(0,90) +
+                {character.description?.substring(0, 90) +
                   (character.description?.length! > 90 ? "..." : "")}
               </p>
             </div>

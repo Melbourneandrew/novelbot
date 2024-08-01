@@ -7,6 +7,7 @@ interface ICharacter extends Document {
   backstory?: string;
   book: IBook | string;
   thumbnailFileLink?: string;
+  published?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,6 +25,10 @@ const characterSchema: Schema = new Schema(
     thumbnailFileLink: {
       type: String,
       default: "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg",
+    },
+    published: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
