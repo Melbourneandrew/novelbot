@@ -7,6 +7,7 @@ import { ICharacter } from "@/lib/models/Character";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
+import ButtonWithLoading from "@/components/ButtonWithLoading";
 export default function AuthorBookSingleView() {
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
@@ -19,15 +20,12 @@ export default function AuthorBookSingleView() {
 
   const fetchBook = async () => {
     setIsLoading(true);
-    const response = await fetch(
-      "/api/author/books/single?bookId=" + bookId,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch("/api/author/books/single?bookId=" + bookId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!response.ok) {
       const error = await response.text();
       console.error(error);
@@ -55,9 +53,7 @@ export default function AuthorBookSingleView() {
         >
           <BackArrowIcon size="20" />
         </button>
-        <h1 className="text-left">
-          Book overview for: {book.title}
-        </h1>
+        <h1 className="text-left">Book overview for: {book.title}</h1>
       </div>
       <img
         src={book.thumbnailFileLink}
@@ -73,22 +69,19 @@ export default function AuthorBookSingleView() {
             <div>Book Id: {book._id as string}</div>
             <div>Author Id: {book.author as string}</div>
             <div>Created at: {book.createdAt}</div>
-            <div>
-              Description:{" "}
-              {book.summary ?? "No summary yet added"}
-            </div>
+            <div>Description: {book.summary ?? "No summary yet added"}</div>
           </div>
           {/* Action Menu */}
           <div className="flex gap-1">
-            <button
+            <ButtonWithLoading
               className="btn btn-primary"
-              onClick={() => console.log("Not implemented")}
+              action={() => console.log("Not implemented")}
             >
               Re-Process
-            </button>
-            <button
+            </ButtonWithLoading>
+            <ButtonWithLoading
               className="btn btn-primary"
-              onClick={() => {
+              action={() => {
                 const modal = document.getElementById(
                   "change_thumbnail_modal"
                 ) as HTMLDialogElement;
@@ -96,19 +89,19 @@ export default function AuthorBookSingleView() {
               }}
             >
               Change Thumbnail
-            </button>
-            <button
+            </ButtonWithLoading>
+            <ButtonWithLoading
               className="btn btn-primary"
-              onClick={() =>
+              action={() =>
                 (window.location.href =
                   "/author/conversations?bookId=" + bookId)
               }
             >
               Conversation History
-            </button>
-            <button
+            </ButtonWithLoading>
+            <ButtonWithLoading
               className="btn btn-error"
-              onClick={() => {
+              action={() => {
                 const modal = document.getElementById(
                   "remove_modal"
                 ) as HTMLDialogElement;
@@ -116,7 +109,7 @@ export default function AuthorBookSingleView() {
               }}
             >
               Remove Book
-            </button>
+            </ButtonWithLoading>
           </div>
           {/* Characters */}
           <h2 className="text-left">Characters</h2>
@@ -130,8 +123,7 @@ export default function AuthorBookSingleView() {
                   className="rounded-lg border border-gray-300 hover:bg-gray-100 p-4 m-2 w-[450px] h-[280px]"
                   onClick={() =>
                     (window.location.href =
-                      "/author/characters/single?characterId=" +
-                      character._id)
+                      "/author/characters/single?characterId=" + character._id)
                   }
                 >
                   <h2 className="text-lg font-semibold mb-2">
@@ -142,9 +134,7 @@ export default function AuthorBookSingleView() {
                     alt="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
                     className="w-full h-40 object-cover rounded-md mb-2"
                   />
-                  <p className="text-gray-600">
-                    {character.description}
-                  </p>
+                  <p className="text-gray-600">{character.description}</p>
                 </div>
               ))
             )}
@@ -152,9 +142,7 @@ export default function AuthorBookSingleView() {
         </div>
       )}
       <UploadThumbnailModal
-        headerText={
-          "Upload a new thumbnail image for this book."
-        }
+        headerText={"Upload a new thumbnail image for this book."}
         uploadRoute={"/api/author/books/thumbnail"}
         documentId={bookId as string}
       />
@@ -163,9 +151,7 @@ export default function AuthorBookSingleView() {
         removeRoute={"/api/author/books/remove?bookId="}
         documentId={bookId as string}
       />
-      {errorMessage && (
-        <p className="text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
     </>
   );
 }

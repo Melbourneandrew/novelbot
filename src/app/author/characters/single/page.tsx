@@ -8,6 +8,7 @@ import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
 import DialogueTable from "@/components/tables/DialogueTable";
+import ButtonWithLoading from "@/components/ButtonWithLoading";
 
 export default function AuthorCharacterSingleView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -150,7 +151,6 @@ export default function AuthorCharacterSingleView() {
   };
 
   const publishCharacter = async () => {
-    setIsLoading(true);
     const response = await fetch(
       "/api/author/characters/publish?characterId=" + characterId
     );
@@ -162,12 +162,10 @@ export default function AuthorCharacterSingleView() {
     }
     const data = await response.json();
     console.log(data);
-    setIsLoading(false);
     window.location.reload();
   };
 
   const unpublishCharacter = async () => {
-    setIsLoading(true);
     const response = await fetch(
       "/api/author/characters/unpublish?characterId=" + characterId
     );
@@ -179,7 +177,6 @@ export default function AuthorCharacterSingleView() {
     }
     const data = await response.json();
     console.log(data);
-    setIsLoading(false);
     window.location.reload();
   };
 
@@ -213,7 +210,7 @@ export default function AuthorCharacterSingleView() {
             src={character.thumbnailFileLink ?? ""}
             alt="https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg"
           />
-          {/* Character Info */}
+          {/* CHARACTER INFO */}
           <div className="mb-[20px]">
             <div>Character Id: {character._id as string}</div>
             <div>Book Id: {character.book as string}</div>
@@ -257,16 +254,16 @@ export default function AuthorCharacterSingleView() {
                 ))}
             </div>
           </div>
-          {/* Action Menu */}
+          {/* ACTION MENU */}
           <div className="flex gap-1">
             {/* GENERATE BOT BUTTON */}
-            <button className="btn btn-primary" onClick={() => generateBot()}>
+            <ButtonWithLoading className="btn btn-primary" action={generateBot}>
               Generate Bot
-            </button>
+            </ButtonWithLoading>
             {/* CHANGE THUMBNAIL BUTTON */}
-            <button
+            <ButtonWithLoading
               className="btn btn-primary"
-              onClick={() => {
+              action={() => {
                 const modal = document.getElementById(
                   "change_thumbnail_modal"
                 ) as HTMLDialogElement;
@@ -274,49 +271,49 @@ export default function AuthorCharacterSingleView() {
               }}
             >
               Change Thumbnail
-            </button>
+            </ButtonWithLoading>
             {/* PUBLISH CHARACTER BUTTON */}
             {!character.published && showGeneratedCharacterActions && (
-              <button
+              <ButtonWithLoading
                 className="btn btn-primary"
-                onClick={() => publishCharacter()}
+                action={publishCharacter}
               >
                 Publish Character
-              </button>
+              </ButtonWithLoading>
             )}
             {/* UNPUBLISH CHARACTER BUTTON */}
             {character.published && showGeneratedCharacterActions && (
-              <button
+              <ButtonWithLoading
                 className="btn btn-primary"
-                onClick={() => unpublishCharacter()}
+                action={unpublishCharacter}
               >
                 Unpublish Character
-              </button>
+              </ButtonWithLoading>
             )}
             {/* CHAT DEMO BUTTON */}
             {showGeneratedCharacterActions && (
-              <button
+              <ButtonWithLoading
                 className="btn btn-primary"
-                onClick={() => console.log("Not implemented")}
+                action={() => console.log("Not implemented")}
               >
                 Chat Demo
-              </button>
+              </ButtonWithLoading>
             )}
             {/* CONVERSATION HISTORY BUTTON */}
             {showGeneratedCharacterActions && (
-              <button
+              <ButtonWithLoading
                 className="btn btn-primary"
-                onClick={() =>
+                action={() =>
                   (window.location.href =
                     "/author/conversations?characterId=" + characterId)
                 }
               >
                 Conversation History
-              </button>
+              </ButtonWithLoading>
             )}
-            <button
+            <ButtonWithLoading
               className="btn btn-error"
-              onClick={() => {
+              action={() => {
                 const modal = document.getElementById(
                   "remove_modal"
                 ) as HTMLDialogElement;
@@ -324,7 +321,7 @@ export default function AuthorCharacterSingleView() {
               }}
             >
               Remove Character
-            </button>
+            </ButtonWithLoading>
           </div>
 
           {/* Dialogue */}

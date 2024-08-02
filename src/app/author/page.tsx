@@ -1,4 +1,5 @@
 "use client";
+import ButtonWithLoading from "@/components/ButtonWithLoading";
 import { ICharacter } from "@/lib/models/Character";
 
 export type AuthorStatBoardData = {
@@ -109,7 +110,7 @@ export default function AuthorHomeView() {
         {/* VIEW ALL HISTORY */}
         <div className="stat">
           <div className="stat-title">Chat History</div>
-          <button className="btn btn-primary">View All</button>
+          <ButtonWithLoading className="btn btn-primary">View All</ButtonWithLoading>
         </div>
       </div>
       <h1 className="text-left">Character Stats</h1>
@@ -129,7 +130,7 @@ export default function AuthorHomeView() {
                 <p>Total Convos: 100</p>
                 <p>Avg. Convo Length: 10</p>
                 <div className="card-actions justify-end">
-                  <button className="btn btn-primary">View History</button>
+                  <ButtonWithLoading className="btn btn-primary">View History</ButtonWithLoading>
                 </div>
               </div>
             </div>

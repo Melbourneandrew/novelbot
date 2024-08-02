@@ -7,6 +7,7 @@ import TrashCanIcon from "@/components/icons/TrashCanIcon";
 import CheckIcon from "../icons/CheckIcon";
 import XIcon from "../icons/XIcon";
 import SearchIcon from "../icons/SearchIcon";
+import ButtonWithLoading from "../ButtonWithLoading";
 
 interface DialogueTableProps {
   dialogue: IDialogue[];
@@ -18,6 +19,50 @@ export default function DialogueTable({ dialogue }: DialogueTableProps) {
 
   const selectDialogue = (index: number) => {
     setSelectedDialogueIndex(index);
+  };
+
+  const submitDialogueEdit = async () => {
+    dialogue[selectedDialogueIndex].text = updatedDialogueLine;
+    const response = await fetch("/api/author/dialogue/edit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dialogueId: dialogue[selectedDialogueIndex]._id,
+        updatedText: updatedDialogueLine,
+      }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      return;
+    }
+    const data = await response.json();
+    console.log(data);
+    setSelectedDialogueIndex(-1);
+  };
+
+  const submitRemoveDialogue = async (targetIndex: number) => {
+    const response = await fetch("/api/author/dialogue/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dialogueId: dialogue[targetIndex]._id,
+      }),
+    });
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    dialogue.splice(targetIndex, 1);
+    setSelectedDialogueIndex(-1);
   };
 
   return (
@@ -61,14 +106,18 @@ export default function DialogueTable({ dialogue }: DialogueTableProps) {
                           type="text"
                           placeholder="Type here"
                           className="input input-bordered w-full max-w-xs"
-                          value={dialogue.text}
+                          defaultValue={dialogue.text}
+                          value={updatedDialogueLine}
                           onChange={(e) =>
                             setUpdatedDialogueLine(e.target.value)
                           }
                         />
-                        <button className="btn btn-outline">
+                        <ButtonWithLoading
+                          className="btn btn-outline"
+                          action={submitDialogueEdit}
+                        >
                           <CheckIcon />
-                        </button>
+                        </ButtonWithLoading>
                         <button
                           className="btn btn-outline"
                           onClick={() => setSelectedDialogueIndex(-1)}
@@ -93,9 +142,12 @@ export default function DialogueTable({ dialogue }: DialogueTableProps) {
                       <button className="btn btn-outline">
                         <StarIcon />
                       </button>
-                      <button className="btn btn-outline">
+                      <ButtonWithLoading
+                        className="btn btn-outline"
+                        action={() => submitRemoveDialogue(index)}
+                      >
                         <TrashCanIcon />
-                      </button>
+                      </ButtonWithLoading>
                     </div>
                   </td>
                 </tr>
