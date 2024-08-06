@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center">
       <a href="/author">Authors</a>
-      <a href="/login">Readers</a>
+      <a href="/reader">Readers</a>
       <br></br>
       <a href="/signup/author">Author Signup</a>
       <a href="/signup/reader">Reader Signup</a>

@@ -1,10 +1,15 @@
 "use client";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { ICharacter } from "@/lib/models/Character";
 export default function Chat() {
+  const [isCharacterListLoading, setIsCharacterListLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [availableCharacters, setAvailableCharacters] = useState<ICharacter[]>(
+    [] as ICharacter[]
+  );
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
-  const [loading, setLoading] = useState(true);
   const [chatId, setChatId] = useState(null);
 
   const handleNewMessage = async (e) => {
@@ -38,6 +43,31 @@ export default function Chat() {
     // setMessages(chatCompletedMessages);
     // if (loading) return;
   };
+
+  const getAvailableCharacters = async () => {
+    setIsCharacterListLoading(true);
+    const characterResponse = await fetch("/api/reader/characters", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!characterResponse.ok) {
+      const err = await characterResponse.text();
+      console.log(err);
+      setErrorMessage(err);
+      setIsCharacterListLoading(false);
+      return;
+    }
+    const { characters } = await characterResponse.json();
+    setAvailableCharacters(characters);
+    setIsCharacterListLoading(false);
+    console.log(characters);
+  };
+
+  useEffect(() => {
+    getAvailableCharacters();
+  }, []);
 
   return (
     <div className="flex flex-row justify-center w-screen gap-[10px]">
@@ -130,18 +160,24 @@ export default function Chat() {
         </div>
       </div>
       {/* CHARACTER SELECT */}
-      <div className="w-[400px] flex flex-col items-center justify-center">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <div className="card bg-base-100 w-96 shadow-xl mb-[5px] p-[20px]">
+      <div className="w-[400px] flex flex-col items-center">
+        <h1>Characters</h1>
+        {availableCharacters.map((character, index) => (
+          <div
+            key={index}
+            className="card bg-base-100 w-96 shadow-xl mb-[5px] p-[20px]"
+          >
             <div className="flex">
               <img
                 className="mask mask-squircle mr-[15px]"
                 src="https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp"
               />
               <div className="">
-                <h2 className="card-title">Character Name</h2>
-                <p>If a dog chews shoes whose shoes does he choose?</p>
-                <div className="card-actions justify-end">
+                <h2 className="card-title">{character.name}</h2>
+                <p className="overflow-hidden text-ellipsis line-clamp-3">
+                  {character.description}
+                </p>
+                <div className="card-actions absolute bottom-[20px] right-[20px]">
                   <button className="btn btn-primary">Chat</button>
                 </div>
               </div>

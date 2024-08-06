@@ -5,6 +5,7 @@ import { generateRandomWords } from "../util/random";
 import { makeR2PublicUrl } from "../util/r2";
 import { AccessCode } from "../models/AccessCode";
 import { Conversation } from "../models/Conversation";
+
 export async function findCharacterById(
   id: string
 ): Promise<ICharacter | null> {
@@ -137,7 +138,6 @@ export async function generateRandomDescription(characterId: string) {
     { new: true }
   );
 }
-
 export async function generateRandomBackstory(characterId: string) {
   console.log("Generating random backstory");
   const randomBackstory = generateRandomWords(40);

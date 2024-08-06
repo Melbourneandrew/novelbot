@@ -5,6 +5,7 @@ import {
   IReaderEnteredCode,
 } from "@/lib/models/ReaderEnteredCode";
 import { ICharacter } from "@/lib/models/Character";
+import * as AccessCodeService from "@/lib/services/AccessCodeService";
 
 export async function findReaderById(id: string): Promise<IReader | null> {
   return await Reader.findById(id);
@@ -33,6 +34,19 @@ export async function findReadersByAuthor(
     },
   });
   return readers;
+}
+
+export async function findCharactersByReader(
+  readerId: string
+): Promise<ICharacter[] | []> {
+  const accessCodes = await AccessCodeService.findAccessCodesByReaderId(
+    readerId
+  );
+  console.log(accessCodes);
+  const characters = accessCodes?.reduce((acc, accessCode) => {
+    return acc.concat(accessCode.characters as ICharacter[]);
+  }, [] as ICharacter[]);
+  return characters ?? [];
 }
 
 type CreateAuthorParams = {
