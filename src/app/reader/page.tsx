@@ -1,13 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ICharacter } from "@/lib/models/Character";
+import LoadingIndicator from "@/components/LoadingIndicator";
+
 export default function Chat() {
-  const [isCharacterListLoading, setIsCharacterListLoading] = useState(false);
+  const [isCharacterListLoading, setIsCharacterListLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   const [availableCharacters, setAvailableCharacters] = useState<ICharacter[]>(
     [] as ICharacter[]
   );
+  const [selectedCharacter, setSelectedCharacter] = useState<ICharacter>();
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
   const [chatId, setChatId] = useState(null);
@@ -62,8 +65,17 @@ export default function Chat() {
     const { characters } = await characterResponse.json();
     setAvailableCharacters(characters);
     setIsCharacterListLoading(false);
+    if (!selectedCharacter) {
+      setSelectedCharacter(characters[0]);
+    }
     console.log(characters);
   };
+
+  const selectCharacter = async (character: ICharacter) => {
+    setSelectedCharacter(character);
+    setMessages([]);
+    setChatId(null);
+  }
 
   useEffect(() => {
     getAvailableCharacters();
@@ -72,18 +84,23 @@ export default function Chat() {
   return (
     <div className="flex flex-row justify-center w-screen gap-[10px]">
       {/* CHARACTER AVATAR */}
-      <div className="w-[400px] flex flex-col items-center justify-center">
-        <img
-          className="mask mask-squircle mb-auto"
-          src="https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp"
-        />
+      <div className="w-[400px] flex flex-col items-center">
+        {isCharacterListLoading ? <LoadingIndicator /> : 
+        <div>
+          <img
+            className="mask mask-squircle w-[160px] mb-auto"
+            src={selectedCharacter?.thumbnailFileLink}
+          />
+          <h2 className="text-center">{selectedCharacter?.name}</h2>
+        </div>
+}
       </div>
       {/* CHAT */}
       <div className="w-[800px] pt-3 flex flex-col h-screen items-center">
         {/* Moral Code Header w Link */}
         <div className="flex items-center justify-center">
           <div className="font-bold">
-            Chat with Character from the Book! &nbsp;
+            Chat with {selectedCharacter?.name} from the Book! &nbsp;
           </div>
           <div>
             More info here:{" "}
@@ -162,24 +179,23 @@ export default function Chat() {
       {/* CHARACTER SELECT */}
       <div className="w-[400px] flex flex-col items-center">
         <h1>Characters</h1>
-        {availableCharacters.map((character, index) => (
+        {isCharacterListLoading ? <LoadingIndicator /> : 
+        availableCharacters.map((character, index) => (
           <div
             key={index}
-            className="card bg-base-100 w-96 shadow-xl mb-[5px] p-[20px]"
+            className="card bg-base-100 hover:bg-gray-200 hover:cursor-pointer w-96 shadow-xl mb-[5px] p-[20px]"
+            onClick={() => selectCharacter(character)}
           >
             <div className="flex">
               <img
-                className="mask mask-squircle mr-[15px]"
-                src="https://img.daisyui.com/images/stock/photo-1567653418876-5bb0e566e1c2.webp"
+                className="mask mask-squircle mr-[15px] w-[100px]"
+                src={character.thumbnailFileLink}
               />
               <div className="">
                 <h2 className="card-title">{character.name}</h2>
                 <p className="overflow-hidden text-ellipsis line-clamp-3">
                   {character.description}
                 </p>
-                <div className="card-actions absolute bottom-[20px] right-[20px]">
-                  <button className="btn btn-primary">Chat</button>
-                </div>
               </div>
             </div>
           </div>

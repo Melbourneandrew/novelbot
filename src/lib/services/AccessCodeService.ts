@@ -1,6 +1,7 @@
 import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_FORM_ACTIONS } from "react";
 import { AccessCode, IAccessCode } from "../models/AccessCode";
 import { ReaderEnteredCode } from "../models/ReaderEnteredCode";
+import { ICharacter, Character } from "../models/Character";
 
 export async function findAccessCodeById(
   id: string
@@ -39,6 +40,8 @@ export async function findAccessCodesByCharacter(
 export async function findAccessCodesByReaderId(
   readerId: string
 ): Promise<IAccessCode[] | null> {
+  //register character model
+  Character.init();
   const readerEnteredCodes = await ReaderEnteredCode.find({
     reader: readerId,
   })

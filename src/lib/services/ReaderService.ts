@@ -44,7 +44,9 @@ export async function findCharactersByReader(
   );
   console.log(accessCodes);
   const characters = accessCodes?.reduce((acc, accessCode) => {
-    return acc.concat(accessCode.characters as ICharacter[]);
+    return acc.concat(accessCode.characters.filter(
+      (character) => ((character as ICharacter).published)
+    ) as ICharacter[]);
   }, [] as ICharacter[]);
   return characters ?? [];
 }
