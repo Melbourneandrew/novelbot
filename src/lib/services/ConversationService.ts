@@ -93,12 +93,13 @@ export async function findConversationsByAuthor(
 
 export async function createConversation(
   readerId: string,
-  characterId: string
+  characterId: string,
+  messages: Message[]
 ): Promise<IConversation> {
   return await Conversation.create({
     reader: readerId,
     character: characterId,
-    messages: [],
+    messages,
   });
 }
 
@@ -156,100 +157,38 @@ export async function generateRandomConversation(characterId: string) {
     };
     messages.push(message);
   }
-  const conversation = await createConversation(randomReader._id, characterId);
+  const conversation = await createConversation(
+    randomReader._id,
+    characterId,
+    []
+  );
   await addMessagesToConversation(conversation._id, messages);
 }
 
-var words = [
-  "adventure",
-  "brave",
-  "curious",
-  "danger",
-  "eager",
-  "fearless",
-  "gallant",
-  "heroic",
-  "imagine",
-  "journey",
-  "kind",
-  "legend",
-  "mystery",
-  "noble",
-  "optimistic",
-  "puzzle",
-  "quest",
-  "rescue",
-  "secret",
-  "treasure",
-  "unite",
-  "victory",
-  "wonder",
-  "xenial",
-  "youthful",
-  "zealous",
-  "ancient",
-  "battle",
-  "courage",
-  "discover",
-  "enigma",
-  "fortune",
-  "glory",
-  "honor",
-  "inspire",
-  "justice",
-  "kingdom",
-  "loyal",
-  "magic",
-  "narrative",
-  "oath",
-  "prophecy",
-  "realm",
-  "saga",
-  "tale",
-  "unravel",
-  "valor",
-  "whisper",
-  "xenon",
-  "yearn",
-  "zenith",
-  "artifact",
-  "beacon",
-  "champion",
-  "destiny",
-  "epic",
-  "fable",
-  "guardian",
-  "haven",
-  "illusion",
-  "jewel",
-  "knight",
-  "lore",
-  "myth",
-  "nurture",
-  "oracle",
-  "pioneer",
-  "relic",
-  "sorcery",
-  "triumph",
-  "unveil",
-  "venture",
-  "wisdom",
-  "xylophone",
-  "yonder",
-  "zephyr",
-  "armor",
-  "bounty",
-  "conquer",
-  "dragon",
-  "empire",
-  "fate",
-  "giant",
-  "horizon",
-  "invincible",
-  "jungle",
-  "keystone",
-  "labyrinth",
-  "mystic",
-  "nebula",
-  "omen",
-];
+export async function buildSystemMessage(
+  character: ICharacter
+): Promise<Message> {
+  const systemMessage = `You are the character ${
+    character.name
+  } from the book ${(character.book as IBook).title}. You are described as ${
+    character.description
+  } and your backstory is ${
+    character.backstory
+  }. Respond to the user as if you were ${character.name}.`;
+
+  return {
+    role: "system",
+    content: systemMessage,
+  };
+}
+export async function getCompletion(messages: Message[]): Promise<Message[]> {
+  const wordCount = Math.floor(Math.random() * 100);
+  const newMessage =
+    generateRandomWords(wordCount) + " (these are random words)";
+
+  messages.push({
+    role: "assistant",
+    content: newMessage,
+  });
+  return messages;
+}

@@ -2,9 +2,21 @@
 import { useState, useEffect } from "react";
 import { ICharacter } from "@/lib/models/Character";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import { IConversation, Message } from "@/lib/models/Conversation";
+
+interface ChatRequestBody {
+  messages: Message[];
+  characterId?: string;
+  conversationId?: string;
+}
+
+interface ChatResponse {
+  conversation: IConversation;
+}
 
 export default function Chat() {
   const [isCharacterListLoading, setIsCharacterListLoading] = useState(true);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const [availableCharacters, setAvailableCharacters] = useState<ICharacter[]>(
@@ -12,39 +24,48 @@ export default function Chat() {
   );
   const [selectedCharacter, setSelectedCharacter] = useState<ICharacter>();
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
-  const [chatId, setChatId] = useState(null);
+  const [messages, setMessages] = useState<Message[]>([] as Message[]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
+  const [conversationId, setConversationId] = useState(null);
 
   const handleNewMessage = async (e) => {
     e.preventDefault();
-    // if (newMessage === "") return;
-    // console.log(newMessage);
-    // const updatedMessages = [
-    //   ...messages,
-    //   { role: "user", content: newMessage },
-    // ];
-    // let postBody = { message: newMessage };
-    // if (chatId) postBody.chatId = chatId;
-    // postBody = JSON.stringify(postBody);
+    if (newMessage === "") return;
+    console.log(newMessage);
+    const updatedMessages: Message[] = [
+      ...messages,
+      { role: "user", content: newMessage },
+    ];
+    let postBody: ChatRequestBody = { messages: updatedMessages };
+    if (conversationId) {
+      postBody.conversationId = conversationId;
+    } else {
+      postBody.characterId = selectedCharacter?._id;
+    }
 
-    // setMessages(updatedMessages);
-    // setNewMessage("");
-    // setLoading(true);
-    // console.log(postBody);
-    // const chatResponse = await fetch(apiURL + "/chat", {
-    //   method: "POST",
-    //   body: postBody,
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // });
-    // let chatCompletedMessages = await chatResponse.json();
-    // if (!chatId) setChatId(chatCompletedMessages._id);
-    // chatCompletedMessages = chatCompletedMessages.history;
-    // console.log(chatCompletedMessages);
-    // setLoading(false);
-    // setMessages(chatCompletedMessages);
-    // if (loading) return;
+    setMessages(updatedMessages);
+    setNewMessage("");
+    setIsChatLoading(true);
+    console.log(postBody);
+    let chatResponse = await fetch("/api/reader/chat", {
+      method: "POST",
+      body: JSON.stringify(postBody),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!chatResponse.ok) {
+      const err = await chatResponse.text();
+      console.log(err);
+      setErrorMessage(err);
+      setIsChatLoading(false);
+      return;
+    }
+
+    let { conversation }: ChatResponse = await chatResponse.json();
+    if (!conversationId) setConversationId(conversation._id);
+    console.log(conversation);
+    setIsChatLoading(false);
+    setMessages(conversation.messages);
   };
 
   const getAvailableCharacters = async () => {
@@ -75,7 +96,7 @@ export default function Chat() {
     setSelectedCharacter(character);
     setMessages([]);
     setChatId(null);
-  }
+  };
 
   useEffect(() => {
     getAvailableCharacters();
@@ -85,15 +106,17 @@ export default function Chat() {
     <div className="flex flex-row justify-center w-screen gap-[10px]">
       {/* CHARACTER AVATAR */}
       <div className="w-[400px] flex flex-col items-center">
-        {isCharacterListLoading ? <LoadingIndicator /> : 
-        <div>
-          <img
-            className="mask mask-squircle w-[160px] mb-auto"
-            src={selectedCharacter?.thumbnailFileLink}
-          />
-          <h2 className="text-center">{selectedCharacter?.name}</h2>
-        </div>
-}
+        {isCharacterListLoading ? (
+          <LoadingIndicator />
+        ) : (
+          <div>
+            <img
+              className="mask mask-squircle w-[160px] mb-auto"
+              src={selectedCharacter?.thumbnailFileLink}
+            />
+            <h2 className="text-center">{selectedCharacter?.name}</h2>
+          </div>
+        )}
       </div>
       {/* CHAT */}
       <div className="w-[800px] pt-3 flex flex-col h-screen items-center">
@@ -179,27 +202,30 @@ export default function Chat() {
       {/* CHARACTER SELECT */}
       <div className="w-[400px] flex flex-col items-center">
         <h1>Characters</h1>
-        {isCharacterListLoading ? <LoadingIndicator /> : 
-        availableCharacters.map((character, index) => (
-          <div
-            key={index}
-            className="card bg-base-100 hover:bg-gray-200 hover:cursor-pointer w-96 shadow-xl mb-[5px] p-[20px]"
-            onClick={() => selectCharacter(character)}
-          >
-            <div className="flex">
-              <img
-                className="mask mask-squircle mr-[15px] w-[100px]"
-                src={character.thumbnailFileLink}
-              />
-              <div className="">
-                <h2 className="card-title">{character.name}</h2>
-                <p className="overflow-hidden text-ellipsis line-clamp-3">
-                  {character.description}
-                </p>
+        {isCharacterListLoading ? (
+          <LoadingIndicator />
+        ) : (
+          availableCharacters.map((character, index) => (
+            <div
+              key={index}
+              className="card bg-base-100 hover:bg-gray-200 hover:cursor-pointer w-96 shadow-xl mb-[5px] p-[20px]"
+              onClick={() => selectCharacter(character)}
+            >
+              <div className="flex">
+                <img
+                  className="mask mask-squircle mr-[15px] w-[100px]"
+                  src={character.thumbnailFileLink}
+                />
+                <div className="">
+                  <h2 className="card-title">{character.name}</h2>
+                  <p className="overflow-hidden text-ellipsis line-clamp-3">
+                    {character.description}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
