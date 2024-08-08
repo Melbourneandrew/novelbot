@@ -4,7 +4,11 @@ import * as AuthorService from "@/lib/services/AuthorService";
 import { generateRandomWords } from "../util/random";
 import { makeR2PublicUrl } from "../util/r2";
 import { AccessCode } from "../models/AccessCode";
-import { Conversation } from "../models/Conversation";
+import {
+  IConversation,
+  Conversation,
+} from "../models/Conversation";
+import { CharacterWithStats } from "@/app/api/author/stats/route";
 
 export async function findCharacterById(
   id: string
@@ -36,23 +40,33 @@ export async function updateCharacter(
   characterBackstory: string
 ): Promise<ICharacter | null> {
   let updatePayload: any = {};
-  if (characterDescription) updatePayload.description = characterDescription;
-  if (characterBackstory) updatePayload.backstory = characterBackstory;
+  if (characterDescription)
+    updatePayload.description = characterDescription;
+  if (characterBackstory)
+    updatePayload.backstory = characterBackstory;
 
-  return await Character.findByIdAndUpdate(characterId, updatePayload, {
-    new: true,
-  });
+  return await Character.findByIdAndUpdate(
+    characterId,
+    updatePayload,
+    {
+      new: true,
+    }
+  );
 }
 
 export async function verifyCharacterBelongsToAuthor(
   characterId: string,
   authorId: string
 ): Promise<boolean> {
-  const character = await Character.findById(characterId).populate("book");
+  const character = await Character.findById(
+    characterId
+  ).populate("book");
   if (!character) {
     return false;
   }
-  const author = await AuthorService.findAuthorById(character.book.author);
+  const author = await AuthorService.findAuthorById(
+    character.book.author
+  );
   if (!author) {
     return false;
   }
@@ -63,7 +77,9 @@ export async function verifyCharacterBelongsToAuthor(
 export function deleteDialogue(characterId: string) {
   return Dialogue.deleteMany({ character: characterId });
 }
-export async function deleteCharacterAndTheirDialogue(characterId: string) {
+export async function deleteCharacterAndTheirDialogue(
+  characterId: string
+) {
   await Dialogue.deleteMany({ character: characterId });
   return await Character.findByIdAndDelete(characterId);
 }
@@ -99,7 +115,9 @@ export async function generateRandomCharacters(bookId: string) {
   ];
   const characters = [];
   for (let i = 0; i < 5; i++) {
-    const randomIndex = Math.floor(Math.random() * names.length);
+    const randomIndex = Math.floor(
+      Math.random() * names.length
+    );
     const name = names[randomIndex];
     const character = new Character({
       name: name,
@@ -129,7 +147,9 @@ export async function generateRandomDialogue(
   }
   return dialogueLines;
 }
-export async function generateRandomDescription(characterId: string) {
+export async function generateRandomDescription(
+  characterId: string
+) {
   console.log("Generating random description");
   const randomDescription = generateRandomWords(40);
   await Character.findByIdAndUpdate(
@@ -138,7 +158,9 @@ export async function generateRandomDescription(characterId: string) {
     { new: true }
   );
 }
-export async function generateRandomBackstory(characterId: string) {
+export async function generateRandomBackstory(
+  characterId: string
+) {
   console.log("Generating random backstory");
   const randomBackstory = generateRandomWords(40);
   await Character.findByIdAndUpdate(
@@ -148,7 +170,8 @@ export async function generateRandomBackstory(characterId: string) {
   );
 }
 
-const CLOUDFLARE_R2_PUBLIC_URL = process.env.CLOUDFLARE_R2_PUBLIC_URL;
+const CLOUDFLARE_R2_PUBLIC_URL =
+  process.env.CLOUDFLARE_R2_PUBLIC_URL;
 if (!CLOUDFLARE_R2_PUBLIC_URL) {
   throw new Error("CLOUDFLARE_R2_PUBLIC_URL must be set");
 }
@@ -167,8 +190,12 @@ export async function updateCharacterThumbnail(
     }
   );
 }
-export async function removeCharacter(characterId: string): Promise<boolean> {
-  const character = await Character.findByIdAndDelete(characterId);
+export async function removeCharacter(
+  characterId: string
+): Promise<boolean> {
+  const character = await Character.findByIdAndDelete(
+    characterId
+  );
   if (!character) {
     return false;
   }
@@ -219,11 +246,45 @@ export async function publishCharacter(
 export async function unpublishCharacter(
   characterId: string
 ): Promise<[boolean, string]> {
-  const character = await Character.findByIdAndUpdate(characterId, {
-    published: false,
-  });
+  const character = await Character.findByIdAndUpdate(
+    characterId,
+    {
+      published: false,
+    }
+  );
   if (!character) {
     return [false, "Character not found"];
   }
   return [true, ""];
+}
+
+export async function findCharactersWithStatsByAuthor(
+  authorId: string
+): Promise<CharacterWithStats[]> {
+  const characters = await findCharactersByAuthor(authorId);
+  const conversations = await Conversation.find({
+    character: { $in: characters.map((c) => c._id) },
+  });
+  const characterStats = characters.map((character) => {
+    const characterConversations = conversations.filter(
+      (conversation) =>
+        conversation.character.toString() ===
+        character._id.toString()
+    );
+    const totalConversations = characterConversations.length;
+    const totalMessages = characterConversations.reduce(
+      (acc, conversation) => {
+        return acc + conversation.messages.length;
+      },
+      0
+    );
+    const averageConversationLength =
+      totalMessages / totalConversations;
+    return {
+      ...character.toObject(),
+      totalConversations,
+      averageConversationLength,
+    };
+  });
+  return characterStats;
 }

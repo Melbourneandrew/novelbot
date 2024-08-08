@@ -1,20 +1,37 @@
 "use client";
+import { useState, useEffect } from "react";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
 import { ICharacter } from "@/lib/models/Character";
-
-export type AuthorStatBoardData = {
-  readers: number;
-  conversations: number;
-  totalMessages: number;
-  averageConvoLength: number;
-  characterStats: {
-    character: ICharacter;
-    totalConvos: number;
-    averageConvoLength: number;
-  }[];
-};
+import { CharacterWithStats } from "../api/author/stats/route";
+import { AuthorStatBoardData } from "../api/author/stats/route";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default function AuthorHomeView() {
+  const [authorStats, setAuthorStats] =
+    useState<AuthorStatBoardData>({} as AuthorStatBoardData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const fetchStats = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/author/stats");
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      setErrorMessage(error);
+      setIsLoading(false);
+      return;
+    }
+    const data = await response.json();
+    console.log(data);
+    setIsLoading(false);
+    setAuthorStats(data);
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <>
       <h1 className="text-left">All-Time Stats</h1>
@@ -110,7 +127,9 @@ export default function AuthorHomeView() {
         {/* VIEW ALL HISTORY */}
         <div className="stat">
           <div className="stat-title">Chat History</div>
-          <ButtonWithLoading className="btn btn-primary">View All</ButtonWithLoading>
+          <ButtonWithLoading className="btn btn-primary">
+            View All
+          </ButtonWithLoading>
         </div>
       </div>
       <h1 className="text-left">Character Stats</h1>
@@ -118,7 +137,10 @@ export default function AuthorHomeView() {
         {Array(10)
           .fill(0)
           .map((_, index) => (
-            <div className="card bg-base-100 w-[384px] shadow-xl flex-shrink-0">
+            <div
+              key={index}
+              className="card bg-base-100 w-[384px] shadow-xl flex-shrink-0"
+            >
               <figure>
                 <img
                   src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
@@ -130,7 +152,9 @@ export default function AuthorHomeView() {
                 <p>Total Convos: 100</p>
                 <p>Avg. Convo Length: 10</p>
                 <div className="card-actions justify-end">
-                  <ButtonWithLoading className="btn btn-primary">View History</ButtonWithLoading>
+                  <ButtonWithLoading className="btn btn-primary">
+                    View History
+                  </ButtonWithLoading>
                 </div>
               </div>
             </div>

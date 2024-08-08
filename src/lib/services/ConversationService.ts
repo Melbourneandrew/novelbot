@@ -9,6 +9,7 @@ import { Author, IAuthor } from "@/lib/models/Author";
 import * as CharacterService from "@/lib/services/CharacterService";
 import * as BookService from "@/lib/services/BookService";
 import * as AuthorService from "@/lib/services/AuthorService";
+import * as ReaderService from "@/lib/services/ReaderService";
 import { IBook } from "@/lib/models/Book";
 import { generateRandomWords } from "../util/random";
 
@@ -29,7 +30,8 @@ export async function findConversations(
     queryFilters.character = characterId;
   }
   if (bookId) {
-    const characters = await CharacterService.findCharactersByBook(bookId);
+    const characters =
+      await CharacterService.findCharactersByBook(bookId);
     const characterIds = characters.map(
       (character: ICharacter) => character._id
     );
@@ -87,8 +89,12 @@ export async function findConversationsByAuthor(
   authorId: string
 ): Promise<IConversation[]> {
   const characters = await Character.find({ author: authorId });
-  const characterIds = characters.map((character: ICharacter) => character._id);
-  return await Conversation.find({ character: { $in: characterIds } });
+  const characterIds = characters.map(
+    (character: ICharacter) => character._id
+  );
+  return await Conversation.find({
+    character: { $in: characterIds },
+  });
 }
 
 export async function createConversation(
@@ -106,13 +112,17 @@ export async function createConversation(
 export async function countConversationsByCharacter(
   characterId: string
 ): Promise<number> {
-  return await Conversation.countDocuments({ character: characterId });
+  return await Conversation.countDocuments({
+    character: characterId,
+  });
 }
 
 export async function countConversationsByReader(
   readerId: string
 ): Promise<number> {
-  return await Conversation.countDocuments({ reader: readerId });
+  return await Conversation.countDocuments({
+    reader: readerId,
+  });
 }
 
 export async function addMessagesToConversation(
@@ -127,18 +137,26 @@ export async function addMessagesToConversation(
 }
 
 export async function countConversationsByBook(bookId: string) {
-  const characters = await Character.find({ book: bookId }).lean();
+  const characters = await Character.find({
+    book: bookId,
+  }).lean();
   const characterIds = characters.map(
     (character: Partial<ICharacter>) => character._id
   );
-  return Conversation.countDocuments({ character: { $in: characterIds } });
+  return Conversation.countDocuments({
+    character: { $in: characterIds },
+  });
 }
 
-export async function generateRandomConversation(characterId: string) {
+export async function generateRandomConversation(
+  characterId: string
+) {
   console.log("Generating random conversation");
   const readers: IReader[] = await Reader.find();
   if (readers.length == 0) {
-    console.log("Can't generate conversation, there are no reader documents!");
+    console.log(
+      "Can't generate conversation, there are no reader documents!"
+    );
   }
   const randomReader: IReader =
     readers[Math.floor(Math.random() * readers.length)];
@@ -170,7 +188,9 @@ export async function buildSystemMessage(
 ): Promise<Message> {
   const systemMessage = `You are the character ${
     character.name
-  } from the book ${(character.book as IBook).title}. You are described as ${
+  } from the book ${
+    (character.book as IBook).title
+  }. You are described as ${
     character.description
   } and your backstory is ${
     character.backstory
@@ -181,14 +201,47 @@ export async function buildSystemMessage(
     content: systemMessage,
   };
 }
-export async function getCompletion(messages: Message[]): Promise<Message[]> {
+export async function getCompletion(
+  messages: Message[]
+): Promise<Message[]> {
   const wordCount = Math.floor(Math.random() * 100);
   const newMessage =
-    generateRandomWords(wordCount) + " (these are random words)";
+    generateRandomWords(wordCount) +
+    " (these are random words)";
 
   messages.push({
     role: "assistant",
     content: newMessage,
   });
   return messages;
+}
+
+export async function conversationStatsByAuthor(
+  authorId: string
+): Promise<{
+  conversationCount: number;
+  totalMessages: number;
+  averageConversationLength: number;
+}> {
+  const readers = await ReaderService.findReadersByAuthor(
+    authorId
+  );
+  const conversations = await Conversation.find({
+    reader: { $in: readers.map((reader) => reader._id) },
+  });
+
+  const conversationCount = conversations.length;
+
+  const totalMessages = conversations.reduce(
+    (acc, conversation) => acc + conversation.messages.length,
+    0
+  );
+  const averageConversationLength =
+    totalMessages / conversationCount;
+
+  return {
+    conversationCount,
+    totalMessages,
+    averageConversationLength,
+  };
 }

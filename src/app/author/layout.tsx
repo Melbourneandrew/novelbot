@@ -41,6 +41,12 @@ export default function DashboardNavbarLayout({
             👓 Readers
           </a>
           <a
+            href="/author/readers/codes"
+            className="py-2 border-t border-b text-left w-[100%] text-xl no-underline hover:bg-gray-200"
+          >
+            🔐 Access Codes
+          </a>
+          <a
             href="/author/conversations"
             className="py-2 border-t border-b text-left w-[100%] text-xl no-underline hover:bg-gray-200"
           >

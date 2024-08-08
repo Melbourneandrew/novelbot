@@ -7,6 +7,11 @@ import {
   ReaderEnteredCode,
   IReaderEnteredCode,
 } from "@/lib/models/ReaderEnteredCode";
+import {
+  Conversation,
+  IConversation,
+} from "@/lib/models/Conversation";
+import * as ReaderService from "@/lib/services/ReaderService";
 
 export async function findAuthorById(
   id: string
