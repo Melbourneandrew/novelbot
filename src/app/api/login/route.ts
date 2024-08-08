@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import * as UserService from "@/lib/services/UserService";
+import * as AuthorService from "@/lib/services/AuthorService";
+import * as ReaderService from "@/lib/services/ReaderService";
 
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
@@ -49,7 +51,16 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7, // One week
       path: "/",
     });
-    return new NextResponse("Logged in", { status: 200 });
+
+    const author = await AuthorService.findAuthorByUser(user._id);
+    if (author) {
+      return NextResponse.json({ userIs: "author" });
+    }
+
+    const reader = await ReaderService.findReaderByUserId(user._id);
+    if (reader) {
+      return NextResponse.json({ userIs: "reader" });
+    }
   } catch (error) {
     console.log(error);
     return new NextResponse("Internal Server Error", {

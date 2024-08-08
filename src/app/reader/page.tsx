@@ -23,7 +23,7 @@ export default function Chat() {
   );
   const [selectedCharacter, setSelectedCharacter] = useState<ICharacter>();
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([] as Message[]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
+  const [messages, setMessages] = useState<Message[]>([] as Message[]);
   const [conversationId, setConversationId] = useState(null);
 
   const handleNewMessage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +96,7 @@ export default function Chat() {
   const selectCharacter = async (character: ICharacter) => {
     setSelectedCharacter(character);
     setMessages([]);
-    setChatId(null);
+    setConversationId(null);
   };
 
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function Chat() {
       </div>
       {/* CHAT */}
       <div className="w-[800px] pt-3 flex flex-col h-screen items-center">
-        {/* Moral Code Header w Link */}
+        {/* Chat Header w Link */}
         <div className="flex items-center justify-center">
           <div className="font-bold">
             Chat with {selectedCharacter?.name} from the Book! &nbsp;
@@ -141,14 +141,11 @@ export default function Chat() {
           <div className="chat chat-start">
             <div className="chat-image avatar">
               <div className="w-10 rounded-full">
-                <img
-                  src="https://m.media-amazon.com/images/I/51R7C0wiWeL.jpg"
-                  alt=""
-                />
+                <img src={selectedCharacter?.thumbnailFileLink} alt="" />
               </div>
             </div>
             <div className="chat-bubble bg-[#009781] text-white">
-              Hello! I am The Character.
+              Hello! I am {selectedCharacter?.name}.
             </div>
           </div>
           {messages.map((message, index) => {
@@ -165,10 +162,7 @@ export default function Chat() {
                     {message.role == "user" ? (
                       <img src="https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg" />
                     ) : (
-                      <img
-                        src="https://m.media-amazon.com/images/I/51R7C0wiWeL.jpg"
-                        alt=""
-                      />
+                      <img src={selectedCharacter?.thumbnailFileLink} alt="" />
                     )}
                   </div>
                 </div>

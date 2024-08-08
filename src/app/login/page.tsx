@@ -5,9 +5,7 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.target as HTMLFormElement;
     const email = form.email.value;
@@ -19,15 +17,23 @@ export default function Login() {
       body: JSON.stringify({ email, password }),
     });
     setIsLoading(false);
-    if (loginResponse.ok) {
-      console.log("Logged in");
-      window.location.href = "/protected/dashboard";
-    } else {
+    if (!loginResponse.ok) {
       const error = await loginResponse.text();
       console.error(error);
       setErrorMessage(error);
+      return;
+    }
+    const { userIs } = await loginResponse.json();
+    console.log(userIs);
+    if (userIs === "reader") {
+      window.location.href = "/reader";
+    } else if (userIs === "author") {
+      window.location.href = "/author";
+    } else {
+      setErrorMessage("User is of unknown type. Please contact support.");
     }
   };
+
   return (
     <div className="flex flex-col items-center">
       <h1>Login</h1>
@@ -49,9 +55,7 @@ export default function Login() {
           required
           current-password="true"
         />
-        {errorMessage && (
-          <p className="text-red-500">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
         {isLoading ? (
           <LoadingIndicator />
         ) : (
