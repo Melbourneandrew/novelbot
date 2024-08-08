@@ -5,6 +5,7 @@ import { IReader } from "./Reader";
 interface Message {
   role: "user" | "assistant" | "system";
   content: string;
+  systemPromptAtTimeOfMessage?: string;
 }
 
 interface IConversation extends Document {
@@ -38,6 +39,10 @@ const conversationSchema: Schema = new Schema(
           content: {
             type: String,
             required: true,
+          },
+          systemPromptAtTimeOfMessage: {
+            type: String,
+            required: false,
           },
         },
       ],

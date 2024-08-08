@@ -11,20 +11,17 @@ import { IConversation } from "@/lib/models/Conversation";
 export const POST = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
-    console.log("Protected route called");
+    console.log("Chat route called");
     const user = request.user;
 
-    const reader = await ReaderService.findReaderByUserId(
-      user._id
-    );
+    const reader = await ReaderService.findReaderByUserId(user._id);
     if (!reader) {
       return new NextResponse("Reader not found", {
         status: 401,
       });
     }
 
-    const { characterId, conversationId, messages } =
-      await request.json();
+    const { characterId, conversationId, messages } = await request.json();
 
     if (!messages) {
       return new NextResponse("Messages are required", {
@@ -36,28 +33,33 @@ export const POST = ProtectedRoute(
     let character: ICharacter | null;
 
     if (!conversationId) {
-      character = await CharacterService.findCharacterById(
-        characterId
+      console.log(
+        "No conversation Id on request. Creating a new conversation..."
       );
+      character = await CharacterService.findCharacterById(characterId);
       if (!character) {
         return new NextResponse("Character not found", {
           status: 404,
         });
       }
-      const systemMessage =
-        await ConversationService.buildSystemMessage(character);
+      const systemMessage = await ConversationService.buildSystemMessage(
+        character
+      );
 
-      conversation =
-        await ConversationService.createConversation(
-          reader._id,
-          character._id,
-          [systemMessage, ...messages]
-        );
+      messages.unshift(systemMessage);
+
+      conversation = await ConversationService.createConversation(
+        reader._id,
+        character._id,
+        messages
+      );
     } else {
-      conversation =
-        await ConversationService.findConversationById(
-          conversationId
-        );
+      console.log(
+        "Conversation Id present on request. Continuing conversation..."
+      );
+      conversation = await ConversationService.findConversationById(
+        conversationId
+      );
       if (!conversation) {
         return new NextResponse("Conversation not found", {
           status: 404,
@@ -67,11 +69,10 @@ export const POST = ProtectedRoute(
 
     await ConversationService.getCompletion(messages);
 
-    conversation =
-      await ConversationService.addMessagesToConversation(
-        conversation._id,
-        messages
-      );
+    conversation = await ConversationService.addMessagesToConversation(
+      conversation._id,
+      messages
+    );
 
     return NextResponse.json({
       conversation,

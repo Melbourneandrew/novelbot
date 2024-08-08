@@ -1,15 +1,18 @@
 "use client";
 
-export default function BasicModal() {
-  /**
-   * Enable this modal with
-   * <button className="btn" onClick={()=>(document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}>open modal</button>
-   */
+interface SystemPromptModalProps {
+  systemPrompt: string;
+}
+export default function SystemPromptModal({
+  systemPrompt,
+}: SystemPromptModalProps) {
   return (
-    <dialog id="my_modal_1" className="modal">
+    <dialog id="system_prompt_modal" className="modal">
       <div className="modal-box">
-        <h3 className="font-bold text-lg">Hello!</h3>
-        <p className="py-4">Press ESC key or click the button below to close</p>
+        <h3 className="font-bold text-lg">
+          System Prompt at time of character message:
+        </h3>
+        <p className="py-4">{systemPrompt}</p>
         <div className="modal-action">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}

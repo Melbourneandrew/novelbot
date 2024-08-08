@@ -30,8 +30,7 @@ export async function findConversations(
     queryFilters.character = characterId;
   }
   if (bookId) {
-    const characters =
-      await CharacterService.findCharactersByBook(bookId);
+    const characters = await CharacterService.findCharactersByBook(bookId);
     const characterIds = characters.map(
       (character: ICharacter) => character._id
     );
@@ -89,9 +88,7 @@ export async function findConversationsByAuthor(
   authorId: string
 ): Promise<IConversation[]> {
   const characters = await Character.find({ author: authorId });
-  const characterIds = characters.map(
-    (character: ICharacter) => character._id
-  );
+  const characterIds = characters.map((character: ICharacter) => character._id);
   return await Conversation.find({
     character: { $in: characterIds },
   });
@@ -148,15 +145,11 @@ export async function countConversationsByBook(bookId: string) {
   });
 }
 
-export async function generateRandomConversation(
-  characterId: string
-) {
+export async function generateRandomConversation(characterId: string) {
   console.log("Generating random conversation");
   const readers: IReader[] = await Reader.find();
   if (readers.length == 0) {
-    console.log(
-      "Can't generate conversation, there are no reader documents!"
-    );
+    console.log("Can't generate conversation, there are no reader documents!");
   }
   const randomReader: IReader =
     readers[Math.floor(Math.random() * readers.length)];
@@ -172,6 +165,7 @@ export async function generateRandomConversation(
     const message: Message = {
       role: i % 2 == 0 ? "user" : "assistant",
       content: randomWords,
+      systemPromptAtTimeOfMessage: i % 2 == 0 ? "" : generateRandomWords(15),
     };
     messages.push(message);
   }
@@ -188,9 +182,7 @@ export async function buildSystemMessage(
 ): Promise<Message> {
   const systemMessage = `You are the character ${
     character.name
-  } from the book ${
-    (character.book as IBook).title
-  }. You are described as ${
+  } from the book ${(character.book as IBook).title}. You are described as ${
     character.description
   } and your backstory is ${
     character.backstory
@@ -201,31 +193,25 @@ export async function buildSystemMessage(
     content: systemMessage,
   };
 }
-export async function getCompletion(
-  messages: Message[]
-): Promise<Message[]> {
+export async function getCompletion(messages: Message[]): Promise<Message[]> {
   const wordCount = Math.floor(Math.random() * 100);
   const newMessage =
-    generateRandomWords(wordCount) +
-    " (these are random words)";
+    generateRandomWords(wordCount) + " (these are random words)";
 
   messages.push({
     role: "assistant",
     content: newMessage,
+    systemPromptAtTimeOfMessage: messages[0].content,
   });
   return messages;
 }
 
-export async function conversationStatsByAuthor(
-  authorId: string
-): Promise<{
+export async function conversationStatsByAuthor(authorId: string): Promise<{
   conversationCount: number;
   totalMessages: number;
   averageConversationLength: number;
 }> {
-  const readers = await ReaderService.findReadersByAuthor(
-    authorId
-  );
+  const readers = await ReaderService.findReadersByAuthor(authorId);
   const conversations = await Conversation.find({
     reader: { $in: readers.map((reader) => reader._id) },
   });
@@ -236,8 +222,7 @@ export async function conversationStatsByAuthor(
     (acc, conversation) => acc + conversation.messages.length,
     0
   );
-  const averageConversationLength =
-    totalMessages / conversationCount;
+  const averageConversationLength = totalMessages / conversationCount;
 
   return {
     conversationCount,

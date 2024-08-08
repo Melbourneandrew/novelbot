@@ -2,10 +2,7 @@
 import { useState, useEffect } from "react";
 import { ICharacter } from "@/lib/models/Character";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import {
-  IConversation,
-  Message,
-} from "@/lib/models/Conversation";
+import { IConversation, Message } from "@/lib/models/Conversation";
 
 interface ChatRequestBody {
   messages: Message[];
@@ -17,24 +14,19 @@ interface ChatResponse {
 }
 
 export default function Chat() {
-  const [isCharacterListLoading, setIsCharacterListLoading] =
-    useState(true);
+  const [isCharacterListLoading, setIsCharacterListLoading] = useState(true);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const [availableCharacters, setAvailableCharacters] =
-    useState<ICharacter[]>([] as ICharacter[]);
-  const [selectedCharacter, setSelectedCharacter] =
-    useState<ICharacter>();
+  const [availableCharacters, setAvailableCharacters] = useState<ICharacter[]>(
+    [] as ICharacter[]
+  );
+  const [selectedCharacter, setSelectedCharacter] = useState<ICharacter>();
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>(
-    [] as Message[]
-  ); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
+  const [messages, setMessages] = useState<Message[]>([] as Message[]); // [{message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}, {message: 'hello', sender: 'me'}
   const [conversationId, setConversationId] = useState(null);
 
-  const handleNewMessage = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleNewMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newMessage === "") return;
     console.log(newMessage);
@@ -54,7 +46,7 @@ export default function Chat() {
     setMessages(updatedMessages);
     setNewMessage("");
     setIsChatLoading(true);
-    console.log(postBody);
+
     let chatResponse = await fetch("/api/reader/chat", {
       method: "POST",
       body: JSON.stringify(postBody),
@@ -70,8 +62,7 @@ export default function Chat() {
       return;
     }
 
-    let { conversation }: ChatResponse =
-      await chatResponse.json();
+    let { conversation }: ChatResponse = await chatResponse.json();
     if (!conversationId) setConversationId(conversation._id);
     console.log(conversation);
     setIsChatLoading(false);
@@ -80,15 +71,12 @@ export default function Chat() {
 
   const getAvailableCharacters = async () => {
     setIsCharacterListLoading(true);
-    const characterResponse = await fetch(
-      "/api/reader/characters",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const characterResponse = await fetch("/api/reader/characters", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!characterResponse.ok) {
       const err = await characterResponse.text();
       console.log(err);
@@ -127,9 +115,7 @@ export default function Chat() {
               className="mask mask-squircle w-[160px] mb-auto"
               src={selectedCharacter?.thumbnailFileLink}
             />
-            <h2 className="text-center">
-              {selectedCharacter?.name}
-            </h2>
+            <h2 className="text-center">{selectedCharacter?.name}</h2>
           </div>
         )}
       </div>
@@ -138,8 +124,7 @@ export default function Chat() {
         {/* Moral Code Header w Link */}
         <div className="flex items-center justify-center">
           <div className="font-bold">
-            Chat with {selectedCharacter?.name} from the Book!
-            &nbsp;
+            Chat with {selectedCharacter?.name} from the Book! &nbsp;
           </div>
           <div>
             More info here:{" "}
@@ -171,9 +156,7 @@ export default function Chat() {
             return (
               <div
                 className={
-                  message.role == "user"
-                    ? "chat chat-end"
-                    : "chat chat-start"
+                  message.role == "user" ? "chat chat-end" : "chat chat-start"
                 }
                 key={index}
               >
@@ -212,9 +195,7 @@ export default function Chat() {
               placeholder="Send a message to The Character"
               className="input input-bordered w-full max-w"
               value={newMessage}
-              onChange={(event) =>
-                setNewMessage(event.target.value)
-              }
+              onChange={(event) => setNewMessage(event.target.value)}
             />
           </form>
         </div>
@@ -237,9 +218,7 @@ export default function Chat() {
                   src={character.thumbnailFileLink}
                 />
                 <div className="">
-                  <h2 className="card-title">
-                    {character.name}
-                  </h2>
+                  <h2 className="card-title">{character.name}</h2>
                   <p className="overflow-hidden text-ellipsis line-clamp-3">
                     {character.description}
                   </p>
