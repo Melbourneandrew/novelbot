@@ -5,6 +5,7 @@ import { ICharacter } from "@/lib/models/Character";
 import XIcon from "../icons/XIcon";
 import { generateReaderAccessCode } from "@/lib/util/random";
 import ButtonWithLoading from "../ButtonWithLoading";
+import ErrorMessage from "../ErrorMessage";
 
 interface AccessCodeModalProps {
   preSelectedCharacter?: ICharacter;
@@ -254,9 +255,8 @@ export default function CreateAccessCodeModal({
             />
           </div>
         </div>
-        {errorMessage && (
-          <p className="text-red-500 text-center mt-[15px]">{errorMessage}</p>
-        )}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
+
         <div className="modal-action">
           <ButtonWithLoading className="btn btn-primary" action={submitCode}>
             Create

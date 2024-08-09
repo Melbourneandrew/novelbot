@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import LoadingIndicator from "../LoadingIndicator";
+import ErrorMessage from "../ErrorMessage";
 interface RemoveModalProps {
   headerText: string;
   removeRoute: string;
@@ -49,7 +50,7 @@ export default function RemoveModal({
           This operation is PERMANENT and cannot be undone. Are you sure you
           want to proceed?
         </p>
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
         <div className="modal-action justify-center">
           {isLoading ? (
             <LoadingIndicator />

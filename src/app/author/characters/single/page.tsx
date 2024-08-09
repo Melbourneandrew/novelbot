@@ -10,6 +10,7 @@ import RemoveModal from "@/components/modals/RemoveModal";
 import DialogueTable from "@/components/tables/DialogueTable";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
 import CreateAccessCodeModal from "@/components/modals/CreateAccessCodeModal";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function AuthorCharacterSingleView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -338,7 +339,7 @@ export default function AuthorCharacterSingleView() {
           <DialogueTable dialogue={dialogue} />
         </div>
       )}
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
       <UploadThumbnailModal
         headerText={"Upload a new thumbnail image for this character."}
         uploadRoute={"/api/author/characters/thumbnail"}

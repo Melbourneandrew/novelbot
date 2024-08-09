@@ -133,7 +133,7 @@ export default function StarterTemplateView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
       <SystemPromptModal systemPrompt={systemPrompt} />
     </div>
   );

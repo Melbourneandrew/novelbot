@@ -8,6 +8,7 @@ import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
+import ErrorMessage from "@/components/ErrorMessage";
 export default function AuthorBookSingleView() {
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
@@ -151,7 +152,7 @@ export default function AuthorBookSingleView() {
         removeRoute={"/api/author/books/remove?bookId="}
         documentId={bookId as string}
       />
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
     </>
   );
 }

@@ -6,16 +6,17 @@ import { IConversation } from "@/lib/models/Conversation";
 import { ICharacter } from "@/lib/models/Character";
 import { IReader } from "@/lib/models/Reader";
 import DropdownIcon from "@/components/icons/DropdownIcon";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function ConversationsView() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [conversations, setConversations] = useState<
-    IConversation[]
-  >([] as IConversation[]);
-  const [characterOptions, setCharacterOptions] = useState<
-    ICharacter[]
-  >([] as ICharacter[]);
+  const [conversations, setConversations] = useState<IConversation[]>(
+    [] as IConversation[]
+  );
+  const [characterOptions, setCharacterOptions] = useState<ICharacter[]>(
+    [] as ICharacter[]
+  );
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
   const characterId = searchParams.get("characterId");
@@ -49,15 +50,12 @@ export default function ConversationsView() {
   };
 
   const fetchCharacters = async () => {
-    const response = await fetch(
-      "/api/author/characters/list",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch("/api/author/characters/list", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (!response.ok) {
       const error = await response.text();
       console.error(error);
@@ -77,9 +75,7 @@ export default function ConversationsView() {
 
   return (
     <div>
-      <h1 className="text-4xl mb-[20px] text-left">
-        Conversations
-      </h1>
+      <h1 className="text-4xl mb-[20px] text-left">Conversations</h1>
 
       {isLoading ? (
         <LoadingIndicator />
@@ -89,11 +85,7 @@ export default function ConversationsView() {
           <div className="flex flex-row gap-2">
             {/* Character Filter */}
             <div className="dropdown">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn m-1"
-              >
+              <div tabIndex={0} role="button" className="btn m-1">
                 Characters <DropdownIcon />
               </div>
               <ul
@@ -119,9 +111,7 @@ export default function ConversationsView() {
                   <th></th>
                   <th>Character</th>
                   <th>Reader</th>
-                  <th className="text-center">
-                    Conversation Length
-                  </th>
+                  <th className="text-center">Conversation Length</th>
                   <th>Date</th>
                 </tr>
               </thead>
@@ -138,15 +128,10 @@ export default function ConversationsView() {
                   >
                     <th>{index + 1}</th>
                     <td>
-                      {(conversation.character as ICharacter)
-                        ?.name ?? "[deleted]"}
+                      {(conversation.character as ICharacter)?.name ??
+                        "[deleted]"}
                     </td>
-                    <td>
-                      {
-                        (conversation.reader as IReader)
-                          .displayName
-                      }
-                    </td>
+                    <td>{(conversation.reader as IReader).displayName}</td>
                     <td className="text-center">
                       {conversation.messages.length}
                     </td>
@@ -162,9 +147,7 @@ export default function ConversationsView() {
           </div>
         </div>
       )}
-      {errorMessage && (
-        <p className="text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
     </div>
   );
 }

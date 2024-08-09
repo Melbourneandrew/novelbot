@@ -4,6 +4,7 @@ import { IUser } from "@/lib/models/User";
 import { useRouter } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import PlusIcon from "@/components/icons/PlusIcon";
+import ErrorMessage from "@/components/ErrorMessage";
 export default function AdminUsers() {
   const router = useRouter();
   const [users, setUsers] = useState<IUser[]>([]);
@@ -101,7 +102,9 @@ export default function AdminUsers() {
           >
             Submit
           </button>
-          {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+          {errorMessage && (
+            <ErrorMessage className="mt-4" message={errorMessage} />
+          )}
         </div>
       </dialog>
     </div>

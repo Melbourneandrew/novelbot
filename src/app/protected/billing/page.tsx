@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ISubscription } from "@/lib/models/Subscription";
 import { IPurchase } from "@/lib/models/Purchase";
 import Stripe from "stripe";
+import ErrorMessage from "@/components/ErrorMessage";
 
 interface SubscriptionPlanResponse {
   activeSubscription: ISubscription;
@@ -13,14 +14,11 @@ interface SubscriptionPlanResponse {
 export default function BillingPage() {
   const [subscriptionPlan, setSubscriptionPlan] =
     useState<SubscriptionPlanResponse>();
-  const [paymentHistory, setPaymentHistory] =
-    useState<IPurchase[]>();
+  const [paymentHistory, setPaymentHistory] = useState<IPurchase[]>();
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const fetchSubscriptionPlan = async () => {
-    const response = await fetch(
-      "/api/billing/active-subscription"
-    );
+    const response = await fetch("/api/billing/active-subscription");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -34,9 +32,7 @@ export default function BillingPage() {
   };
 
   const fetchPaymentHistory = async () => {
-    const response = await fetch(
-      "/api/billing/payment-history"
-    );
+    const response = await fetch("/api/billing/payment-history");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -51,9 +47,7 @@ export default function BillingPage() {
 
   const cancelSubscription = async () => {
     console.log("Cancelling subscription");
-    const response = await fetch(
-      "/api/billing/cancel-subscription"
-    );
+    const response = await fetch("/api/billing/cancel-subscription");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -66,9 +60,7 @@ export default function BillingPage() {
   };
 
   const updatePaymentMethod = async () => {
-    const response = await fetch(
-      "/api/stripe/create-update-payment-session"
-    );
+    const response = await fetch("/api/stripe/create-update-payment-session");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -78,10 +70,7 @@ export default function BillingPage() {
 
     const data = await response.json();
     window.location.href = data.url;
-    console.log(
-      "Payment method update checkout session created: ",
-      data
-    );
+    console.log("Payment method update checkout session created: ", data);
   };
 
   useEffect(() => {
@@ -91,9 +80,8 @@ export default function BillingPage() {
   return (
     <div>
       <h1>Billing</h1>
-      {errorMessage && (
-        <div className="text-red-500">{errorMessage}</div>
-      )}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
+
       {/* Plan Info */}
       <div className="flex items-center gap-2">
         {/* Plan title */}
@@ -112,8 +100,8 @@ export default function BillingPage() {
             <div className="stat-value">
               $
               {(
-                (subscriptionPlan?.stripeSubscriptionObject
-                  ?.items?.data[0]?.plan?.amount || 0) / 100
+                (subscriptionPlan?.stripeSubscriptionObject?.items?.data[0]
+                  ?.plan?.amount || 0) / 100
               ).toFixed(2)}
             </div>
           </div>
@@ -135,11 +123,9 @@ export default function BillingPage() {
           <div className="stat">
             <div className="stat-title">Card Info</div>
             <div className="stat-value">
-              {subscriptionPlan?.stripePaymentMethod?.card
-                ?.brand +
+              {subscriptionPlan?.stripePaymentMethod?.card?.brand +
                 " " +
-                subscriptionPlan?.stripePaymentMethod?.card
-                  ?.last4}
+                subscriptionPlan?.stripePaymentMethod?.card?.last4}
             </div>
           </div>
         </div>

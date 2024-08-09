@@ -18,11 +18,7 @@ export default function Pricing() {
         price: {
           unit_amount: 0,
         },
-        features: [
-          "Renews at 29.99/mo",
-          "Feature 2",
-          "Feature 3",
-        ],
+        features: ["Renews at 29.99/mo", "Feature 2", "Feature 3"],
         default_price: "TRIAL",
       },
       ...res,
@@ -52,10 +48,10 @@ export default function Pricing() {
         "Content-Type": "application/json",
       },
     });
-    if(!response.ok){
+    if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
-      console.error("Error creating session: ",err);
+      console.error("Error creating session: ", err);
       return;
     }
     const data = await response.json();
@@ -70,9 +66,7 @@ export default function Pricing() {
         {plans.map((plan, i) => (
           <div className="card w-80 glass" key={i}>
             <div className="card-body items-center text-center">
-              <h2 className="card-title text-[25px]">
-                {plan.name}
-              </h2>
+              <h2 className="card-title text-[25px]">{plan.name}</h2>
               <h2 className=" text-[30px]">
                 {`$${plan.price.unit_amount}` + "/mo"}
               </h2>
@@ -93,9 +87,7 @@ export default function Pricing() {
           </div>
         ))}
       </div>
-      {errorMessage && (
-        <div className="text-red-500">{errorMessage}</div>
-      )}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
     </div>
   );
 }

@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import ErrorMessage from "@/components/ErrorMessage";
+
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -54,7 +56,7 @@ export default function ResetPasswordPage() {
         Submit
       </button>
       <a href="/login">Login</a>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <ErrorMessage message={error} />}
       {isLoading && <LoadingIndicator />}
     </div>
   );

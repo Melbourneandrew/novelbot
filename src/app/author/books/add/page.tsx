@@ -2,6 +2,7 @@
 import { useState } from "react";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function CreateBook() {
   const [bookTitle, setBookTitle] = useState("");
@@ -119,7 +120,7 @@ export default function CreateBook() {
             Add book
           </button>
         )}
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
       </div>
     </>
   );

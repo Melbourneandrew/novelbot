@@ -2,13 +2,12 @@
 import { useState, useEffect } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { IReader } from "@/lib/models/Reader";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function AuthorReadersView() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const [readers, setReaders] = useState<IReader[]>(
-    [] as IReader[]
-  );
+  const [readers, setReaders] = useState<IReader[]>([] as IReader[]);
 
   const fetchReaders = async () => {
     setIsLoading(true);
@@ -66,17 +65,16 @@ export default function AuthorReadersView() {
                       className="btn btn-primary"
                       onClick={() =>
                         (window.location.href =
-                          "/author/conversations?readerId=" +
-                          reader._id)
+                          "/author/conversations?readerId=" + reader._id)
                       }
                     >
                       Chat History
                     </button>
                   </td>
                   <td>
-                    {new Date(
-                      reader.createdAt as string
-                    ).toLocaleDateString("en-US")}
+                    {new Date(reader.createdAt as string).toLocaleDateString(
+                      "en-US"
+                    )}
                   </td>
                 </tr>
               ))}
@@ -84,9 +82,7 @@ export default function AuthorReadersView() {
           </table>
         </div>
       )}
-      {errorMessage && (
-        <p className="text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
     </div>
   );
 }

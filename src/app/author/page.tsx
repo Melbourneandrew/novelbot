@@ -7,8 +7,9 @@ import { AuthorStatBoardData } from "../api/author/stats/route";
 import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default function AuthorHomeView() {
-  const [authorStats, setAuthorStats] =
-    useState<AuthorStatBoardData>({} as AuthorStatBoardData);
+  const [authorStats, setAuthorStats] = useState<AuthorStatBoardData>(
+    {} as AuthorStatBoardData
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -127,9 +128,14 @@ export default function AuthorHomeView() {
         {/* VIEW ALL HISTORY */}
         <div className="stat">
           <div className="stat-title">Chat History</div>
-          <ButtonWithLoading className="btn btn-primary">
+          <button
+            className="btn btn-primary"
+            onClick={() =>
+              (window.location.href = "/author/conversations/list")
+            }
+          >
             View All
-          </ButtonWithLoading>
+          </button>
         </div>
       </div>
       <h1 className="text-left">Character Stats</h1>

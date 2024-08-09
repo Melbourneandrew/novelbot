@@ -45,7 +45,7 @@ export default function DashboardNavbarLayout({
             🔐 Access Codes
           </a>
           <a
-            href="/author/conversations"
+            href="/author/conversations/list"
             className="py-2 border-t border-b text-left w-[100%] text-xl no-underline hover:bg-gray-200"
           >
             💬 Conversations

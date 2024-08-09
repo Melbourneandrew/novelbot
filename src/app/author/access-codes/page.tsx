@@ -7,6 +7,7 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import { ICharacter } from "@/lib/models/Character";
 import TrashCanIcon from "@/components/icons/TrashCanIcon";
 import RemoveModal from "@/components/modals/RemoveModal";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function AuthorReadersAccessCodesView() {
   const [accessCodes, setAccessCodes] = useState<IAccessCode[]>(
@@ -133,7 +134,7 @@ export default function AuthorReadersAccessCodesView() {
           </button>
         </div>
       )}
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
       <CreateAccessCodeModal />
       <RemoveModal
         headerText={"Remove Code '" + accessCodeForDeletion.name + "'?"}

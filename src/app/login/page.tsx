@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +56,7 @@ export default function Login() {
           required
           current-password="true"
         />
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
         {isLoading ? (
           <LoadingIndicator />
         ) : (

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import LoadingIndicator from "../LoadingIndicator";
+import ErrorMessage from "../ErrorMessage";
 interface UploadThumbnailModalProps {
   headerText: string;
   uploadRoute: string;
@@ -77,7 +78,7 @@ export default function UploadThumbnailModal({
           accept=".jpg, .jpeg, .png"
           onChange={handleThumbnailFileChange}
         />
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
         <div className="modal-action">
           {isLoading ? (
             <LoadingIndicator />

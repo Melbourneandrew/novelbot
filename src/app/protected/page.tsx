@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function StarterTemplateView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function StarterTemplateView() {
     <div>
       {isLoading ? <LoadingIndicator /> : <p>This is some content</p>}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
     </div>
   );
 }

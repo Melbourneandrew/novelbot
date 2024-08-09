@@ -7,6 +7,7 @@ import {
   validatePassword,
   validateDisplayName,
 } from "@/lib/util/validators";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function ReaderSignup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -99,7 +100,7 @@ export default function ReaderSignup() {
           />
         )}
 
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {errorMessage && <ErrorMessage message={errorMessage} />}
         {isLoading ? (
           <LoadingIndicator />
         ) : (

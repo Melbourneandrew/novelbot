@@ -7,6 +7,7 @@ import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import { IReader } from "@/lib/models/Reader";
 import { IAccessCode } from "@/lib/models/AccessCode";
 import RemoveModal from "@/components/modals/RemoveModal";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function AuthorReaderSingleView() {
   const searchParams = useSearchParams();
@@ -137,7 +138,7 @@ export default function AuthorReaderSingleView() {
         </div>
       )}
 
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <ErrorMessage message={errorMessage} />}
 
       <RemoveModal
         headerText={"Remove Reader: " + reader.displayName}
