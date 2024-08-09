@@ -8,6 +8,7 @@ export const GET = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("Protected route called");
     const user = request.user;
+
     if (false) {
       return new NextResponse("Protected route call failed", { status: 401 });
     }

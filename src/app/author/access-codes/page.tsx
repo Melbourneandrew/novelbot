@@ -5,6 +5,8 @@ import CreateAccessCodeModal from "@/components/modals/CreateAccessCodeModal";
 import { IAccessCode } from "@/lib/models/AccessCode";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { ICharacter } from "@/lib/models/Character";
+import TrashCanIcon from "@/components/icons/TrashCanIcon";
+import RemoveModal from "@/components/modals/RemoveModal";
 
 export default function AuthorReadersAccessCodesView() {
   const [accessCodes, setAccessCodes] = useState<IAccessCode[]>(
@@ -12,6 +14,8 @@ export default function AuthorReadersAccessCodesView() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [accessCodeForDeletion, setAccessCodeForDeletion] =
+    useState<IAccessCode>({} as IAccessCode);
 
   const fetchAccessCodes = async () => {
     setIsLoading(true);
@@ -34,6 +38,25 @@ export default function AuthorReadersAccessCodesView() {
     setIsLoading(false);
   };
 
+  const removeAccessCode = async (
+    accessCodeId: string,
+    setErrorMessage: Function
+  ) => {
+    const response = await fetch(
+      "/api/author/readers/access-codes/remove?accessCodeId=" + accessCodeId
+    );
+    if (!response.ok) {
+      const error = await response.text();
+      console.error(error);
+      setErrorMessage(error);
+      return;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    window.location.reload();
+  };
+
   useEffect(() => {
     fetchAccessCodes();
   }, []);
@@ -54,6 +77,7 @@ export default function AuthorReadersAccessCodesView() {
                 <th>Code</th>
                 <th>Characters</th>
                 <th>Expires</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +102,20 @@ export default function AuthorReadersAccessCodesView() {
                       ? "Never"
                       : new Date(code.expires).toLocaleDateString()}
                   </td>
+                  <td>
+                    <button
+                      className="btn btn-outline"
+                      onClick={() => {
+                        setAccessCodeForDeletion(code);
+                        const modal = document.getElementById(
+                          "remove_modal"
+                        ) as HTMLDialogElement;
+                        modal?.showModal();
+                      }}
+                    >
+                      <TrashCanIcon />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -97,6 +135,12 @@ export default function AuthorReadersAccessCodesView() {
       )}
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       <CreateAccessCodeModal />
+      <RemoveModal
+        headerText={"Remove Code '" + accessCodeForDeletion.name + "'?"}
+        removeRoute="/api/author/readers/access-codes/remove?accessCodeId="
+        documentId={accessCodeForDeletion._id}
+        removeAction={removeAccessCode}
+      />
     </div>
   );
 }

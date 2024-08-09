@@ -6,6 +6,7 @@ interface ButtonWithLoadingProps {
   className: string;
   isLoading?: [boolean, Function];
   action?: Function;
+  setErrorMessage?: Function;
   children: React.ReactNode;
 }
 export default function ButtonWithLoading({

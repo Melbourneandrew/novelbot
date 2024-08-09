@@ -12,9 +12,9 @@ export default function AuthorReaderSingleView() {
   const searchParams = useSearchParams();
   const readerId = searchParams.get("readerId");
   const [reader, setReader] = useState<IReader>({} as IReader);
-  const [readerAccessCodes, setReaderAccessCodes] = useState<
-    IAccessCode[]
-  >([] as IAccessCode[]);
+  const [readerAccessCodes, setReaderAccessCodes] = useState<IAccessCode[]>(
+    [] as IAccessCode[]
+  );
   const [conversationCount, setConversationCount] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -54,15 +54,10 @@ export default function AuthorReaderSingleView() {
   return (
     <>
       <div className="flex gap-2 mb-[10px]">
-        <button
-          className="btn btn-outline"
-          onClick={() => window.history.back()}
-        >
-          <BackArrowIcon size="20" />
+        <button onClick={() => window.history.back()}>
+          <BackArrowIcon size="25" />
         </button>
-        <h1 className="text-left">
-          Reader overview for: {reader.displayName}
-        </h1>
+        <h1 className="text-left">Reader overview for: {reader.displayName}</h1>
       </div>
       {isLoading ? (
         <LoadingIndicator />
@@ -70,10 +65,7 @@ export default function AuthorReaderSingleView() {
         <div>
           {/* Reader Info */}
           <div className="mb-[20px]">
-            <div>
-              Reader Display Name:{" "}
-              {reader.displayName as string}
-            </div>
+            <div>Reader Display Name: {reader.displayName as string}</div>
             <div>Reader Id: {reader._id as string}</div>
             <div>Created at: {reader.createdAt}</div>
             <div>Conversations had: {conversationCount}</div>
@@ -101,8 +93,8 @@ export default function AuthorReaderSingleView() {
               Remove Reader
             </button>
           </div>
-
-          {/* Dialogue */}
+          <h1 className="text-left mt-[30px]">Access Codes</h1>
+          {/* Access Codes */}
           <div className="overflow-x-auto">
             <table className="table">
               {/* head */}
@@ -124,11 +116,9 @@ export default function AuthorReaderSingleView() {
                     <td>
                       {code.characters
                         .map((character) =>
-                          (character as ICharacter).name
-                            ?.length > 10
-                            ? (
-                                character as ICharacter
-                              ).name.substring(0, 10) + "..."
+                          (character as ICharacter).name?.length > 10
+                            ? (character as ICharacter).name.substring(0, 10) +
+                              "..."
                             : (character as ICharacter).name
                         )
                         .join(", ")}
@@ -137,9 +127,7 @@ export default function AuthorReaderSingleView() {
                       {new Date(code.expires).getFullYear() >
                       new Date().getFullYear() + 90
                         ? "Never"
-                        : new Date(
-                            code.expires
-                          ).toLocaleDateString()}
+                        : new Date(code.expires).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
@@ -149,9 +137,7 @@ export default function AuthorReaderSingleView() {
         </div>
       )}
 
-      {errorMessage && (
-        <p className="text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
       <RemoveModal
         headerText={"Remove Reader: " + reader.displayName}

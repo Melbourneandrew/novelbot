@@ -7,6 +7,7 @@ import { ICharacter } from "@/lib/models/Character";
 import { IReader } from "@/lib/models/Reader";
 import SystemPromptIcon from "@/components/icons/SystemPromptIcon";
 import SystemPromptModal from "@/components/modals/SystemPromptModal";
+import BackArrowIcon from "@/components/icons/BackArrowIcon";
 
 export default function StarterTemplateView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -61,16 +62,21 @@ export default function StarterTemplateView() {
       ) : (
         <div>
           {/* CONVERSATION BETWEEN HEADER */}
-          <h2 className="text-left">
-            Conversation between character{" "}
-            <a href={"/author/character/single?characterId=" + character._id}>
-              {character.name ?? "[deleted]"}
-            </a>{" "}
-            and reader{" "}
-            <a href={"/author/readers/single?readerId=" + reader._id}>
-              {reader.displayName}
-            </a>
-          </h2>
+          <div className="flex gap-2 mb-[10px]">
+            <button onClick={() => window.history.back()}>
+              <BackArrowIcon size="20" />
+            </button>
+            <h2 className="text-left">
+              Conversation between character{" "}
+              <a href={"/author/character/single?characterId=" + character._id}>
+                {character.name ?? "[deleted]"}
+              </a>{" "}
+              and reader{" "}
+              <a href={"/author/readers/single?readerId=" + reader._id}>
+                {reader.displayName}
+              </a>
+            </h2>
+          </div>
           {/* CONVERSATION HISTORY */}
           <div>
             {conversation.messages?.map((message, index) => {

@@ -9,6 +9,7 @@ import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
 import DialogueTable from "@/components/tables/DialogueTable";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
+import CreateAccessCodeModal from "@/components/modals/CreateAccessCodeModal";
 
 export default function AuthorCharacterSingleView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -188,11 +189,8 @@ export default function AuthorCharacterSingleView() {
     <>
       {" "}
       <div className="flex gap-2 mb-[10px]">
-        <button
-          className="btn btn-outline"
-          onClick={() => window.history.back()}
-        >
-          <BackArrowIcon size="20" />
+        <button onClick={() => window.history.back()}>
+          <BackArrowIcon size="25" />
         </button>
         <h1 className="text-left">
           Character overview for:{" "}
@@ -272,6 +270,17 @@ export default function AuthorCharacterSingleView() {
             >
               Change Thumbnail
             </ButtonWithLoading>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                const modal = document.getElementById(
+                  "new_access_code_modal"
+                ) as HTMLDialogElement;
+                modal?.showModal();
+              }}
+            >
+              Create Reader Access Code
+            </button>
             {/* PUBLISH CHARACTER BUTTON */}
             {!character.published && showGeneratedCharacterActions && (
               <ButtonWithLoading
@@ -340,6 +349,7 @@ export default function AuthorCharacterSingleView() {
         removeRoute={"/api/author/characters/remove?characterId="}
         documentId={characterId as string}
       />
+      <CreateAccessCodeModal preSelectedCharacter={character} />
     </>
   );
 }

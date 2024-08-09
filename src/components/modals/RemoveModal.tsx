@@ -5,16 +5,24 @@ interface RemoveModalProps {
   headerText: string;
   removeRoute: string;
   documentId: string;
+  removeAction?: Function;
 }
 export default function RemoveModal({
   headerText,
   removeRoute,
   documentId,
+  removeAction,
 }: RemoveModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const submitRemove = async () => {
+    if (removeAction) {
+      setIsLoading(true);
+      await removeAction(documentId, setErrorMessage);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     const response = await fetch(removeRoute + documentId);
 

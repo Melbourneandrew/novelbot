@@ -4,17 +4,22 @@ import DropdownIcon from "@/components/icons/DropdownIcon";
 import { ICharacter } from "@/lib/models/Character";
 import XIcon from "../icons/XIcon";
 import { generateReaderAccessCode } from "@/lib/util/random";
-export default function CreateAccessCodeModal() {
+import ButtonWithLoading from "../ButtonWithLoading";
+
+interface AccessCodeModalProps {
+  preSelectedCharacter?: ICharacter;
+}
+export default function CreateAccessCodeModal({
+  preSelectedCharacter,
+}: AccessCodeModalProps) {
   /**
    * Enable this modal with
    * <button className="btn" onClick={()=>document.getElementById('my_modal_1').showModal()}>open modal</button>
    */
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const [codeName, setCodeName] = useState("");
   const [codeValue, setCodeValue] = useState(generateReaderAccessCode());
-  const [selectedCharacters, setSelectedCharacters] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [neverExpires, setNeverExpires] = useState(false);
 
@@ -26,14 +31,34 @@ export default function CreateAccessCodeModal() {
   >([] as ICharacter[]);
 
   const submitCode = async () => {
-    setIsLoading(true);
     console.log(
       codeName,
       codeValue,
-      selectedCharacters,
+      selectedCharacterOptions,
       expirationDate,
       neverExpires
     );
+
+    if (!codeName) {
+      setErrorMessage("Code name is required");
+      return;
+    }
+    if (!codeValue) {
+      setErrorMessage("Code value is required");
+      return;
+    }
+    if (!expirationDate) {
+      setErrorMessage("Expiration date is required");
+      return;
+    }
+    if (selectedCharacterOptions.length === 0) {
+      setErrorMessage("At least one character is required");
+      return;
+    }
+    if (selectedCharacterOptions.some((character) => !character)) {
+      setErrorMessage("At least one character is required");
+      return;
+    }
 
     const createCodeResponse = await fetch(
       "/api/author/readers/access-codes/add",
@@ -54,14 +79,11 @@ export default function CreateAccessCodeModal() {
     if (!createCodeResponse.ok) {
       const error = await createCodeResponse.text();
       console.error(error);
-      setIsLoading(false);
       setErrorMessage(error);
       return;
     }
     const data = await createCodeResponse.json();
     console.log(data);
-
-    setIsLoading(false);
 
     const modal = document.getElementById(
       "new_access_code_modal"
@@ -70,7 +92,6 @@ export default function CreateAccessCodeModal() {
   };
 
   const fetchCharacters = async () => {
-    setIsLoading(true);
     const response = await fetch("/api/author/characters/list", {
       method: "GET",
       headers: {
@@ -87,7 +108,22 @@ export default function CreateAccessCodeModal() {
     const data = await response.json();
     console.log(data);
     setCharacterOptions(data.characters);
-    setIsLoading(false);
+  };
+
+  const selectCharacter = async (character: ICharacter) => {
+    console.log(selectedCharacterOptions);
+    const newSelectedCharacters = [...selectedCharacterOptions];
+
+    if (
+      newSelectedCharacters.some(
+        (selectedCharacter) => selectedCharacter._id === character._id
+      )
+    ) {
+      newSelectedCharacters.splice(newSelectedCharacters.indexOf(character), 1);
+    } else {
+      newSelectedCharacters.push(character);
+    }
+    setSelectedCharacterOptions(newSelectedCharacters);
   };
 
   useEffect(() => {
@@ -95,7 +131,10 @@ export default function CreateAccessCodeModal() {
     setExpirationDate(
       new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
     );
-  }, []);
+    if (preSelectedCharacter) {
+      setSelectedCharacterOptions([preSelectedCharacter as ICharacter]);
+    }
+  }, [preSelectedCharacter]);
 
   return (
     <dialog id="new_access_code_modal" className="modal">
@@ -146,20 +185,12 @@ export default function CreateAccessCodeModal() {
                       <input
                         type="checkbox"
                         className="checkbox"
-                        checked={selectedCharacterOptions.includes(character)}
+                        checked={selectedCharacterOptions.some(
+                          (selectedCharacter) =>
+                            selectedCharacter._id === character._id
+                        )}
                         onChange={() => {
-                          const newSelectedCharacters = [
-                            ...selectedCharacterOptions,
-                          ];
-                          if (newSelectedCharacters.includes(character)) {
-                            newSelectedCharacters.splice(
-                              newSelectedCharacters.indexOf(character),
-                              1
-                            );
-                          } else {
-                            newSelectedCharacters.push(character);
-                          }
-                          setSelectedCharacterOptions(newSelectedCharacters);
+                          selectCharacter(character);
                         }}
                       />
                       {character.name}
@@ -223,10 +254,13 @@ export default function CreateAccessCodeModal() {
             />
           </div>
         </div>
+        {errorMessage && (
+          <p className="text-red-500 text-center mt-[15px]">{errorMessage}</p>
+        )}
         <div className="modal-action">
-          <button className="btn btn-primary" onClick={() => submitCode()}>
+          <ButtonWithLoading className="btn btn-primary" action={submitCode}>
             Create
-          </button>
+          </ButtonWithLoading>
         </div>
       </div>
       {/* Second form to close the modal when clicking outside */}
