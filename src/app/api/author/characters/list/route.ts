@@ -17,8 +17,10 @@ export const GET = ProtectedRoute(
         status: 404,
       });
     }
+    console.log(author);
 
     let characters = await CharacterService.findCharactersByAuthor(author._id);
+    console.log(characters);
 
     const { searchParams } = new URL(request.url);
 

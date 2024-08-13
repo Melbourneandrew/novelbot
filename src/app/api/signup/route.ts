@@ -83,6 +83,11 @@ export async function POST(request: NextRequest) {
       });
       console.log("Author created");
       //TODO Also create reader account with author so they can log in as a reader as well
+      await ReaderService.createReader({
+        user: newUser._id,
+        displayName: reqBody.penName,
+      });
+      console.log("Author's Reader account created created");
     } else if (role === "reader") {
       const reader = await ReaderService.createReader({
         user: newUser._id,

@@ -4,6 +4,7 @@ import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AccessCodeService from "@/lib/services/AccessCodeService";
 import * as AuthorService from "@/lib/services/AuthorService";
+import * as ReaderService from "@/lib/services/ReaderService";
 import { IAccessCode } from "@/lib/models/AccessCode";
 import { ICharacter } from "@/lib/models/Character";
 
@@ -56,15 +57,37 @@ export const POST = ProtectedRoute(
         author: author._id,
         expires: expirationDateObject,
       } as IAccessCode);
+      console.log("Access code created");
+
+      /* 
+        We want all the access codes an author creates to be automatically added to their reader account.
+        This way they can demo all their published characters.
+      */
+      const authorReaderAccount = await ReaderService.findReaderByUserId(
+        user._id
+      );
+      if (!authorReaderAccount) {
+        return new NextResponse(
+          "No reader account found for this author. (This should never happen)",
+          {
+            status: 400,
+          }
+        );
+      }
+      await ReaderService.createReaderEnteredCode(
+        authorReaderAccount._id,
+        codeValue
+      );
+      console.log("Added access code to author's reader account");
+
+      return NextResponse.json({
+        message: "Access code created",
+      });
     } catch (error) {
       console.error(error);
       return new NextResponse("Error creating access code record:" + error, {
         status: 500,
       });
     }
-
-    return NextResponse.json({
-      message: "Access code created",
-    });
   }
 );
