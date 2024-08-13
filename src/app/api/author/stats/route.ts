@@ -34,9 +34,11 @@ export const GET = ProtectedRoute(
         status: 404,
       });
     }
-    const readerCount = await AuthorService.countReaders(
-      author._id.toString()
-    );
+
+    const readerCount =
+      (await AuthorService.countReaders(
+        author._id.toString()
+      )) - 1; // Subtract 1 to exclude the author
 
     const {
       conversationCount,

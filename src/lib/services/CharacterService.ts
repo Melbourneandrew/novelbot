@@ -28,9 +28,10 @@ export async function findCharactersByAuthor(
     return [];
   }
 
-  const characters = await Character.find({
+  const characters = (await Character.find({
     book: { $in: books.map((book) => book._id) },
-  });
+  }).populate("book")) as ICharacter[];
+
   return characters;
 }
 

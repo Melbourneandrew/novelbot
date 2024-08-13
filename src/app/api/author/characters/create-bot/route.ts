@@ -21,14 +21,18 @@ export const POST = ProtectedRoute(
     }
 
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(user.id);
+    const author = await AuthorService.findAuthorByUser(
+      user.id
+    );
     if (!author) {
       return new NextResponse("Author not found", {
         status: 404,
       });
     }
 
-    const character = await CharacterService.findCharacterById(characterId);
+    const character = await CharacterService.findCharacterById(
+      characterId
+    );
     if (!character) {
       return new NextResponse("Character not found", {
         status: 404,
@@ -36,7 +40,9 @@ export const POST = ProtectedRoute(
     }
 
     // Mock character creation process
-    await CharacterService.generateRandomDescription(characterId);
+    await CharacterService.generateRandomDescription(
+      characterId
+    );
     await CharacterService.generateRandomBackstory(characterId);
 
     await CharacterService.deleteDialogue(characterId);
@@ -46,9 +52,9 @@ export const POST = ProtectedRoute(
         characterId
       );
     }
-    for (let i = 0; i < 25; i++) {
-      await ConversationService.generateRandomConversation(characterId);
-    }
+    // for (let i = 0; i < 25; i++) {
+    //   await ConversationService.generateRandomConversation(characterId);
+    // }
 
     return NextResponse.json({
       message: "Protected route called",

@@ -28,8 +28,11 @@ export const GET = ProtectedRoute(
     );
 
     const readersWithAuthorDesignated = readers.map((reader) =>
-      reader.user == user
-        ? (reader.displayName += " (You)")
+      reader.user.toString() == user._id.toString()
+        ? {
+            ...reader,
+            displayName: reader.displayName + " (You)",
+          }
         : reader
     );
 
