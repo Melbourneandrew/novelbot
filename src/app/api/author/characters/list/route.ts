@@ -10,7 +10,9 @@ export const GET = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("Character list request");
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(user.id);
+    const author = await AuthorService.findAuthorByUser(
+      user.id
+    );
     if (!author) {
       console.log("Author not found");
       return new NextResponse("Author not found", {
@@ -19,14 +21,19 @@ export const GET = ProtectedRoute(
     }
     console.log(author);
 
-    let characters = await CharacterService.findCharactersByAuthor(author._id);
+    let characters =
+      await CharacterService.findCharactersByAuthor(
+        author._id.toString()
+      );
     console.log(characters);
 
     const { searchParams } = new URL(request.url);
 
     const bookId = searchParams.get("bookId");
     if (bookId) {
-      characters = characters.filter((character) => character.book === bookId);
+      characters = characters.filter(
+        (character) => character.book.toString() === bookId
+      );
     }
 
     return NextResponse.json({ characters });

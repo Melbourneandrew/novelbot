@@ -1,5 +1,8 @@
 import { Reader, IReader } from "@/lib/models/Reader";
-import { AccessCode, IAccessCode } from "@/lib/models/AccessCode";
+import {
+  AccessCode,
+  IAccessCode,
+} from "@/lib/models/AccessCode";
 import {
   ReaderEnteredCode,
   IReaderEnteredCode,
@@ -7,7 +10,9 @@ import {
 import { ICharacter } from "@/lib/models/Character";
 import * as AccessCodeService from "@/lib/services/AccessCodeService";
 
-export async function findReaderById(id: string): Promise<IReader | null> {
+export async function findReaderById(
+  id: string
+): Promise<IReader | null> {
   return await Reader.findById(id);
 }
 
@@ -20,28 +25,34 @@ export async function findReaderByUserId(
 export async function findReadersByAuthor(
   authorId: string
 ): Promise<IReader[]> {
-  const accessCodes = await AccessCode.find({ author: authorId });
+  const accessCodes = await AccessCode.find({
+    author: authorId,
+  });
+  console.log("Access codes", accessCodes);
 
   const readerEnteredCodes = await ReaderEnteredCode.find({
-    accessCode: { $in: accessCodes.map((accessCode) => accessCode._id) },
+    accessCode: {
+      $in: accessCodes.map((accessCode) => accessCode._id),
+    },
   });
+  console.log("Reader entered codes", readerEnteredCodes);
 
   const readers = await Reader.find({
-    id: {
+    _id: {
       $in: readerEnteredCodes.map(
         (readerEnteredCode) => readerEnteredCode.reader._id
       ),
     },
   });
+  console.log("Readers", readers);
   return readers;
 }
 
 export async function findCharactersByReader(
   readerId: string
 ): Promise<ICharacter[] | []> {
-  const accessCodes = await AccessCodeService.findAccessCodesByReaderId(
-    readerId
-  );
+  const accessCodes =
+    await AccessCodeService.findAccessCodesByReaderId(readerId);
   const characters = accessCodes?.reduce((acc, accessCode) => {
     return acc.concat(
       accessCode.characters.filter(
@@ -70,7 +81,9 @@ export async function createReaderEnteredCode(
   reader: IReader,
   accessCode: string
 ): Promise<IReaderEnteredCode | null> {
-  const accessCodeDoc = await AccessCode.findOne({ code: accessCode });
+  const accessCodeDoc = await AccessCode.findOne({
+    code: accessCode,
+  });
   if (!accessCodeDoc || accessCodeDoc.expiresAt < new Date()) {
     return null;
   }
@@ -83,7 +96,9 @@ export async function createReaderEnteredCode(
 export async function findReaderEnteredCodesWithCharacters(
   readerId: string
 ): Promise<IReaderEnteredCode[]> {
-  return await ReaderEnteredCode.find({ reader: readerId }).populate({
+  return await ReaderEnteredCode.find({
+    reader: readerId,
+  }).populate({
     path: "accessCode",
     populate: {
       path: "characters",
@@ -94,13 +109,13 @@ export async function findReaderEnteredCodesWithCharacters(
 export async function getReaderAllowedCharacters(
   readerId: string
 ): Promise<ICharacter[]> {
-  const enteredAccessCodes = await findReaderEnteredCodesWithCharacters(
-    readerId
-  );
+  const enteredAccessCodes =
+    await findReaderEnteredCodesWithCharacters(readerId);
   const allowedCharacters = [];
   for (const enteredAccessCode of enteredAccessCodes) {
-    for (const character of (enteredAccessCode.accessCode as IAccessCode)
-      .characters) {
+    for (const character of (
+      enteredAccessCode.accessCode as IAccessCode
+    ).characters) {
       allowedCharacters.push(character as ICharacter);
     }
   }
@@ -122,7 +137,9 @@ export async function verifyReaderBelongsToAuthor(
     return false;
   }
   for (const readerEnteredCode of readerEnteredCodes) {
-    const accessCode = await AccessCode.findById(readerEnteredCode.accessCode);
+    const accessCode = await AccessCode.findById(
+      readerEnteredCode.accessCode
+    );
     if (!accessCode) {
       return false;
     }
@@ -133,7 +150,9 @@ export async function verifyReaderBelongsToAuthor(
   return false;
 }
 
-export async function deleteReaderAndTheirEnteredCodes(readerId: string) {
+export async function deleteReaderAndTheirEnteredCodes(
+  readerId: string
+) {
   await ReaderEnteredCode.deleteMany({ reader: readerId });
   return await Reader.findByIdAndDelete(readerId);
 }

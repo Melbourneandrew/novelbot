@@ -5,7 +5,10 @@ import bcrypt from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 import * as UserService from "@/lib/services/UserService";
 import { cookies } from "next/headers";
-import { validateEmail, validatePassword } from "@/lib/util/validators";
+import {
+  validateEmail,
+  validatePassword,
+} from "@/lib/util/validators";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as ReaderService from "@/lib/services/ReaderService";
 
@@ -16,7 +19,12 @@ export async function POST(request: NextRequest) {
   const { email, password, role } = reqBody;
   await connectToDB();
   try {
-    console.log("Signup route called for: ", email, password, role);
+    console.log(
+      "Signup route called for: ",
+      email,
+      password,
+      role
+    );
     if (!email) {
       return new NextResponse("Email is required", {
         status: 400,
@@ -53,13 +61,15 @@ export async function POST(request: NextRequest) {
     }
     const sanatizedEmail = email.toLowerCase().trim();
 
-    const user: IUser | null = await UserService.findUserByEmail(
-      sanatizedEmail
-    );
+    const user: IUser | null =
+      await UserService.findUserByEmail(sanatizedEmail);
     if (user) {
-      return new NextResponse("User with that email already exists", {
-        status: 404,
-      });
+      return new NextResponse(
+        "User with that email already exists",
+        {
+          status: 404,
+        }
+      );
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -97,16 +107,20 @@ export async function POST(request: NextRequest) {
 
       //Reader has the option to enter an access code at signup
       if (reqBody.accessCode) {
-        const validCode = await ReaderService.createReaderEnteredCode(
-          reader._id,
-          reqBody.accessCode
-        );
+        const validCode =
+          await ReaderService.createReaderEnteredCode(
+            reader._id,
+            reqBody.accessCode
+          );
         if (!validCode) {
           return new NextResponse("Invalid access code", {
             status: 400,
           });
         }
-        console.log("Added reader entered access code: ", reqBody.accessCode);
+        console.log(
+          "Added reader entered access code: ",
+          reqBody.accessCode
+        );
       }
     }
 
@@ -123,6 +137,7 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7, // One week
       path: "/",
     });
+
     return new NextResponse("Signed in", { status: 200 });
   } catch (error) {
     console.log(error);

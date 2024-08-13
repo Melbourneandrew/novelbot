@@ -40,16 +40,18 @@ export async function findAuthorByUser(
 export async function countReaders(
   authorId: string
 ): Promise<number> {
-  const author = await findAuthorById(authorId);
+  console.log("Author Id", authorId);
   const accessCodes = await AccessCode.find({
     author: authorId,
   });
+  console.log("Access codes", accessCodes);
 
   const readers = await ReaderEnteredCode.find({
-    accessCode: { $in: accessCodes.map((code) => code._id) },
-  })
-    .distinct("reader")
-    .estimatedDocumentCount();
+    // accessCode: {
+    //   $in: accessCodes.map((code) => code._id),
+    // },
+  });
+  console.log("Readers", readers);
 
-  return readers;
+  return readers.length;
 }

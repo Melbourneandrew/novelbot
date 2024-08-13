@@ -11,21 +11,30 @@ export const GET = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("List readers route called");
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(user._id);
+    const author = await AuthorService.findAuthorByUser(
+      user._id
+    );
     if (!author) {
-      return new NextResponse("Only authors can access this route", {
-        status: 403,
-      });
+      return new NextResponse(
+        "Only authors can access this route",
+        {
+          status: 403,
+        }
+      );
     }
 
-    const readers = await ReaderService.findReadersByAuthor(author._id);
+    const readers = await ReaderService.findReadersByAuthor(
+      author._id
+    );
 
     const readersWithAuthorDesignated = readers.map((reader) =>
-      reader.user == user ? (reader.displayName += " (You)") : reader
+      reader.user == user
+        ? (reader.displayName += " (You)")
+        : reader
     );
 
     return NextResponse.json({
-      readersWithAuthorDesignated,
+      readers: readersWithAuthorDesignated,
     });
   }
 );

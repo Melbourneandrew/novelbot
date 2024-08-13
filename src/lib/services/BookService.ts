@@ -82,7 +82,7 @@ export async function removeBook(
     character: { $in: characterIds },
   });
   await AccessCode.deleteMany({
-    id: { $in: accessCodeIds },
+    _id: { $in: accessCodeIds },
   });
   await ReaderEnteredCode.deleteMany({
     accessCode: { $in: accessCodeIds },
@@ -90,7 +90,7 @@ export async function removeBook(
   await Conversation.deleteMany({
     character: { $in: characterIds },
   });
-  await Character.deleteMany({ id: { $in: characterIds } });
+  await Character.deleteMany({ _id: { $in: characterIds } });
 
   return true;
 }
