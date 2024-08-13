@@ -8,6 +8,7 @@ import { IReader } from "@/lib/models/Reader";
 import { IAccessCode } from "@/lib/models/AccessCode";
 import RemoveModal from "@/components/modals/RemoveModal";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorReaderSingleView() {
   const searchParams = useSearchParams();
@@ -23,7 +24,7 @@ export default function AuthorReaderSingleView() {
 
   const fetchReader = async () => {
     setIsLoading(true);
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/readers/single?readerId=" + readerId,
       {
         method: "GET",

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
@@ -14,7 +15,7 @@ export default function ResetPasswordPage() {
 
   const submitNewPassword = async () => {
     setIsLoading(true);
-    const res = await fetch("/api/password/reset", {
+    const res = await Fetch("/api/password/reset", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

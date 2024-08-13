@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "@/components/LoadingIndicator";
+import { Fetch } from "@/lib/util/Fetch";
+
 export default function Pricing() {
   const [plans, setPlans] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -10,7 +12,7 @@ export default function Pricing() {
   }, []);
   const getPlans = async () => {
     setIsLoading(true);
-    let res = await fetch("/api/stripe/plans");
+    let res = await Fetch("/api/stripe/plans");
     res = await res.json();
     const plansList = [
       {
@@ -37,7 +39,7 @@ export default function Pricing() {
       priceId = plans[1].default_price;
       isTrial = true;
     }
-    let response = await fetch("/api/stripe/create-payment-session", {
+    let response = await Fetch("/api/stripe/create-payment-session", {
       method: "POST",
       body: JSON.stringify({
         priceId: priceId,

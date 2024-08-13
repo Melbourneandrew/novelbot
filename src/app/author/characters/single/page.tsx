@@ -11,6 +11,7 @@ import DialogueTable from "@/components/tables/DialogueTable";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
 import CreateAccessCodeModal from "@/components/modals/CreateAccessCodeModal";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorCharacterSingleView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function AuthorCharacterSingleView() {
   const characterId = searchParams.get("characterId");
   const fetchCharacter = async () => {
     setIsLoading(true);
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/characters/single?characterId=" + characterId,
       {
         method: "GET",
@@ -76,7 +77,7 @@ export default function AuthorCharacterSingleView() {
   const updateCharacterDescription = async () => {
     setIsSaveCharacterDescriptionLoading(true);
 
-    const response = await fetch("/api/author/characters/single/update", {
+    const response = await Fetch("/api/author/characters/single/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +103,7 @@ export default function AuthorCharacterSingleView() {
 
   const updateCharacterBackstory = async () => {
     setIsSaveCharacterBackstoryLoading(true);
-    const response = await fetch("/api/author/characters/single/update", {
+    const response = await Fetch("/api/author/characters/single/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +129,7 @@ export default function AuthorCharacterSingleView() {
 
   const generateBot = async () => {
     setIsLoading(true);
-    const generateBotResponse = await fetch(
+    const generateBotResponse = await Fetch(
       "/api/author/characters/create-bot",
       {
         method: "POST",
@@ -153,7 +154,7 @@ export default function AuthorCharacterSingleView() {
   };
 
   const publishCharacter = async () => {
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/characters/publish?characterId=" + characterId
     );
     if (!response.ok) {
@@ -168,7 +169,7 @@ export default function AuthorCharacterSingleView() {
   };
 
   const unpublishCharacter = async () => {
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/characters/unpublish?characterId=" + characterId
     );
     if (!response.ok) {

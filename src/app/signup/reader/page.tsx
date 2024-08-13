@@ -8,6 +8,7 @@ import {
   validateDisplayName,
 } from "@/lib/util/validators";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function ReaderSignup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,7 @@ export default function ReaderSignup() {
     const accessCode = accessCodeFromSearchParams ?? form.accessCode.value;
 
     setIsLoading(true);
-    const signupResponse = await fetch("/api/signup", {
+    const signupResponse = await Fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

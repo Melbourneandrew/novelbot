@@ -3,6 +3,7 @@ import { useState } from "react";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function CreateBook() {
   const [bookTitle, setBookTitle] = useState("");
@@ -18,7 +19,7 @@ export default function CreateBook() {
       return;
     }
     setIsLoading(true);
-    const submitAddBookResponse = await fetch("/api/author/books/add", {
+    const submitAddBookResponse = await Fetch("/api/author/books/add", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +62,7 @@ export default function CreateBook() {
     formData.append("file", bookFile);
 
     console.log("Upload URL: ", uploadLink);
-    await fetch(uploadLink, {
+    await Fetch(uploadLink, {
       method: "PUT",
       body: formData,
     });

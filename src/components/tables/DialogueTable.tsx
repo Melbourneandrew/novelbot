@@ -8,6 +8,7 @@ import CheckIcon from "../icons/CheckIcon";
 import XIcon from "../icons/XIcon";
 import SearchIcon from "../icons/SearchIcon";
 import ButtonWithLoading from "../ButtonWithLoading";
+import { Fetch } from "@/lib/util/Fetch";
 
 interface DialogueTableProps {
   dialogue: IDialogue[];
@@ -23,7 +24,7 @@ export default function DialogueTable({ dialogue }: DialogueTableProps) {
 
   const submitDialogueEdit = async () => {
     dialogue[selectedDialogueIndex].text = updatedDialogueLine;
-    const response = await fetch("/api/author/dialogue/edit", {
+    const response = await Fetch("/api/author/dialogue/edit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +45,7 @@ export default function DialogueTable({ dialogue }: DialogueTableProps) {
   };
 
   const submitRemoveDialogue = async (targetIndex: number) => {
-    const response = await fetch("/api/author/dialogue/remove", {
+    const response = await Fetch("/api/author/dialogue/remove", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

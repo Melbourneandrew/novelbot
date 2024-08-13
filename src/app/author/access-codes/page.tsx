@@ -8,6 +8,7 @@ import { ICharacter } from "@/lib/models/Character";
 import TrashCanIcon from "@/components/icons/TrashCanIcon";
 import RemoveModal from "@/components/modals/RemoveModal";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorReadersAccessCodesView() {
   const [accessCodes, setAccessCodes] = useState<IAccessCode[]>(
@@ -20,7 +21,7 @@ export default function AuthorReadersAccessCodesView() {
 
   const fetchAccessCodes = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/readers/access-codes/list", {
+    const response = await Fetch("/api/author/readers/access-codes/list", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +44,7 @@ export default function AuthorReadersAccessCodesView() {
     accessCodeId: string,
     setErrorMessage: Function
   ) => {
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/readers/access-codes/remove?accessCodeId=" + accessCodeId
     );
     if (!response.ok) {

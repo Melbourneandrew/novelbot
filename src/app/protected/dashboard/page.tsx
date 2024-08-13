@@ -2,6 +2,7 @@
 import { validateEmail } from "@/lib/util/validators";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Fetch } from "@/lib/util/Fetch";
 export default function Dashboard() {
   const [passwordResetEmail, setPasswordResetEmail] = useState("");
   const [file, setFile] = useState<File>();
@@ -21,7 +22,7 @@ export default function Dashboard() {
       return;
     }
 
-    const res = await fetch("/api/password/request-reset", {
+    const res = await Fetch("/api/password/request-reset", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,12 +51,12 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/upload", {
+    const response = await Fetch("/api/upload", {
       method: "POST",
     });
     const { signedUrl } = await response.json();
     console.log("Upload URL: ", signedUrl);
-    await fetch(signedUrl, {
+    await Fetch(signedUrl, {
       method: "PUT",
       body: formData,
     });

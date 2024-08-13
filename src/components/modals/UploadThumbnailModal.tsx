@@ -2,6 +2,7 @@
 import { useState } from "react";
 import LoadingIndicator from "../LoadingIndicator";
 import ErrorMessage from "../ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 interface UploadThumbnailModalProps {
   headerText: string;
   uploadRoute: string;
@@ -42,7 +43,7 @@ export default function UploadThumbnailModal({
     formData.append("thumbnail", thumbnailFile);
     formData.append("documentId", documentId);
 
-    const response = await fetch(uploadRoute, {
+    const response = await Fetch(uploadRoute, {
       method: "POST",
       body: formData,
     });

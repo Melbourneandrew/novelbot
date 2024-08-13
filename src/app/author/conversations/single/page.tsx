@@ -8,6 +8,7 @@ import { IReader } from "@/lib/models/Reader";
 import SystemPromptIcon from "@/components/icons/SystemPromptIcon";
 import SystemPromptModal from "@/components/modals/SystemPromptModal";
 import BackArrowIcon from "@/components/icons/BackArrowIcon";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function StarterTemplateView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +33,7 @@ export default function StarterTemplateView() {
 
   const fetchConversation = async () => {
     setIsLoading(true);
-    const response = await fetch(
+    const response = await Fetch(
       "/api/author/conversations/single?conversationId=" + conversationId
     );
     if (!response.ok) {

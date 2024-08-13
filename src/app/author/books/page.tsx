@@ -3,6 +3,7 @@ import PlusIcon from "@/components/icons/PlusIcon";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { useState, useEffect } from "react";
 import { IBook } from "@/lib/models/Book";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorBooksDashboard() {
   const [books, setBooks] = useState<IBook[]>([] as IBook[]);
@@ -11,7 +12,7 @@ export default function AuthorBooksDashboard() {
 
   const fetchBooks = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/books/list", {
+    const response = await Fetch("/api/author/books/list", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

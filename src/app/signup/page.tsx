@@ -3,6 +3,7 @@ import { useState } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { validateEmail, validatePassword } from "@/lib/util/validators";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function Signup() {
       return;
     }
     setIsLoading(true);
-    const signupResponse = await fetch("/api/signup", {
+    const signupResponse = await Fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

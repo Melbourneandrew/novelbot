@@ -7,6 +7,7 @@ import { ICharacter } from "@/lib/models/Character";
 import { IReader } from "@/lib/models/Reader";
 import DropdownIcon from "@/components/icons/DropdownIcon";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function ConversationsView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +26,7 @@ export default function ConversationsView() {
 
   const fetchConversations = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/conversations", {
+    const response = await Fetch("/api/author/conversations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +51,7 @@ export default function ConversationsView() {
   };
 
   const fetchCharacters = async () => {
-    const response = await fetch("/api/author/characters/list", {
+    const response = await Fetch("/api/author/characters/list", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

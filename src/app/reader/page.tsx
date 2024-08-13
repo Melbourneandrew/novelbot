@@ -8,6 +8,7 @@ import {
 } from "@/lib/models/Conversation";
 import { useSearchParams } from "next/navigation";
 import { IBook } from "@/lib/models/Book";
+import { Fetch } from "@/lib/util/Fetch";
 interface ChatRequestBody {
   messages: Message[];
   characterId?: string;
@@ -61,7 +62,7 @@ export default function Chat() {
     setNewMessage("");
     setIsChatLoading(true);
 
-    let chatResponse = await fetch("/api/reader/chat", {
+    let chatResponse = await Fetch("/api/reader/chat", {
       method: "POST",
       body: JSON.stringify(postBody),
       headers: {
@@ -86,7 +87,7 @@ export default function Chat() {
 
   const getAvailableCharacters = async () => {
     setIsCharacterListLoading(true);
-    const characterResponse = await fetch(
+    const characterResponse = await Fetch(
       "/api/reader/characters",
       {
         method: "GET",

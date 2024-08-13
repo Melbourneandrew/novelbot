@@ -4,6 +4,7 @@ import { ISubscription } from "@/lib/models/Subscription";
 import { IPurchase } from "@/lib/models/Purchase";
 import Stripe from "stripe";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 interface SubscriptionPlanResponse {
   activeSubscription: ISubscription;
@@ -18,7 +19,7 @@ export default function BillingPage() {
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const fetchSubscriptionPlan = async () => {
-    const response = await fetch("/api/billing/active-subscription");
+    const response = await Fetch("/api/billing/active-subscription");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -32,7 +33,7 @@ export default function BillingPage() {
   };
 
   const fetchPaymentHistory = async () => {
-    const response = await fetch("/api/billing/payment-history");
+    const response = await Fetch("/api/billing/payment-history");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -47,7 +48,7 @@ export default function BillingPage() {
 
   const cancelSubscription = async () => {
     console.log("Cancelling subscription");
-    const response = await fetch("/api/billing/cancel-subscription");
+    const response = await Fetch("/api/billing/cancel-subscription");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);
@@ -60,7 +61,7 @@ export default function BillingPage() {
   };
 
   const updatePaymentMethod = async () => {
-    const response = await fetch("/api/stripe/create-update-payment-session");
+    const response = await Fetch("/api/stripe/create-update-payment-session");
     if (!response.ok) {
       const err = await response.text();
       setErrorMessage(err);

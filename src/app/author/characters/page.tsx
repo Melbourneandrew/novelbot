@@ -5,6 +5,7 @@ import PlusIcon from "@/components/icons/PlusIcon";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { useState, useEffect } from "react";
 import { ICharacter } from "@/lib/models/Character";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorCharactersView() {
   const [characters, setCharacters] = useState<ICharacter[]>(
@@ -15,7 +16,7 @@ export default function AuthorCharactersView() {
 
   const fetchCharacters = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/characters/list", {
+    const response = await Fetch("/api/author/characters/list", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -20,7 +20,6 @@ export async function findCharacterById(
 export async function findCharactersByAuthor(
   authorId: string
 ): Promise<ICharacter[]> {
-  console.log(authorId);
   const books = await Book.find({
     author: authorId,
   });

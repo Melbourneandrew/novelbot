@@ -3,6 +3,7 @@ import { useState } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { validateEmail, validatePassword } from "@/lib/util/validators";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorSignup() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function AuthorSignup() {
       return;
     }
     setIsLoading(true);
-    const signupResponse = await fetch("/api/signup", {
+    const signupResponse = await Fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, penName, role: "author" }),
@@ -32,7 +33,7 @@ export default function AuthorSignup() {
     setIsLoading(false);
     if (signupResponse.ok) {
       console.log("Signed up");
-      window.location.href = "/protected/dashboard";
+      window.location.href = "/author";
     } else {
       const error = await signupResponse.text();
       console.error(error);

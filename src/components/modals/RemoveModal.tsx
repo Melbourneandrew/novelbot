@@ -2,6 +2,7 @@
 import { useState } from "react";
 import LoadingIndicator from "../LoadingIndicator";
 import ErrorMessage from "../ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 interface RemoveModalProps {
   headerText: string;
   removeRoute: string;
@@ -25,7 +26,7 @@ export default function RemoveModal({
       return;
     }
     setIsLoading(true);
-    const response = await fetch(removeRoute + documentId);
+    const response = await Fetch(removeRoute + documentId);
 
     if (!response.ok) {
       const error = await response.text();

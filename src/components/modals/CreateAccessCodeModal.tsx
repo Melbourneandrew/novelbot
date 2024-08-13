@@ -6,6 +6,7 @@ import XIcon from "../icons/XIcon";
 import { generateReaderAccessCode } from "@/lib/util/random";
 import ButtonWithLoading from "../ButtonWithLoading";
 import ErrorMessage from "../ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 interface AccessCodeModalProps {
   preSelectedCharacter?: ICharacter;
@@ -61,7 +62,7 @@ export default function CreateAccessCodeModal({
       return;
     }
 
-    const createCodeResponse = await fetch(
+    const createCodeResponse = await Fetch(
       "/api/author/readers/access-codes/add",
       {
         method: "POST",
@@ -93,7 +94,7 @@ export default function CreateAccessCodeModal({
   };
 
   const fetchCharacters = async () => {
-    const response = await fetch("/api/author/characters/list", {
+    const response = await Fetch("/api/author/characters/list", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

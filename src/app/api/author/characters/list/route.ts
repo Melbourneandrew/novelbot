@@ -10,22 +10,17 @@ export const GET = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("Character list request");
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(
-      user.id
-    );
+    const author = await AuthorService.findAuthorByUser(user.id);
     if (!author) {
       console.log("Author not found");
       return new NextResponse("Author not found", {
         status: 404,
       });
     }
-    console.log(author);
 
-    let characters =
-      await CharacterService.findCharactersByAuthor(
-        author._id.toString()
-      );
-    console.log(characters);
+    let characters = await CharacterService.findCharactersByAuthor(
+      author._id.toString()
+    );
 
     const { searchParams } = new URL(request.url);
 

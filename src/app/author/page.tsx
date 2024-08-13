@@ -7,6 +7,7 @@ import {
   CharacterWithStats,
 } from "../api/author/stats/route";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorHomeView() {
   const [authorStats, setAuthorStats] = useState<AuthorStatBoardData>(
@@ -17,7 +18,8 @@ export default function AuthorHomeView() {
 
   const fetchStats = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/stats");
+    const response = await Fetch("/api/author/stats");
+    console.log(response);
     if (!response.ok) {
       const error = await response.text();
       console.error(error);

@@ -9,6 +9,7 @@ import UploadThumbnailModal from "@/components/modals/UploadThumbnailModal";
 import RemoveModal from "@/components/modals/RemoveModal";
 import ButtonWithLoading from "@/components/ButtonWithLoading";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 export default function AuthorBookSingleView() {
   const searchParams = useSearchParams();
   const bookId = searchParams.get("bookId");
@@ -21,7 +22,7 @@ export default function AuthorBookSingleView() {
 
   const fetchBook = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/books/single?bookId=" + bookId, {
+    const response = await Fetch("/api/author/books/single?bookId=" + bookId, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

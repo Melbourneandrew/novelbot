@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function StarterTemplateView() {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,7 +10,7 @@ export default function StarterTemplateView() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/route/here", {
+    const response = await Fetch("/api/route/here", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

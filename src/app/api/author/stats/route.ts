@@ -25,9 +25,7 @@ export const GET = ProtectedRoute(
   async (request: AuthenticatedNextRequest) => {
     console.log("Protected route called");
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(
-      user.id
-    );
+    const author = await AuthorService.findAuthorByUser(user.id);
     if (!author) {
       console.log("Author not found");
       return new NextResponse("Author not found", {
@@ -35,18 +33,15 @@ export const GET = ProtectedRoute(
       });
     }
 
-    const readerCount =
-      (await AuthorService.countReaders(
-        author._id.toString()
-      )) - 1; // Subtract 1 to exclude the author
+    const readerCount = Math.max(
+      0,
+      (await AuthorService.countReaders(author._id.toString())) - 1
+    ); // Subtract 1 to exclude the author
 
-    const {
-      conversationCount,
-      totalMessages,
-      averageConversationLength,
-    } = await ConversationService.conversationStatsByAuthor(
-      author._id.toString()
-    );
+    const { conversationCount, totalMessages, averageConversationLength } =
+      await ConversationService.conversationStatsByAuthor(
+        author._id.toString()
+      );
 
     const charactersWithStats =
       await CharacterService.findCharactersWithStatsByAuthor(

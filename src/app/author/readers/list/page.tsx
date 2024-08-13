@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { IReader } from "@/lib/models/Reader";
 import ErrorMessage from "@/components/ErrorMessage";
+import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorReadersView() {
   const [isLoading, setIsLoading] = useState(true);
@@ -11,7 +12,7 @@ export default function AuthorReadersView() {
 
   const fetchReaders = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/author/readers/list");
+    const response = await Fetch("/api/author/readers/list");
     if (!response.ok) {
       const error = await response.text();
       console.error(error);
