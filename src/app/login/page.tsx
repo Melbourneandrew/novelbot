@@ -65,6 +65,7 @@ export default function Login() {
             Submit
           </button>
         )}
+        <a href="/reset-password">Reset Password</a>
         <a href="/signup">Signup</a>
       </form>
     </div>

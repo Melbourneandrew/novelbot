@@ -305,7 +305,9 @@ export default function AuthorCharacterSingleView() {
             {showGeneratedCharacterActions && (
               <ButtonWithLoading
                 className="btn btn-primary"
-                action={() => console.log("Not implemented")}
+                action={() =>
+                  (window.location.href = "/reader?characterId=" + characterId)
+                }
               >
                 Chat Demo
               </ButtonWithLoading>

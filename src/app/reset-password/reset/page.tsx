@@ -32,11 +32,11 @@ export default function ResetPasswordPage() {
     }
 
     const data = await res.json();
-    alert(data);
+    window.location.href = "/login";
   };
 
   return (
-    <div className="flex flex-col gap-2 items-start">
+    <div className="flex flex-col gap-2 items-center">
       <h3>Enter new password</h3>
       <input
         type="text"
