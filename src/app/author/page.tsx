@@ -10,9 +10,8 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import { Fetch } from "@/lib/util/Fetch";
 
 export default function AuthorHomeView() {
-  const [authorStats, setAuthorStats] = useState<AuthorStatBoardData>(
-    {} as AuthorStatBoardData
-  );
+  const [authorStats, setAuthorStats] =
+    useState<AuthorStatBoardData>({} as AuthorStatBoardData);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -39,11 +38,12 @@ export default function AuthorHomeView() {
 
   return (
     <>
-      <h1 className="text-left">All-Time Stats</h1>
       {isLoading ? (
         <LoadingIndicator />
       ) : (
         <>
+          <h4>Welcome back, {authorStats.authorPenName}.</h4>
+          <h1 className="text-left">All-Time Stats</h1>
           <div className="stats shadow mb-[25px]">
             {/* TOTAL READERS STAT */}
             <div className="stat">
@@ -64,7 +64,9 @@ export default function AuthorHomeView() {
                 </svg>
               </div>
               <div className="stat-title">Readers</div>
-              <div className="stat-value">{authorStats.readerCount}</div>
+              <div className="stat-value">
+                {authorStats.readerCount}
+              </div>
               <div className="stat-desc">All-time</div>
             </div>
             {/* TOTAL CONVOS STAT*/}
@@ -85,8 +87,12 @@ export default function AuthorHomeView() {
                   ></path>
                 </svg>
               </div>
-              <div className="stat-title">Conversations Had</div>
-              <div className="stat-value">{authorStats.conversationCount}</div>
+              <div className="stat-title">
+                Conversations Had
+              </div>
+              <div className="stat-value">
+                {authorStats.conversationCount}
+              </div>
               <div className="stat-desc">↗︎ 400 (22%)</div>
             </div>
             {/* TOTAL MESSAGES STAT */}
@@ -108,7 +114,9 @@ export default function AuthorHomeView() {
                 </svg>
               </div>
               <div className="stat-title">Total Messages</div>
-              <div className="stat-value">{authorStats.totalMessages}</div>
+              <div className="stat-value">
+                {authorStats.totalMessages}
+              </div>
               <div className="stat-desc">↘︎ 90 (14%)</div>
             </div>
             {/* AVERAGE CHAT LENGTH STAT */}
@@ -129,9 +137,13 @@ export default function AuthorHomeView() {
                   ></path>
                 </svg>
               </div>
-              <div className="stat-title">Avg. Convo Length</div>
+              <div className="stat-title">
+                Avg. Convo Length
+              </div>
               <div className="stat-value">
-                {authorStats.averageConversationLength?.toFixed(1)}
+                {authorStats.averageConversationLength?.toFixed(
+                  1
+                )}
               </div>
               <div className="stat-desc">Messages</div>
             </div>
@@ -141,7 +153,8 @@ export default function AuthorHomeView() {
               <button
                 className="btn btn-primary"
                 onClick={() =>
-                  (window.location.href = "/author/conversations/list")
+                  (window.location.href =
+                    "/author/conversations/list")
                 }
               >
                 View All
@@ -169,13 +182,20 @@ export default function AuthorHomeView() {
                     />
                   </figure>
                   <div className="card-body">
-                    <h2 className="card-title">{character.name}</h2>
+                    <h2 className="card-title">
+                      {character.name}
+                    </h2>
                     {character.published ? (
                       <>
-                        <p>Total Convos: {character.totalConversations}</p>
+                        <p>
+                          Total Convos:{" "}
+                          {character.totalConversations}
+                        </p>
                         <p>
                           Avg. Convo Length:{" "}
-                          {character?.averageConversationLength?.toFixed(1)}
+                          {character?.averageConversationLength?.toFixed(
+                            1
+                          )}
                         </p>
                         <div className="card-actions justify-end">
                           <ButtonWithLoading className="btn btn-primary">

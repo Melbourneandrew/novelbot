@@ -159,3 +159,18 @@ export async function deleteReaderAndTheirEnteredCodes(
   await ReaderEnteredCode.deleteMany({ reader: readerId });
   return await Reader.findByIdAndDelete(readerId);
 }
+
+export async function revokeAccess(
+  readerId: string
+): Promise<Boolean> {
+  try {
+    await ReaderEnteredCode.updateMany(
+      { reader: readerId },
+      { accessRevoked: true }
+    );
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+  return true;
+}

@@ -9,14 +9,15 @@ import { IAccessCode } from "@/lib/models/AccessCode";
 import RemoveModal from "@/components/modals/RemoveModal";
 import ErrorMessage from "@/components/ErrorMessage";
 import { Fetch } from "@/lib/util/Fetch";
+import { DisplayAccessCode } from "@/lib/services/AccessCodeService";
 
 export default function AuthorReaderSingleView() {
   const searchParams = useSearchParams();
   const readerId = searchParams.get("readerId");
   const [reader, setReader] = useState<IReader>({} as IReader);
-  const [readerAccessCodes, setReaderAccessCodes] = useState<IAccessCode[]>(
-    [] as IAccessCode[]
-  );
+  const [readerAccessCodes, setReaderAccessCodes] = useState<
+    DisplayAccessCode[]
+  >([] as DisplayAccessCode[]);
   const [conversationCount, setConversationCount] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -59,7 +60,9 @@ export default function AuthorReaderSingleView() {
         <button onClick={() => window.history.back()}>
           <BackArrowIcon size="25" />
         </button>
-        <h1 className="text-left">Reader overview for: {reader.displayName}</h1>
+        <h1 className="text-left">
+          Reader overview for: {reader.displayName}
+        </h1>
       </div>
       {isLoading ? (
         <LoadingIndicator />
@@ -67,13 +70,17 @@ export default function AuthorReaderSingleView() {
         <div>
           {/* Reader Info */}
           <div className="mb-[20px]">
-            <div>Reader Display Name: {reader.displayName as string}</div>
+            <div>
+              Reader Display Name:{" "}
+              {reader.displayName as string}
+            </div>
             <div>Reader Id: {reader._id as string}</div>
             <div>Created at: {reader.createdAt}</div>
             <div>Conversations had: {conversationCount}</div>
           </div>
           {/* Action Menu */}
           <div className="flex gap-1">
+            {/* Conversation History Button */}
             <button
               className="btn btn-primary"
               onClick={() =>
@@ -83,6 +90,7 @@ export default function AuthorReaderSingleView() {
             >
               Conversation History
             </button>
+            {/* Revoke Access */}
             <button
               className="btn btn-error"
               onClick={() => {
@@ -92,7 +100,7 @@ export default function AuthorReaderSingleView() {
                 modal?.showModal();
               }}
             >
-              Remove Reader
+              Remove Reader Access
             </button>
           </div>
           <h1 className="text-left mt-[30px]">Access Codes</h1>
@@ -107,6 +115,7 @@ export default function AuthorReaderSingleView() {
                   <th>Code</th>
                   <th>Characters</th>
                   <th>Expires</th>
+                  <th>Access Revoked</th>
                 </tr>
               </thead>
               <tbody>
@@ -118,9 +127,11 @@ export default function AuthorReaderSingleView() {
                     <td>
                       {code.characters
                         .map((character) =>
-                          (character as ICharacter).name?.length > 10
-                            ? (character as ICharacter).name.substring(0, 10) +
-                              "..."
+                          (character as ICharacter).name
+                            ?.length > 10
+                            ? (
+                                character as ICharacter
+                              ).name.substring(0, 10) + "..."
                             : (character as ICharacter).name
                         )
                         .join(", ")}
@@ -129,8 +140,11 @@ export default function AuthorReaderSingleView() {
                       {new Date(code.expires).getFullYear() >
                       new Date().getFullYear() + 90
                         ? "Never"
-                        : new Date(code.expires).toLocaleDateString()}
+                        : new Date(
+                            code.expires
+                          ).toLocaleDateString()}
                     </td>
+                    <td>{code.accessRevoked ? "Yes" : "No"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -142,8 +156,10 @@ export default function AuthorReaderSingleView() {
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
       <RemoveModal
-        headerText={"Remove Reader: " + reader.displayName}
-        removeRoute={"/api/author/readers/remove?readerId="}
+        headerText={
+          "Revoke Reader Access: " + reader.displayName
+        }
+        removeRoute={"/api/author/readers/revoke?readerId="}
         documentId={readerId as string}
       />
     </>

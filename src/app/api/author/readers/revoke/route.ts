@@ -4,13 +4,12 @@ import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as ReaderService from "@/lib/services/ReaderService";
-import { read } from "fs";
-
 export const GET = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
-    console.log("List readers route called");
+    console.log("Revoke reader access route called");
     const user = request.user;
+
     const author = await AuthorService.findAuthorByUser(
       user._id
     );
@@ -23,21 +22,35 @@ export const GET = ProtectedRoute(
       );
     }
 
-    const readers = await ReaderService.findReadersByAuthor(
-      author._id
-    );
+    const searchParams = request.nextUrl.searchParams;
+    const readerId = searchParams.get("readerId");
+    if (!readerId) {
+      return new NextResponse("Reader ID is required", {
+        status: 400,
+      });
+    }
 
-    const readersWithAuthorDesignated = readers.map(
-      (reader) => {
-        if (reader.user.toString() == user._id.toString()) {
-          reader.displayName = reader.displayName + " (You)";
-        }
-        return reader;
-      }
+    const reader = await ReaderService.findReaderById(readerId);
+    if (!reader) {
+      return new NextResponse("Reader not found", {
+        status: 404,
+      });
+    }
+
+    const revokeAccess = await ReaderService.revokeAccess(
+      readerId
     );
+    if (!revokeAccess) {
+      return new NextResponse(
+        "Failed to revoke reader access",
+        {
+          status: 500,
+        }
+      );
+    }
 
     return NextResponse.json({
-      readers: readersWithAuthorDesignated,
+      message: "Reader access revoked",
     });
   }
 );

@@ -26,7 +26,9 @@ export async function findAccessCodeByCode(
 export async function findAccessCodesByAuthor(
   authorId: string
 ): Promise<IAccessCode[] | null> {
-  return await AccessCode.find({ author: authorId }).populate("characters");
+  return await AccessCode.find({ author: authorId }).populate(
+    "characters"
+  );
 }
 
 export async function findAccessCodesByCharacter(
@@ -35,9 +37,12 @@ export async function findAccessCodesByCharacter(
   return await AccessCode.find({ characters: characterId });
 }
 
+export interface DisplayAccessCode extends IAccessCode {
+  accessRevoked: boolean;
+}
 export async function findAccessCodesByReaderId(
   readerId: string
-): Promise<IAccessCode[] | null> {
+): Promise<DisplayAccessCode[] | null> {
   //register character model
   Character.init();
   const readerEnteredCodes = await ReaderEnteredCode.find({
@@ -55,13 +60,20 @@ export async function findAccessCodesByReaderId(
   }
   const accessCodes = [];
   for (const readerEnteredCode of readerEnteredCodes) {
+    const code =
+      readerEnteredCode.accessCode as DisplayAccessCode;
+    code.accessRevoked = readerEnteredCode.accessRevoked;
     accessCodes.push(readerEnteredCode.accessCode);
   }
   return accessCodes;
 }
 
-export async function removeAccessCode(accessCodeId: string): Promise<boolean> {
-  const accessCode = await AccessCode.findByIdAndDelete(accessCodeId);
+export async function removeAccessCode(
+  accessCodeId: string
+): Promise<boolean> {
+  const accessCode = await AccessCode.findByIdAndDelete(
+    accessCodeId
+  );
   if (!accessCode) {
     return false;
   }

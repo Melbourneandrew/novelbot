@@ -9,6 +9,7 @@ import { IReader } from "./Reader";
 interface IReaderEnteredCode extends Document {
   reader: IReader | string;
   accessCode: IAccessCode | string;
+  accessRevoked: boolean;
 }
 
 const ReaderEnteredCodeSchema: Schema = new Schema(
@@ -22,6 +23,10 @@ const ReaderEnteredCodeSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "AccessCode",
       required: true,
+    },
+    accessRevoked: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

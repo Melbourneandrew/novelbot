@@ -13,6 +13,7 @@ export interface CharacterWithStats extends ICharacter {
 }
 
 export interface AuthorStatBoardData {
+  authorPenName: string;
   readerCount?: number;
   conversationCount?: number;
   totalMessages?: number;
@@ -23,25 +24,33 @@ export interface AuthorStatBoardData {
 export const GET = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
-    console.log("Protected route called");
+    console.log("Author stats route called");
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(user.id);
+    const author = await AuthorService.findAuthorByUser(
+      user.id
+    );
     if (!author) {
       console.log("Author not found");
       return new NextResponse("Author not found", {
         status: 404,
       });
     }
+    const authorPenName = author.penName;
 
     const readerCount = Math.max(
       0,
-      (await AuthorService.countReaders(author._id.toString())) - 1
+      (await AuthorService.countReaders(
+        author._id.toString()
+      )) - 1
     ); // Subtract 1 to exclude the author
 
-    const { conversationCount, totalMessages, averageConversationLength } =
-      await ConversationService.conversationStatsByAuthor(
-        author._id.toString()
-      );
+    const {
+      conversationCount,
+      totalMessages,
+      averageConversationLength,
+    } = await ConversationService.conversationStatsByAuthor(
+      author._id.toString()
+    );
 
     const charactersWithStats =
       await CharacterService.findCharactersWithStatsByAuthor(
@@ -49,6 +58,7 @@ export const GET = ProtectedRoute(
       );
 
     const authorStats: AuthorStatBoardData = {
+      authorPenName,
       readerCount,
       charactersWithStats,
       conversationCount,
