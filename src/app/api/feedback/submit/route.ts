@@ -2,22 +2,20 @@ import { NextResponse } from "next/server";
 import { ProtectedRoute } from "@/lib/ProtectedRoute";
 import { AuthenticatedNextRequest } from "@/types";
 import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
+import * as FeedbackService from "@/lib/services/FeedbackService";
 
 export const POST = ProtectedRoute(
   UserAuthenticator,
   async (request: AuthenticatedNextRequest) => {
-    console.log("Protected route called");
+    console.log("Submit Feedback route called");
     const user = request.user;
 
     const { message, requestHistory } = await request.json();
 
-    if (false) {
-      return new NextResponse("Protected route call failed", {
-        status: 401,
-      });
-    }
+    await FeedbackService.createFeedback(message, requestHistory, user);
+
     return NextResponse.json({
-      message: "Protected route called",
+      message: "Feedback submitted",
     });
   }
 );

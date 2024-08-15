@@ -18,9 +18,7 @@ export default function SpotlightPage() {
   return (
     <div className="flex flex-col items-center">
       <h1>{documentType}</h1>
-      <p>
-        <pre>{JSON.stringify(document, null, 2)}</pre>
-      </p>
+      <pre>{JSON.stringify(document, null, 2)}</pre>
     </div>
   );
 }

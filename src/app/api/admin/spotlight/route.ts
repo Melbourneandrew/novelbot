@@ -8,6 +8,7 @@ import { Purchase } from "@/lib/models/Purchase";
 import * as EventService from "@/lib/services/EventService";
 import * as UserService from "@/lib/services/UserService";
 import * as PurchaseService from "@/lib/services/PurchaseService";
+import * as FeedbackService from "@/lib/services/FeedbackService";
 
 //TODO: Change to admin protected route
 
@@ -36,6 +37,9 @@ export const GET = ProtectedRoute(
         break;
       case "Purchase":
         document = await PurchaseService.findPurchaseById(id);
+        break;
+      case "Feedback":
+        document = await FeedbackService.findFeedbackById(id);
     }
 
     return NextResponse.json({ document });

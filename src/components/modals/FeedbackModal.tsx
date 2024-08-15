@@ -4,11 +4,11 @@ import ButtonWithLoading from "../ButtonWithLoading";
 import { getEntriesFromRequestHistory } from "@/lib/util/request-history";
 import ChatBubbleIcon from "../icons/ChatBubbleIcon";
 export default function BasicModal() {
-  const [feedbackMessage, setFeedbackMessage] =
-    useState<string>("");
+  const [feedbackMessage, setFeedbackMessage] = useState<string>("");
   const submitFeedback = async () => {
     const requestHistory = getEntriesFromRequestHistory();
-    const request = await fetch("/api/feedback", {
+    console.log(requestHistory);
+    const request = await fetch("/api/feedback/submit", {
       method: "POST",
       body: JSON.stringify({
         message: feedbackMessage,
@@ -20,11 +20,7 @@ export default function BasicModal() {
       console.error("Error submitting feedback");
       return;
     }
-    (
-      document.getElementById(
-        "feedback_modal"
-      ) as HTMLDialogElement
-    ).close();
+    (document.getElementById("feedback_modal") as HTMLDialogElement).close();
     setFeedbackMessage("");
   };
 
@@ -43,12 +39,10 @@ export default function BasicModal() {
       </button>
       <dialog id="feedback_modal" className="modal">
         <div className="modal-box absolute top-4 right-4">
-          <h3 className="font-bold text-lg">
-            Leave some feedback!
-          </h3>
+          <h3 className="font-bold text-lg">Leave some feedback!</h3>
           <p className="py-4">
-            Describe your expierence, lodge a complaint, or
-            leave a suggestion. Don&apos;t hold back!
+            Describe your expierence, lodge a complaint, or leave a suggestion.
+            Don&apos;t hold back!
           </p>
           <textarea
             className="textarea textarea-bordered w-[100%] h-[150px] resize-none"
