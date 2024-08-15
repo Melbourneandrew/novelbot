@@ -1,3 +1,4 @@
+import { addEntryToRequestHistory } from "./request-history";
 export async function Fetch(
   input: URL | RequestInfo,
   init?: RequestInit | undefined
@@ -8,17 +9,4 @@ export async function Fetch(
     window.location.href = "/login";
   }
   return res;
-}
-
-function addEntryToRequestHistory(entry: string) {
-  let history = [];
-  const storedHistory = localStorage.getItem("request_history");
-  if (storedHistory) {
-    history = JSON.parse(storedHistory);
-    if (history.length > 10) {
-      history.shift();
-    }
-  }
-  history.push(entry);
-  localStorage.setItem("request_history", JSON.stringify(history));
 }
