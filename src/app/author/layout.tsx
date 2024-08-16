@@ -1,4 +1,5 @@
 "use client";
+import FeedbackModal from "@/components/modals/FeedbackModal";
 import { ReactNode } from "react";
 
 export default function DashboardNavbarLayout({
@@ -8,9 +9,7 @@ export default function DashboardNavbarLayout({
 }) {
   return (
     <>
-      <h1 className="text-4xl mb-[20px] text-left">
-        Author Dashboard
-      </h1>
+      <h1 className="text-4xl mb-[20px] text-left">Author Dashboard</h1>
 
       <div className="flex flex-row w-[100%] overflow-hidden">
         {/* SIDE NAV BAR */}
@@ -61,6 +60,7 @@ export default function DashboardNavbarLayout({
         </div>
         {/* CONTENT */}
         <div className="flex-1">{children}</div>
+        <FeedbackModal />
       </div>
     </>
   );

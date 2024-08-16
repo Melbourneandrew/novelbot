@@ -16,12 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={
-          inter.className + " w-[100vw] h-[100vh] p-4 relative"
-        }
-      >
-        <FeedbackModal />
+      <body className={inter.className + " w-[100vw] h-[100vh] p-4 relative"}>
         {children}
       </body>
     </html>

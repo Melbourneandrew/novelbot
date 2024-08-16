@@ -6,6 +6,7 @@ import { IConversation, Message } from "@/lib/models/Conversation";
 import { useSearchParams } from "next/navigation";
 import { IBook } from "@/lib/models/Book";
 import { Fetch } from "@/lib/util/Fetch";
+import FeedbackModal from "@/components/modals/FeedbackModal";
 interface ChatRequestBody {
   messages: Message[];
   characterId?: string;
@@ -252,6 +253,7 @@ export default function Chat() {
           ))
         )}
       </div>
+      <FeedbackModal />
     </div>
   );
 }
