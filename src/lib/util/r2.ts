@@ -57,5 +57,5 @@ export async function uploadImageToR2(
 }
 
 export function makeR2PublicUrl(fileName: string) {
-  return `https://${CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${fileName}`;
+  return `https://pub-d83e34d9fafc4ffcbe840bd347e399eb.r2.dev/${fileName}`;
 }

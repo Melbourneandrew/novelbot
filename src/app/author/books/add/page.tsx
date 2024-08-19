@@ -19,16 +19,19 @@ export default function CreateBook() {
       return;
     }
     setIsLoading(true);
-    const submitAddBookResponse = await Fetch("/api/author/books/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        bookTitle,
-        bookSummary,
-      }),
-    });
+    const submitAddBookResponse = await Fetch(
+      "/api/author/books/add",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookTitle,
+          bookSummary,
+        }),
+      }
+    );
     setIsLoading(false);
 
     if (submitAddBookResponse.ok) {
@@ -44,7 +47,9 @@ export default function CreateBook() {
     }
   };
 
-  const handleBookFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBookFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files) {
       console.log("Book file changed");
       const currentFile = event.target.files[0];
@@ -62,9 +67,13 @@ export default function CreateBook() {
     formData.append("file", bookFile);
 
     console.log("Upload URL: ", uploadLink);
+
     await Fetch(uploadLink, {
       method: "PUT",
-      body: formData,
+      body: bookFile,
+      headers: {
+        "Content-Type": "applicaiton/pdf",
+      },
     });
   };
   return (
@@ -77,7 +86,9 @@ export default function CreateBook() {
       </div>
       <div className="flex flex-col gap-4">
         <div>
-          <div className="text-[25px] font-bold">Book title</div>
+          <div className="text-[25px] font-bold">
+            Book title
+          </div>
           <input
             value={bookTitle}
             onChange={(e) => setBookTitle(e.target.value)}
@@ -87,7 +98,9 @@ export default function CreateBook() {
           />
         </div>
         <div>
-          <div className="text-[25px] font-bold">Book summary</div>
+          <div className="text-[25px] font-bold">
+            Book summary
+          </div>
           <input
             value={bookSummary}
             onChange={(e) => setBookSummary(e.target.value)}
@@ -105,10 +118,11 @@ export default function CreateBook() {
             onChange={handleBookFileChange}
           />
           <p>
-            Your book PDF will be used to collect your characters dialogue to
-            create a chatbot that acts and sounds like them. The PDF will not be
-            stored beyond what is necessary to support the creation of your
-            characters bot profile.
+            Your book PDF will be used to collect your
+            characters dialogue to create a chatbot that acts
+            and sounds like them. The PDF will not be stored
+            beyond what is necessary to support the creation of
+            your characters bot profile.
           </p>
         </div>
         {isLoading ? (
@@ -121,7 +135,9 @@ export default function CreateBook() {
             Add book
           </button>
         )}
-        {errorMessage && <ErrorMessage message={errorMessage} />}
+        {errorMessage && (
+          <ErrorMessage message={errorMessage} />
+        )}
       </div>
     </>
   );
