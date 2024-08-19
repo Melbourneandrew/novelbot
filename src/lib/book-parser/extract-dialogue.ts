@@ -21,6 +21,10 @@ async function fetchContent(contentLink: string) {
   return pdfData.text;
 }
 
+/**
+ * Split text into specifed length chunks.
+ * Will go over chunkSize if chunk will end in the middle of a quote or sentence
+ */
 async function chunkText(text: string, chunkSize: number): Promise<string[]> {
   const words = text.replace(/\n/g, " ").split(" ");
   const chunks = [];
@@ -28,7 +32,12 @@ async function chunkText(text: string, chunkSize: number): Promise<string[]> {
 
   let iteratorIsInQuote = false;
   for (let i = 0; i < words.length; i++) {
-    if (currentChunk.length > chunkSize && !iteratorIsInQuote) {
+    // Don't end chunk in a quote or before the end of a sentence
+    if (
+      currentChunk.length > chunkSize &&
+      !iteratorIsInQuote &&
+      currentChunk[currentChunk.length - 1].includes(".")
+    ) {
       chunks.push(currentChunk.join(" "));
       currentChunk = [];
     }
