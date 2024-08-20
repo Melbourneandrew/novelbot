@@ -9,24 +9,18 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function extractDialogue(book: IBook) {
   const { contentFileLink, _id: bookId } = book;
-  console.log(
-    "Dialogue extraction initiated for book " + bookId
-  );
+  console.log("Dialogue extraction initiated for book " + bookId);
   console.log("Fetching content from " + contentFileLink);
   const bookContent = await fetchContent(contentFileLink);
   console.log("Finished fetching content.");
   const chunks = await chunkText(bookContent, 5000);
-  console.log("Finished chunking text");
-  const dialogueByCharacter = await sortDialogueByCharacter(
-    chunks
-  );
+  console.log("Finished chunking text. Chunk count: " + chunks.length);
+  const dialogueByCharacter = await sortDialogueByCharacter(chunks);
   console.log("Finished extracting dialogue");
 
   console.log(dialogueByCharacter);
 
-  console.log(
-    "Adding character and dialogue documents in database"
-  );
+  console.log("Adding character and dialogue documents in database");
   await CharacterService.createCharactersFromBookExtraction(
     dialogueByCharacter,
     bookId.toString()
@@ -36,16 +30,11 @@ export async function extractDialogue(book: IBook) {
 
 async function fetchContent(contentLink: string) {
   const response = await fetch(contentLink);
-  const pdfData = await pdfParse(
-    Buffer.from(await response.arrayBuffer())
-  );
+  const pdfData = await pdfParse(Buffer.from(await response.arrayBuffer()));
   return pdfData.text;
 }
 
-async function chunkText(
-  text: string,
-  chunkSize: number
-): Promise<string[]> {
+async function chunkText(text: string, chunkSize: number): Promise<string[]> {
   const words = text.replace(/\n/g, " ").split(" ");
   const chunks = [];
   let currentChunk = [];
@@ -79,29 +68,33 @@ async function sortDialogueByCharacter(chunks: string[]) {
   let chunkRetries = 0;
   let dialogueByCharacter: DialogueByCharacter = {};
   for (let i = 0; i < chunks.length; i++) {
-    console.log(
-      "Processing chunk " +
-        i +
-        " with length " +
-        chunks[i].length
-    );
-    const completionResponse = await getGroqChatCompletion(
-      buildPrompt(chunks[i])
-    );
-    const completion =
-      completionResponse.choices[0]?.message?.content || "";
+    console.log("Processing chunk " + i + " with length " + chunks[i].length);
+    const encounteredCharacters = Object.keys(dialogueByCharacter);
+    let completion;
+    try {
+      const { systemPrompt, userPrompt } = buildPrompt(
+        chunks[i],
+        encounteredCharacters
+      );
+      const completionResponse = await getGroqChatCompletion(
+        systemPrompt,
+        userPrompt
+      );
+      completion = completionResponse.choices[0]?.message?.content || "";
+    } catch (error) {
+      console.error("Failed to get completion. Retrying completion.");
+      i -= 1;
+      continue;
+    }
 
-    const jsonString =
-      extractJsonStringFromCompletion(completion);
     let dialogueData;
     try {
-      dialogueData = JSON.parse(jsonString);
+      dialogueData = extractJsonFromCompletion(completion);
     } catch (error) {
       console.error(
         "Failed to parse JSON. Retrying completion. Chunk retries: " +
           ++chunkRetries
       );
-      console.log(jsonString);
 
       i -= 1;
       continue;
@@ -110,24 +103,25 @@ async function sortDialogueByCharacter(chunks: string[]) {
 
     for (const character in dialogueData) {
       if (dialogueByCharacter[character]) {
-        dialogueByCharacter[character].push(
-          ...dialogueData[character]
-        );
+        dialogueByCharacter[character].push(...dialogueData[character]);
       } else {
-        dialogueByCharacter[character] =
-          dialogueData[character];
+        dialogueByCharacter[character] = dialogueData[character];
       }
     }
   }
   return dialogueByCharacter;
 }
 
-async function getGroqChatCompletion(prompt: string) {
+async function getGroqChatCompletion(systemPrompt: string, userPrompt: string) {
   return groq.chat.completions.create({
     messages: [
       {
+        role: "system",
+        content: systemPrompt,
+      },
+      {
         role: "user",
-        content: prompt,
+        content: userPrompt,
       },
     ],
     model: "llama-3.1-70b-versatile",
@@ -135,9 +129,17 @@ async function getGroqChatCompletion(prompt: string) {
   });
 }
 
-function buildPrompt(chunk: string) {
-  return `Extract each line of dialogue from the real input text and put it into a JSON formatted collection of other lines of dialogue said by that character. 
-
+function buildPrompt(
+  chunk: string,
+  encounteredCharacters: string[]
+): {
+  systemPrompt: string;
+  userPrompt: string;
+} {
+  const systemPrompt = `
+  You will extract each line of dialogue from an input text and put it into a JSON formatted collection of other lines of dialogue said by that character. The text could come from any part of the book, as the book will be broken up into
+  chunks and the dialogue collected incrimentally. You will be provided with a list of characters that have already been encountered. Try to assign the dialogue to one of these characters, as the name they are addressed by may change throughout the book.
+  For example, if you are provided with an already encountered character "Sherlock Holmes", any dialogue in the text from "Sherlock" or "Holmes" would be put into an array keyed with "Sherlock Holmes".
   Here is an example of the input text:
   Bob and Alice crossed paths in the park. Bob greeted, “Hello.” Alice smiled, replying, “Good day.” Bob asked, “How are you?” Alice nodded, “I am well.” As they parted ways, Bob waved, saying, “Goodbye.” Alice echoed, “Farewell.”
 
@@ -146,13 +148,24 @@ function buildPrompt(chunk: string) {
   
   Respond ONLY with valid JSON.
   The lines of dialogue should not contain quotation mark characters. If you do encounter this, escape them with a backslash to preserve the JSON format.
-  Here is the real input text: 
+  `;
+
+  const userPrompt = `
+  ${
+    encounteredCharacters.length
+      ? "Here is a list of characters that have already been encountered: " +
+        encounteredCharacters.join(", ") +
+        ". \n"
+      : ""
+  }
+  Here is the input text: 
   ${chunk}
   Now produce the expected output. Respond ONLY with valid JSON.
   `;
+  return { systemPrompt, userPrompt };
 }
 
-function extractJsonStringFromCompletion(completion: string) {
+function extractJsonFromCompletion(completion: string) {
   const firstCurlyBracketIndex = completion.indexOf("{");
   const lastCurlyBracketIndex = completion.lastIndexOf("}");
   const jsonString = completion.substring(
@@ -160,5 +173,5 @@ function extractJsonStringFromCompletion(completion: string) {
     lastCurlyBracketIndex + 1
   );
 
-  return jsonString;
+  return JSON.parse(jsonString);
 }
