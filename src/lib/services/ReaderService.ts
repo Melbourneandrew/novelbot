@@ -28,17 +28,11 @@ export async function findReadersByAuthor(
   const accessCodes = await AccessCode.find({
     author: authorId,
   });
-  console.log("Access codes", accessCodes);
-  console.log(
-    "Access code ids",
-    accessCodes.map((code) => code._id)
-  );
   const readerEnteredCodes = await ReaderEnteredCode.find({
     accessCode: {
       $in: accessCodes.map((accessCode) => accessCode._id),
     },
   });
-  console.log("Reader entered codes", readerEnteredCodes);
 
   const readers = await Reader.find({
     _id: {
@@ -47,7 +41,6 @@ export async function findReadersByAuthor(
       ),
     },
   });
-  console.log("Readers", readers);
   return readers;
 }
 

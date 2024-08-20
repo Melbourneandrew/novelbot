@@ -10,6 +10,8 @@ import {
 } from "../models/Conversation";
 import { IBook, Book } from "@/lib/models/Book";
 import { CharacterWithStats } from "@/app/api/author/stats/route";
+import { DialogueByCharacter } from "../book-parser/extract-dialogue";
+import mongoose from "mongoose";
 
 export async function findCharacterById(
   id: string
@@ -95,6 +97,45 @@ export async function deleteCharacterAndTheirDialogue(
   await Dialogue.deleteMany({ character: characterId });
   return await Character.findByIdAndDelete(characterId);
 }
+export async function createCharactersFromBookExtraction(
+  dialogueByCharacter: DialogueByCharacter,
+  bookId: string
+) {
+  const characters = [];
+  const dialogues = [];
+  for (const characterName in dialogueByCharacter) {
+    const characterId = new mongoose.Types.ObjectId();
+    characters.push({
+      name: characterName,
+      book: bookId,
+      _id: characterId,
+    });
+    dialogues.push(
+      ...dialogueByCharacter[characterName].map((text) => ({
+        character: characterId,
+        text,
+      }))
+    );
+  }
+  await Character.insertMany(characters);
+  await Dialogue.insertMany(dialogues);
+}
+export async function createCharacterAndAddDialogue(
+  name: string,
+  dialogue: string[],
+  bookId: string
+) {
+  const character = new Character({ name, book: bookId });
+  await character.save();
+
+  const dialogues = dialogue.map((text) => ({
+    character: character._id,
+    text,
+  }));
+
+  await Dialogue.insertMany(dialogues);
+}
+
 export async function generateRandomCharacters(bookId: string) {
   console.log("Generating random characters");
   const names = [
@@ -187,7 +228,6 @@ const CLOUDFLARE_R2_PUBLIC_URL =
 if (!CLOUDFLARE_R2_PUBLIC_URL) {
   throw new Error("CLOUDFLARE_R2_PUBLIC_URL must be set");
 }
-
 export async function updateCharacterThumbnail(
   characterId: string,
   thumbnailFileName: string

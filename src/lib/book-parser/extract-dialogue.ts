@@ -1,31 +1,51 @@
 import pdfParse from "pdf-parse";
 import Groq from "groq-sdk";
-
+import * as CharacterService from "@/lib/services/CharacterService";
+import { IBook } from "../models/Book";
 if (!process.env.GROQ_API_KEY) {
   throw new Error("GROQ_API_KEY must be set");
 }
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-export async function extractDialogue(contentLink: string) {
-  const bookContent = await fetchContent(contentLink);
+export async function extractDialogue(book: IBook) {
+  const { contentFileLink, _id: bookId } = book;
+  console.log(
+    "Dialogue extraction initiated for book " + bookId
+  );
+  console.log("Fetching content from " + contentFileLink);
+  const bookContent = await fetchContent(contentFileLink);
+  console.log("Finished fetching content.");
   const chunks = await chunkText(bookContent, 5000);
-
-  const dialogueByCharacter = await sortDialogueByCharacter(chunks);
-
+  console.log("Finished chunking text");
+  const dialogueByCharacter = await sortDialogueByCharacter(
+    chunks
+  );
   console.log("Finished extracting dialogue");
+
+  console.log(dialogueByCharacter);
+
+  console.log(
+    "Adding character and dialogue documents in database"
+  );
+  await CharacterService.createCharactersFromBookExtraction(
+    dialogueByCharacter,
+    bookId.toString()
+  );
+  console.log("Finished creating characters");
 }
 
 async function fetchContent(contentLink: string) {
   const response = await fetch(contentLink);
-  const pdfData = await pdfParse(Buffer.from(await response.arrayBuffer()));
+  const pdfData = await pdfParse(
+    Buffer.from(await response.arrayBuffer())
+  );
   return pdfData.text;
 }
 
-/**
- * Split text into specifed length chunks.
- * Will go over chunkSize if chunk will end in the middle of a quote or sentence
- */
-async function chunkText(text: string, chunkSize: number): Promise<string[]> {
+async function chunkText(
+  text: string,
+  chunkSize: number
+): Promise<string[]> {
   const words = text.replace(/\n/g, " ").split(" ");
   const chunks = [];
   let currentChunk = [];
@@ -52,20 +72,27 @@ async function chunkText(text: string, chunkSize: number): Promise<string[]> {
   return chunks;
 }
 
-type DialogueByCharacter = {
-  [character: string]: string[];
+export type DialogueByCharacter = {
+  [characterName: string]: string[];
 };
 async function sortDialogueByCharacter(chunks: string[]) {
   let chunkRetries = 0;
   let dialogueByCharacter: DialogueByCharacter = {};
   for (let i = 0; i < chunks.length; i++) {
-    console.log("Processing chunk " + i + " with length " + chunks[i].length);
+    console.log(
+      "Processing chunk " +
+        i +
+        " with length " +
+        chunks[i].length
+    );
     const completionResponse = await getGroqChatCompletion(
       buildPrompt(chunks[i])
     );
-    const completion = completionResponse.choices[0]?.message?.content || "";
+    const completion =
+      completionResponse.choices[0]?.message?.content || "";
 
-    const jsonString = extractJsonStringFromCompletion(completion);
+    const jsonString =
+      extractJsonStringFromCompletion(completion);
     let dialogueData;
     try {
       dialogueData = JSON.parse(jsonString);
@@ -83,14 +110,16 @@ async function sortDialogueByCharacter(chunks: string[]) {
 
     for (const character in dialogueData) {
       if (dialogueByCharacter[character]) {
-        dialogueByCharacter[character].push(...dialogueData[character]);
+        dialogueByCharacter[character].push(
+          ...dialogueData[character]
+        );
       } else {
-        dialogueByCharacter[character] = dialogueData[character];
+        dialogueByCharacter[character] =
+          dialogueData[character];
       }
     }
   }
-
-  console.log(dialogueByCharacter);
+  return dialogueByCharacter;
 }
 
 async function getGroqChatCompletion(prompt: string) {
@@ -131,50 +160,5 @@ function extractJsonStringFromCompletion(completion: string) {
     lastCurlyBracketIndex + 1
   );
 
-  return jsonString;
-}
-
-//WIP
-function tryEscapingQuotesBetweenCommas(jsonString: string): string {
-  const jsonFormattingCharactersList = [
-    ",",
-    String.fromCharCode(10), //newline,
-    String.fromCharCode(32), //space
-  ];
-  let isInArray = false;
-  let isInQuote = false;
-  for (let i = 0; i < jsonString.length - 3; i++) {
-    if (jsonString[i] == "[") {
-      isInArray = true;
-      continue;
-    }
-    if (jsonString[i] == "]") {
-      isInArray = false;
-      continue;
-    }
-    if (!isInArray) {
-      continue;
-    }
-    if (jsonString[i] == '"' && !isInQuote) {
-      isInQuote = true;
-      continue;
-    }
-    if (jsonString[i] == '"') {
-      let escapedQuote = false;
-      for (let j = i + 1; j < i + 4; j++) {
-        if (!jsonFormattingCharactersList.includes(jsonString[j])) {
-          jsonString = jsonString.slice(0, i) + "\\" + jsonString.slice(i);
-          i++;
-          escapedQuote = true;
-          break;
-        }
-      }
-      if (escapedQuote) {
-        continue;
-      } else {
-        isInQuote = false;
-      }
-    }
-  }
   return jsonString;
 }

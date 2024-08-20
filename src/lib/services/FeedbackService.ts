@@ -8,7 +8,6 @@ export async function createFeedback(
   requestHistory: string[],
   user: IUser
 ) {
-  console.log(requestHistory);
   Feedback.create({
     userMessage: message,
     requestHistory: requestHistory,
@@ -22,8 +21,12 @@ export async function createFeedback(
     "User deposited message: \n" + message
   );
 }
-export async function findFeedbackById(feedbackId: string): Promise<IFeedback> {
-  return (await Feedback.findById(feedbackId).populate("user")) as IFeedback;
+export async function findFeedbackById(
+  feedbackId: string
+): Promise<IFeedback> {
+  return (await Feedback.findById(feedbackId).populate(
+    "user"
+  )) as IFeedback;
 }
 
 export async function findAllFeedback(): Promise<IFeedback[]> {
