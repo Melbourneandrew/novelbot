@@ -9,18 +9,26 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function extractDialogue(book: IBook) {
   const { contentFileLink, _id: bookId } = book;
-  console.log("Dialogue extraction initiated for book " + bookId);
+  console.log(
+    "Dialogue extraction initiated for book " + bookId
+  );
   console.log("Fetching content from " + contentFileLink);
-  const bookContent = await fetchContent(contentFileLink);
+  const bookContent = await fetchBookContent(contentFileLink);
   console.log("Finished fetching content.");
   const chunks = await chunkText(bookContent, 5000);
-  console.log("Finished chunking text. Chunk count: " + chunks.length);
-  const dialogueByCharacter = await sortDialogueByCharacter(chunks);
+  console.log(
+    "Finished chunking text. Chunk count: " + chunks.length
+  );
+  const dialogueByCharacter = await sortDialogueByCharacter(
+    chunks
+  );
   console.log("Finished extracting dialogue");
 
   console.log(dialogueByCharacter);
 
-  console.log("Adding character and dialogue documents in database");
+  console.log(
+    "Adding character and dialogue documents in database"
+  );
   await CharacterService.createCharactersFromBookExtraction(
     dialogueByCharacter,
     bookId.toString()
@@ -28,13 +36,18 @@ export async function extractDialogue(book: IBook) {
   console.log("Finished creating characters");
 }
 
-async function fetchContent(contentLink: string) {
+export async function fetchBookContent(contentLink: string) {
   const response = await fetch(contentLink);
-  const pdfData = await pdfParse(Buffer.from(await response.arrayBuffer()));
+  const pdfData = await pdfParse(
+    Buffer.from(await response.arrayBuffer())
+  );
   return pdfData.text;
 }
 
-async function chunkText(text: string, chunkSize: number): Promise<string[]> {
+export async function chunkText(
+  text: string,
+  chunkSize: number
+): Promise<string[]> {
   const words = text.replace(/\n/g, " ").split(" ");
   const chunks = [];
   let currentChunk = [];
@@ -68,8 +81,17 @@ async function sortDialogueByCharacter(chunks: string[]) {
   let chunkRetries = 0;
   let dialogueByCharacter: DialogueByCharacter = {};
   for (let i = 0; i < chunks.length; i++) {
-    console.log("Processing chunk " + i + " with length " + chunks[i].length);
-    const encounteredCharacters = Object.keys(dialogueByCharacter);
+    console.log(
+      "Processing chunk " +
+        i +
+        " of " +
+        chunks.length +
+        " with length " +
+        chunks[i].length
+    );
+    const encounteredCharacters = Object.keys(
+      dialogueByCharacter
+    );
     let completion;
     try {
       const { systemPrompt, userPrompt } = buildPrompt(
@@ -80,9 +102,12 @@ async function sortDialogueByCharacter(chunks: string[]) {
         systemPrompt,
         userPrompt
       );
-      completion = completionResponse.choices[0]?.message?.content || "";
+      completion =
+        completionResponse.choices[0]?.message?.content || "";
     } catch (error) {
-      console.error("Failed to get completion. Retrying completion.");
+      console.error(
+        "Failed to get completion. Retrying completion."
+      );
       i -= 1;
       continue;
     }
@@ -103,16 +128,22 @@ async function sortDialogueByCharacter(chunks: string[]) {
 
     for (const character in dialogueData) {
       if (dialogueByCharacter[character]) {
-        dialogueByCharacter[character].push(...dialogueData[character]);
+        dialogueByCharacter[character].push(
+          ...dialogueData[character]
+        );
       } else {
-        dialogueByCharacter[character] = dialogueData[character];
+        dialogueByCharacter[character] =
+          dialogueData[character];
       }
     }
   }
   return dialogueByCharacter;
 }
 
-async function getGroqChatCompletion(systemPrompt: string, userPrompt: string) {
+async function getGroqChatCompletion(
+  systemPrompt: string,
+  userPrompt: string
+) {
   return groq.chat.completions.create({
     messages: [
       {
@@ -165,7 +196,7 @@ function buildPrompt(
   return { systemPrompt, userPrompt };
 }
 
-function extractJsonFromCompletion(completion: string) {
+export function extractJsonFromCompletion(completion: string) {
   const firstCurlyBracketIndex = completion.indexOf("{");
   const lastCurlyBracketIndex = completion.lastIndexOf("}");
   const jsonString = completion.substring(

@@ -5,6 +5,9 @@ import { UserAuthenticator } from "@/lib/authenticators/UserAuthenticator";
 import * as AuthorService from "@/lib/services/AuthorService";
 import * as CharacterService from "@/lib/services/CharacterService";
 import * as ConversationService from "@/lib/services/ConversationService";
+import { generateCharacterDescriptionAndBackstory } from "@/lib/book-parser/generate-character";
+import { Character } from "@/lib/models/Character";
+import { upsertText } from "@/lib/retrieval/upsert";
 
 export const POST = ProtectedRoute(
   UserAuthenticator,
@@ -30,34 +33,54 @@ export const POST = ProtectedRoute(
       });
     }
 
-    const character = await CharacterService.findCharacterById(
-      characterId
-    );
+    const character =
+      await CharacterService.findCharacterWithBookById(
+        characterId
+      );
     if (!character) {
       return new NextResponse("Character not found", {
         status: 404,
       });
     }
 
-    // Mock character creation process
-    await CharacterService.generateRandomDescription(
-      characterId
-    );
-    await CharacterService.generateRandomBackstory(characterId);
-
-    await CharacterService.deleteDialogue(characterId);
-    for (let i = 0; i < 10; i++) {
-      await CharacterService.generateRandomDialogue(
-        character.book as string,
-        characterId
+    (async () => {
+      const characterInfo =
+        await generateCharacterDescriptionAndBackstory(
+          character
+        );
+      CharacterService.addCharacterDescriptionAndBackstory(
+        characterId,
+        characterInfo
       );
-    }
-    // for (let i = 0; i < 25; i++) {
-    //   await ConversationService.generateRandomConversation(characterId);
+      const dialogue =
+        await CharacterService.findDialogueByCharacter(
+          characterId
+        );
+      const dialogueText = dialogue.map((d) => d.text);
+      upsertText(dialogueText, characterId);
+    })();
+    // console.log("Generated description: ", description);
+    // console.log("Generated backstory: ", backstory);
+
+    // // Mock character creation process
+    // await CharacterService.generateRandomDescription(
+    //   characterId
+    // );
+    // await CharacterService.generateRandomBackstory(characterId);
+
+    // await CharacterService.deleteDialogue(characterId);
+    // for (let i = 0; i < 10; i++) {
+    //   await CharacterService.generateRandomDialogue(
+    //     character.book as string,
+    //     characterId
+    //   );
     // }
+    // // for (let i = 0; i < 25; i++) {
+    // //   await ConversationService.generateRandomConversation(characterId);
+    // // }
 
     return NextResponse.json({
-      message: "Protected route called",
+      message: "Character generation started",
     });
   }
 );

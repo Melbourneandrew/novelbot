@@ -12,11 +12,20 @@ import { IBook, Book } from "@/lib/models/Book";
 import { CharacterWithStats } from "@/app/api/author/stats/route";
 import { DialogueByCharacter } from "../book-parser/extract-dialogue";
 import mongoose from "mongoose";
+import { CharacterInfo } from "../book-parser/generate-character";
 
 export async function findCharacterById(
   id: string
 ): Promise<ICharacter | null> {
   return await Character.findById(id);
+}
+
+export async function findCharacterWithBookById(
+  id: string
+): Promise<ICharacter | null> {
+  return (await Character.findById(id).populate(
+    "book"
+  )) as ICharacter;
 }
 
 export async function findCharactersByAuthor(
@@ -339,4 +348,19 @@ export async function findCharactersWithStatsByAuthor(
     };
   });
   return characterStats;
+}
+
+export async function addCharacterDescriptionAndBackstory(
+  characterId: string,
+  characeterInfo: CharacterInfo
+) {
+  const { description, backstory } = characeterInfo;
+  return Character.findByIdAndUpdate(
+    characterId,
+    {
+      description,
+      backstory,
+    },
+    { new: true }
+  );
 }
