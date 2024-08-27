@@ -14,7 +14,7 @@ export const POST = ProtectedRoute(
     console.log("Chat route called");
     const user = request.user;
 
-    const reader = await ReaderService.findReaderByUserId(user._id);
+    const reader = await ReaderService.findReaderByUserId(user.id);
     if (!reader) {
       return new NextResponse("Reader not found", {
         status: 401,
@@ -49,8 +49,8 @@ export const POST = ProtectedRoute(
       messages.unshift(systemMessage);
 
       conversation = await ConversationService.createConversation(
-        reader._id,
-        character._id,
+        reader.id,
+        character.id,
         messages
       );
     } else {
@@ -67,10 +67,10 @@ export const POST = ProtectedRoute(
       }
     }
 
-    await ConversationService.getCompletion(messages);
+    await ConversationService.getRandomCompletion(messages);
 
     conversation = await ConversationService.addMessagesToConversation(
-      conversation._id,
+      conversation.id,
       messages
     );
 

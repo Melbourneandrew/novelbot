@@ -193,7 +193,20 @@ export async function buildSystemMessage(
     content: systemMessage,
   };
 }
-export async function getCompletion(messages: Message[]): Promise<Message[]> {
+export async function getRandomCompletion(messages: Message[]): Promise<Message[]> {
+  const wordCount = Math.floor(Math.random() * 100);
+  const newMessage =
+    generateRandomWords(wordCount) + " (these are random words)";
+
+  messages.push({
+    role: "assistant",
+    content: newMessage,
+    systemPromptAtTimeOfMessage: messages[0].content,
+  });
+  return messages;
+}
+
+export async function getChatCompletion(messages: Message[]): Promise<Message[]> {
   const wordCount = Math.floor(Math.random() * 100);
   const newMessage =
     generateRandomWords(wordCount) + " (these are random words)";

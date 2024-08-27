@@ -8,6 +8,7 @@ import * as ConversationService from "@/lib/services/ConversationService";
 import { generateCharacterDescriptionAndBackstory } from "@/lib/book-parser/generate-character";
 import { Character } from "@/lib/models/Character";
 import { upsertText } from "@/lib/retrieval/upsert";
+import { connectPinecone } from "@/lib/retrieval/vector-db";
 
 export const POST = ProtectedRoute(
   UserAuthenticator,
@@ -24,19 +25,16 @@ export const POST = ProtectedRoute(
     }
 
     const user = request.user;
-    const author = await AuthorService.findAuthorByUser(
-      user.id
-    );
+    const author = await AuthorService.findAuthorByUser(user.id);
     if (!author) {
       return new NextResponse("Author not found", {
         status: 404,
       });
     }
 
-    const character =
-      await CharacterService.findCharacterWithBookById(
-        characterId
-      );
+    const character = await CharacterService.findCharacterWithBookById(
+      characterId
+    );
     if (!character) {
       return new NextResponse("Character not found", {
         status: 404,
@@ -44,18 +42,17 @@ export const POST = ProtectedRoute(
     }
 
     (async () => {
-      const characterInfo =
-        await generateCharacterDescriptionAndBackstory(
-          character
-        );
+      connectPinecone();
+      const characterInfo = await generateCharacterDescriptionAndBackstory(
+        character
+      );
       CharacterService.addCharacterDescriptionAndBackstory(
         characterId,
         characterInfo
       );
-      const dialogue =
-        await CharacterService.findDialogueByCharacter(
-          characterId
-        );
+      const dialogue = await CharacterService.findDialogueByCharacter(
+        characterId
+      );
       const dialogueText = dialogue.map((d) => d.text);
       upsertText(dialogueText, characterId);
     })();
